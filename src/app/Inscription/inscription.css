@@ -7,22 +7,22 @@
     width: 450px;
     border-radius: 20px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  }
-  
-  ::placeholder {
+}
+
+::placeholder {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  }
-  
-  .form button {
+}
+
+.form button {
     align-self: flex-end;
-  }
-  
-  .flex-column > label {
+}
+
+.flex-column > label {
     color: #151717;
     font-weight: 600;
-  }
-  
-  .inputForm {
+}
+
+.inputForm {
     border: 1.5px solid #ecedec;
     border-radius: 10px;
     height: 50px;
@@ -30,60 +30,42 @@
     align-items: center;
     padding-left: 10px;
     transition: 0.2s ease-in-out;
-  }
-  
-  .input {
+}
+
+.inputForm.file-upload {
+  height: 80px; /* Ajustez la hauteur selon vos besoins */
+  padding-left: 20px; /* Ajustez le padding selon vos besoins */
+}
+
+.input {
     margin-left: 10px;
     border-radius: 10px;
     border: none;
     width: 100%;
     height: 100%;
-  }
-  
-  .input:focus {
+}
+
+.input:focus {
     outline: none;
-  }
-  
-  .inputForm:focus-within {
+}
+
+.inputForm:focus-within {
     border: 1.5px solid #2d79f3;
-  }
-  
-  .flex-row {
+}
+
+.flex-row {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 10px;
     justify-content: space-between;
-  }
-  
-  .flex-row .flex-column {
+}
+
+.flex-row .flex-column {
     flex: 1;
-  }
-  
-  .container {
-    display: flex; /* Flex pour aligner la case et le texte */
-    align-items: center; /* Aligne verticalement */
-    cursor: pointer;
-    font-size: 20px;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-  }
-  
-  .remember-me-text {
-    margin-left: 8px; /* Espace entre la case à cocher et le texte */
-    font-size: 14px; /* Ajustez la taille de police si nécessaire */
-    color: #151717; /* Couleur du texte */
-  }
-  
-  .span {
-    font-size: 14px;
-    margin-left: 5px;
-    color: #2d79f3;
-    font-weight: 500;
-    cursor: pointer;
-  }
-  
-  .button-submit {
+}
+
+.button-submit {
     margin: 20px 0 10px 0;
     background-color: #151717;
     border: none;
@@ -94,16 +76,16 @@
     height: 50px;
     width: 100%;
     cursor: pointer;
-  }
-  
-  .p {
+}
+
+.p {
     text-align: center;
     color: black;
     font-size: 14px;
     margin: 5px 0;
-  }
-  
-  .btn {
+}
+
+.btn {
     margin-top: 10px;
     width: 100%;
     height: 50px;
@@ -117,66 +99,60 @@
     background-color: white;
     cursor: pointer;
     transition: 0.2s ease-in-out;
-  }
-  
-  .btn:hover {
+}
+
+.btn:hover {
     border: 1px solid #2d79f3;
-  }
-  
-  .container input {
-    display: none;
-  }
-  
-  .checkmark {
-    position: relative;
-    top: 0;
-    left: 0;
-    height: 1.05em;
-    width: 1.0em;
-    background-color: #2196F300;
-    border-radius: 0.25em;
-    transition: all 0.25s;
-  }
-  
-  .container input:checked ~ .checkmark {
-    background-color: #2196F3;
-  }
-  
-  .checkmark:after {
-    content: "";
-    position: absolute;
-    transform: rotate(0deg);
-    border: 0.1em solid black;
-    left: 0;
-    top: 0;
-    width: 1.05em;
-    height: 1.05em;
-    border-radius: 0.25em;
-    transition: all 0.25s, border-width 0.1s;
-  }
-  
-  .container input:checked ~ .checkmark:after {
-    left: 0.40em;
-    top: 0.25em;
-    width: 0.25em;
-    height: 0.5em;
-    border-color: #fff0 white white #fff0;
-    border-width: 0 0.15em 0.15em 0;
-    border-radius: 0em;
-    transform: rotate(45deg);
-  }
+}
 
 .toggle-password {
-  background: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; /* Ajustez la largeur selon vos besoins */
+    height: 24px; /* Ajustez la hauteur selon vos besoins */
+    position: relative; /* Si vous souhaitez positionner l'élément de manière absolue */
+    top: -11px; /* Ajustez la position verticale */
+    right: 10px; /* Ajustez la position horizontale */
+}
+
+.file-input {
+    border: 1.5px solid #ecedec;
+    border-radius: 10px;
+    padding: 10px;
+    transition: 0.2s ease-in-out;
+}
+
+.file-input:focus-within {
+    border: 1.5px solid #2d79f3;
+}
+
+.custom-file-upload {
   border: none;
+  outline: none;
+  background-color: #0070f3;
+  padding: 10px 20px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  border-radius: 7px;
+  transition: all ease 0.1s;
+  box-shadow: 0px 5px 0px 0px #a29bfe;
   cursor: pointer;
+  display: inline-block;
+}
+
+.custom-file-upload:active {
+  transform: translateY(5px);
+  box-shadow: 0px 0px 0px 0px #a29bfe;
+}
+
+.file-name {
   margin-left: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px; /* Ajustez la largeur selon vos besoins */
-  height: 24px; /* Ajustez la hauteur selon vos besoins */
-  position: relative; /* Si vous souhaitez positionner l'élément de manière absolue */
-  top: -11px; /* Ajustez la position verticale */
-  right: 10px; /* Ajustez la position horizontale */
+  font-size: 12px;
+  color: #6c757d;
 }
