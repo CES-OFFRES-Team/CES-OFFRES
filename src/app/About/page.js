@@ -1,25 +1,25 @@
 // JavaScript source code
 export default function AboutPage() {
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>About Internship Search</h1>
-      <p>
-        Welcome to Internship Search, your go-to platform for finding the perfect internship opportunities. Our mission is to connect students and recent graduates with companies offering valuable internship experiences.
+    <div style={{ padding: "2rem", textAlign: "center" }}>
+      <h1 style={{ marginBottom: "1rem" }}><strong>À propos de Internship Search</strong></h1>
+      <p style={{ marginBottom: "1rem" }}>
+        Bienvenue sur <strong>Internship Search</strong>, votre plateforme de référence pour trouver les opportunités de stage parfaites. Notre mission est de connecter les étudiants et les jeunes diplômés avec des entreprises offrant des expériences de stage précieuses.
       </p>
-      <h2>Our Mission</h2>
-      <p>
-        At Internship Search, we aim to bridge the gap between aspiring professionals and industry leaders. We believe that internships are a crucial step in building a successful career, and we strive to make the search process as seamless as possible.
+      <h2 style={{ marginBottom: "1rem" }}><strong>Notre Mission</strong></h2>
+      <p style={{ marginBottom: "1rem" }}>
+        Chez <strong>Internship Search</strong>, nous visons à combler le fossé entre les professionnels en herbe et les leaders de l'industrie. Nous croyons que les stages sont une étape cruciale dans la construction d'une carrière réussie, et nous nous efforçons de rendre le processus de recherche aussi fluide que possible.
       </p>
-      <h2>Features</h2>
-      <ul>
-        <li>Comprehensive internship listings from various industries</li>
-        <li>User-friendly search and filter options</li>
-        <li>Resources and tips for landing your dream internship</li>
-        <li>Company profiles and reviews</li>
+      <h2 style={{ marginBottom: "1rem" }}><strong>Fonctionnalités</strong></h2>
+      <ul style={{ listStyleType: "none", padding: 0, marginBottom: "1rem" }}>
+        <li style={{ marginBottom: "0.5rem" }}>Listes complètes de stages dans divers secteurs</li>
+        <li style={{ marginBottom: "0.5rem" }}>Options de recherche et de filtrage conviviales</li>
+        <li style={{ marginBottom: "0.5rem" }}>Ressources et conseils pour décrocher le stage de vos rêves</li>
+        <li style={{ marginBottom: "0.5rem" }}>Profils et avis des entreprises</li>
       </ul>
-      <h2>Contact Us</h2>
-      <p>
-        If you have any questions or need assistance, feel free to <a href="/contact">contact us</a>. We are here to help you every step of the way.
+      <h2 style={{ marginBottom: "1rem" }}><strong>Contactez-nous</strong></h2>
+      <p style={{ marginBottom: "1rem" }}>
+        Si vous avez des questions ou besoin d'assistance, n'hésitez pas à nous contacter. Nous sommes là pour vous aider à chaque étape.
       </p>
     </div>
   );
