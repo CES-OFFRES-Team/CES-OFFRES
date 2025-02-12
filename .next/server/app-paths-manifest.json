@@ -2,5 +2,8 @@
   "/page": "app/page.js",
   "/Offres/page": "app/Offres/page.js",
   "/Contact/page": "app/Contact/page.js",
-  "/Login/page": "app/Login/page.js"
+  "/Login/page": "app/Login/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/Inscription/page": "app/Inscription/page.js",
+  "/About/page": "app/About/page.js"
 }

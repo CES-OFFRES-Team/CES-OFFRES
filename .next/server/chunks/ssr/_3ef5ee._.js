@@ -32,6 +32,33 @@ const offresDeStages = [
         localisation: 'Lyon, France',
         dateDebut: '15/03/2025',
         duree: '4 mois'
+    },
+    {
+        id: 3,
+        titre: 'Stage Marketing Digital',
+        entreprise: 'Entreprise C',
+        description: 'Gestion des campagnes marketing en ligne.',
+        localisation: 'Marseille, France',
+        dateDebut: '01/04/2025',
+        duree: '5 mois'
+    },
+    {
+        id: 4,
+        titre: 'Stage Ingénieur Logiciel',
+        entreprise: 'Entreprise D',
+        description: 'Développement de logiciels embarqués.',
+        localisation: 'Toulouse, France',
+        dateDebut: '01/05/2025',
+        duree: '6 mois'
+    },
+    {
+        id: 5,
+        titre: 'Stage Consultant IT',
+        entreprise: 'Entreprise E',
+        description: 'Consulting en technologies de l\'information.',
+        localisation: 'Nantes, France',
+        dateDebut: '15/05/2025',
+        duree: '3 mois'
     }
 ];
 const OffresPage = ()=>{
@@ -42,7 +69,7 @@ const OffresPage = ()=>{
                 children: "Offres de Stages"
             }, void 0, false, {
                 fileName: "[project]/src/app/Offres/page.js",
-                lineNumber: 30,
+                lineNumber: 56,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
@@ -53,7 +80,7 @@ const OffresPage = ()=>{
                                 children: offre.titre
                             }, void 0, false, {
                                 fileName: "[project]/src/app/Offres/page.js",
-                                lineNumber: 34,
+                                lineNumber: 60,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -62,7 +89,7 @@ const OffresPage = ()=>{
                                         children: "Entreprise:"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/Offres/page.js",
-                                        lineNumber: 35,
+                                        lineNumber: 61,
                                         columnNumber: 28
                                     }, this),
                                     " ",
@@ -70,7 +97,7 @@ const OffresPage = ()=>{
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/Offres/page.js",
-                                lineNumber: 35,
+                                lineNumber: 61,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -79,7 +106,7 @@ const OffresPage = ()=>{
                                         children: "Description:"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/Offres/page.js",
-                                        lineNumber: 36,
+                                        lineNumber: 62,
                                         columnNumber: 28
                                     }, this),
                                     " ",
@@ -87,7 +114,7 @@ const OffresPage = ()=>{
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/Offres/page.js",
-                                lineNumber: 36,
+                                lineNumber: 62,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -96,7 +123,7 @@ const OffresPage = ()=>{
                                         children: "Localisation:"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/Offres/page.js",
-                                        lineNumber: 37,
+                                        lineNumber: 63,
                                         columnNumber: 28
                                     }, this),
                                     " ",
@@ -104,7 +131,7 @@ const OffresPage = ()=>{
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/Offres/page.js",
-                                lineNumber: 37,
+                                lineNumber: 63,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -113,7 +140,7 @@ const OffresPage = ()=>{
                                         children: "Date de début:"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/Offres/page.js",
-                                        lineNumber: 38,
+                                        lineNumber: 64,
                                         columnNumber: 28
                                     }, this),
                                     " ",
@@ -121,7 +148,7 @@ const OffresPage = ()=>{
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/Offres/page.js",
-                                lineNumber: 38,
+                                lineNumber: 64,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -130,7 +157,7 @@ const OffresPage = ()=>{
                                         children: "Durée:"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/Offres/page.js",
-                                        lineNumber: 39,
+                                        lineNumber: 65,
                                         columnNumber: 28
                                     }, this),
                                     " ",
@@ -138,24 +165,24 @@ const OffresPage = ()=>{
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/Offres/page.js",
-                                lineNumber: 39,
+                                lineNumber: 65,
                                 columnNumber: 25
                             }, this)
                         ]
                     }, offre.id, true, {
                         fileName: "[project]/src/app/Offres/page.js",
-                        lineNumber: 33,
+                        lineNumber: 59,
                         columnNumber: 21
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/src/app/Offres/page.js",
-                lineNumber: 31,
+                lineNumber: 57,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/Offres/page.js",
-        lineNumber: 29,
+        lineNumber: 55,
         columnNumber: 9
     }, this);
 };

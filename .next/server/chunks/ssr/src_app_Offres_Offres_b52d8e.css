@@ -25,27 +25,29 @@ ul {
 }
 
 .offre {
-  border-bottom: 1px solid #ddd;
-  padding: 10px 20px;
-  margin-bottom: 10px;
-  background-color: #fff;
-  border-radius: 10px;
+  background: #f9f9f9;
+  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 8px;
   box-shadow: 0 2px 4px #0000001a;
+  transition: transform .3s, box-shadow .3s;
 }
 
-.offre:last-child {
-  border-bottom: none;
+.offre:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px #0003;
 }
 
-h2 {
+.offre h2 {
+  margin-top: 0;
   color: #007bff;
 }
 
-p {
+.offre p {
   margin: 5px 0;
 }
 
-strong {
+.offre strong {
   color: #555;
 }
 

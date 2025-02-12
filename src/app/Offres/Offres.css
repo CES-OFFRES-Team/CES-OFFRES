@@ -1,5 +1,4 @@
-/* page.css */
-
+/* Offres.css */
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
@@ -26,27 +25,28 @@ ul {
 }
 
 .offre {
-    border-bottom: 1px solid #ddd;
-    padding: 10px 20px;
-    margin-bottom: 10px;
-    background-color: #fff;
-    border-radius: 10px; /* Coins arrondis */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ombre pour un effet de profondeur */
+    background: #f9f9f9;
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.offre:last-child {
-    border-bottom: none;
+.offre:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-h2 {
+.offre h2 {
+    margin-top: 0;
     color: #007BFF;
 }
 
-p {
+.offre p {
     margin: 5px 0;
 }
 
-strong {
+.offre strong {
     color: #555;
 }
-
