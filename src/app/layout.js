@@ -28,13 +28,13 @@ export default function RootLayout({ children }) {
             <nav>
               <ul className="nav-list">
                 <li><a href="/">Home</a></li>
-                <li><a href="/Offres">Offers</a></li>
-                <li><a href="/About">About</a></li>
+                <li><a href="/Offres">Offres</a></li>
+                <li><a href="/About">A propos</a></li>
                 <li><a href="/Contact">Contact</a></li>
                 <li><a href="/Inscription">Inscription</a></li>
               </ul>
             </nav>
-            <a href="/Login" className="login-button">Login</a>
+            <a href="/Login" className="login-button">Connexion</a>
           </div>
         </header>
         <div className="bottom-bar"></div>
