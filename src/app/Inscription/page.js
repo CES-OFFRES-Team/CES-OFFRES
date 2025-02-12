@@ -4,9 +4,19 @@ import './inscription.css';
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [fileName, setFileName] = useState("Aucun fichier n'a été ajouté");
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setFileName(file.name);
+    } else {
+      setFileName("Aucun fichier n'a été ajouté");
+    }
   };
 
   return (
@@ -73,6 +83,17 @@ export default function LoginPage() {
           <input placeholder="Confirmez votre mot de passe" className="input" type={showPassword ? "text" : "password"} />
         </div>
 
+        <div className="flex-column">
+          <label>CV (Max 2 Mo)</label>
+        </div>
+        <div className="inputForm file-upload">
+          <input type="file" className="input file-input" accept=".pdf,.doc,.docx" id="file-upload" style={{ display: 'none' }} onChange={handleFileChange} />
+          <label htmlFor="file-upload" className="custom-file-upload">
+            Choisir un fichier
+          </label>
+          <span className="file-name">{fileName}</span>
+        </div>
+
         <button className="button-submit">S'inscrire</button>
         <p className="p">Vous avez un compte ? <span className="span">Se connecter</span></p>
         <p className="p line">Ou avec</p>
@@ -88,7 +109,7 @@ export default function LoginPage() {
             Google
           </button>
           <button className="btn apple">
-            <svg xmlSpace="preserve" style={{ enableBackground: "new 0 0 22.773 22.773" }} viewBox="0 0 22.773 22.773" y="0px" x="0px" xmlnsXlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" id="Capa_1" width="20" height="20" version="1.1">
+            <svg xmlSpace="preserve" style={{ enableBackground: "new 0 0 22.773 22.773" }} viewBox="0 0 22.773 22.773" y="0px" x="0px" xmlnsXlink="http://www.w3.org/2000/xlink" id="Capa_1" width="20" height="20" version="1.1">
               <g>
                 <g>
                   <path d="M15.769,0c0.053,0,0.106,0,0.162,0c0.13,1.606-0.483,2.806-1.228,3.675c-0.731,0.863-1.732,1.7-3.351,1.573c-0.108-1.583,0.506-2.694,1.25-3.561C13.292,0.879,14.557,0.16,15.769,0z"></path>
