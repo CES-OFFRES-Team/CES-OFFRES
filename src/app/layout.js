@@ -29,7 +29,7 @@ export default function RootLayout({ children }) {
               <ul className="nav-list">
                 <li><a href="/">Acceuil</a></li>
                 <li><a href="/Offres">Offres</a></li>
-                <li><a href="/About">A propos</a></li>
+                <li><a href="/About">À propos</a></li>
                 <li><a href="/Contact">Contact</a></li>
                 <li><a href="/Inscription">Inscription</a></li>
               </ul>
