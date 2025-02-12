@@ -27,7 +27,7 @@ export default function RootLayout({ children }) {
             </a>
             <nav>
               <ul className="nav-list">
-                <li><a href="/">Home</a></li>
+                <li><a href="/">Acceuil</a></li>
                 <li><a href="/Offres">Offres</a></li>
                 <li><a href="/About">A propos</a></li>
                 <li><a href="/Contact">Contact</a></li>
@@ -42,7 +42,7 @@ export default function RootLayout({ children }) {
           {children}
         </main>
         <footer>
-          <p>&copy; 2025 Internship Search. All rights reserved.</p>
+          <p>&copy; 2025 CES'OFFRES. Tous droits réservés.</p>
         </footer>
       </body>
     </html>
