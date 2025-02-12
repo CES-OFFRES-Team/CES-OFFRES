@@ -1,0 +1,52 @@
+/* [project]/src/app/Offres/Offres.css [app-client] (css) */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px #0000001a;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.offre {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px #0000001a;
+}
+
+.offre:last-child {
+  border-bottom: none;
+}
+
+h2 {
+  color: #007bff;
+}
+
+p {
+  margin: 5px 0;
+}
+
+strong {
+  color: #555;
+}
+
+/*# sourceMappingURL=src_app_Offres_Offres_b52d8e.css.map*/
