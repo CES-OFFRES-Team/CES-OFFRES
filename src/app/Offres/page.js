@@ -57,12 +57,17 @@ const OffresPage = () => {
             <ul>
                 {offresDeStages.map(offre => (
                     <li key={offre.id} className="offre">
-                        <h2>{offre.titre}</h2>
-                        <p><strong>Entreprise:</strong> {offre.entreprise}</p>
-                        <p><strong>Description:</strong> {offre.description}</p>
-                        <p><strong>Localisation:</strong> {offre.localisation}</p>
-                        <p><strong>Date de début:</strong> {offre.dateDebut}</p>
-                        <p><strong>Durée:</strong> {offre.duree}</p>
+                        <div className="offre-content">
+                            <div className="offre-details">
+                                <h2>{offre.titre}</h2>
+                                <p><strong>Entreprise:</strong> {offre.entreprise}</p>
+                                <p><strong>Description:</strong> {offre.description}</p>
+                                <p><strong>Localisation:</strong> {offre.localisation}</p>
+                                <p><strong>Date de début:</strong> {offre.dateDebut}</p>
+                                <p><strong>Durée:</strong> {offre.duree}</p>
+                            </div>
+                            <button className="postuler-button">Postuler</button>
+                        </div>
                     </li>
                 ))}
             </ul>

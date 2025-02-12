@@ -1,11 +1,178 @@
-/* Offres.css */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+/* globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --background: #ffffff; /* Blanc */
+    --foreground: #000000; /* Noir */
+    --primary: #0070f3;
+    --secondary: #1a1a1a;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background: #ffffff;
+        --foreground: #0070f3;
+        --primary: #0070f3;
+        --secondary: #ededed;
+    }
+}
+
+html, body {
+    height: 100%;
     margin: 0;
     padding: 0;
 }
 
+body {
+    display: flex;
+    flex-direction: column;
+    color: var(--foreground);
+    background: var(--background);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+.header {
+    background-color: var(--background);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 1rem 2rem;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Align items to the left */
+    width: 100%;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary);
+    margin-right: 2rem; /* Add some space between the logo and the nav */
+}
+
+nav {
+    display: flex;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    margin: 0;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: var(--foreground);
+    font-weight: 500;
+}
+
+nav ul li a:hover {
+    color: var(--primary);
+}
+
+.login-button {
+    background-color: var(--primary);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    margin-left: auto; /* Push the login button to the right */
+}
+
+.login-button:hover {
+    background-color: #005bb5;
+}
+
+.bottom-bar {
+    width: 100%;
+    height: 3px;
+    background-color: var(--primary);
+    margin-top: 0rem;
+}
+
+.contact-form,
+.inscription-form,
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: var(--background);
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.form-group input {
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    color: var(--foreground);
+    background-color: var(--background);
+    transition: border-color 0.3s ease;
+    width: 100%; /* Make input fields take full width */
+}
+
+.form-group input:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
+button[type="submit"] {
+    padding: 0.75rem;
+    border: none;
+    border-radius: 4px;
+    background-color: var(--primary);
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #005bb5;
+}
+
+footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: var(--background);
+    box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* New styles to center the form */
+.center-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align items to the top */
+    min-height: 100vh;
+    padding-top: 2rem; /* Add some padding to the top */
+}
+
+/* Offres.css */
 .container {
     max-width: 800px;
     margin: 0 auto;
@@ -31,6 +198,9 @@ ul {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .offre:hover {
@@ -49,4 +219,18 @@ ul {
 
 .offre strong {
     color: #555;
+}
+
+.postuler-button {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.postuler-button:hover {
+    background-color: #005bb5;
 }

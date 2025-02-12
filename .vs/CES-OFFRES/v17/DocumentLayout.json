@@ -1,7 +1,32 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\src\\app\\Offres\\page.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\Offres\\page.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\src\\app\\Offres\\Offres.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\Offres\\Offres.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\src\\app\\globals.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\globals.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\src\\app\\layout.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\layout.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\src\\app\\page.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\page.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,7 +34,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -22,6 +47,84 @@
             {
               "$type": "Bookmark",
               "Name": "ST:130:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "globals.css",
+              "DocumentMoniker": "C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\src\\app\\globals.css",
+              "RelativeDocumentMoniker": "src\\app\\globals.css",
+              "ToolTip": "C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\src\\app\\globals.css",
+              "RelativeToolTip": "src\\app\\globals.css",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABAAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-02-12T18:17:49.152Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "page.js",
+              "DocumentMoniker": "C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\src\\app\\Offres\\page.js",
+              "RelativeDocumentMoniker": "src\\app\\Offres\\page.js",
+              "ToolTip": "C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\src\\app\\Offres\\page.js",
+              "RelativeToolTip": "src\\app\\Offres\\page.js",
+              "ViewState": "AgIAACQAAAAAAAAAAAAAADUAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2025-02-12T18:12:49.078Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Offres.css",
+              "DocumentMoniker": "C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\src\\app\\Offres\\Offres.css",
+              "RelativeDocumentMoniker": "src\\app\\Offres\\Offres.css",
+              "ToolTip": "C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\src\\app\\Offres\\Offres.css",
+              "RelativeToolTip": "src\\app\\Offres\\Offres.css",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-02-12T18:12:48.281Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "page.js",
+              "DocumentMoniker": "C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\src\\app\\page.js",
+              "RelativeDocumentMoniker": "src\\app\\page.js",
+              "ToolTip": "C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\src\\app\\page.js",
+              "RelativeToolTip": "src\\app\\page.js",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2025-02-12T18:08:45.956Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": ".gitignore",
+              "DocumentMoniker": "C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\.gitignore",
+              "RelativeDocumentMoniker": ".gitignore",
+              "ToolTip": "C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\.gitignore",
+              "RelativeToolTip": ".gitignore",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-02-12T18:04:22.666Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "layout.js",
+              "DocumentMoniker": "C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\src\\app\\layout.js",
+              "RelativeDocumentMoniker": "src\\app\\layout.js",
+              "ToolTip": "C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\src\\app\\layout.js",
+              "RelativeToolTip": "src\\app\\layout.js",
+              "ViewState": "AgIAABAAAAAAAAAAAAAgwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2025-02-12T17:57:35.466Z",
+              "EditorCaption": ""
             }
           ]
         }
