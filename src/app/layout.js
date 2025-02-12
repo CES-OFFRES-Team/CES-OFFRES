@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
         <header className="header">
           <div className="header-content">
             <a href="/" className="logo-link">
-              <h1 className="logo">IS</h1>
+              <h1 className="logo">CO</h1>
             </a>
             <nav>
               <ul className="nav-list">
