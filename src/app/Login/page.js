@@ -58,7 +58,7 @@ export default function LoginPage() {
           <span className="span">Mot de passe oublié ?</span>
         </div>
         <button className="button-submit">Se connecter</button>
-        <p className="p">Vous n'avez pas de compte ? <span className="span">S'inscrire</span></p>
+        <p className="p">Vous n'avez pas de compte ? <a href="/Inscription" className="span">S'inscrire</a></p>
         <p className="p line">Ou avec</p>
 
 

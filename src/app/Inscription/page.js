@@ -95,7 +95,7 @@ export default function LoginPage() {
         </div>
 
         <button className="button-submit">S'inscrire</button>
-        <p className="p">Vous avez un compte ? <span className="span">Se connecter</span></p>
+        <p className="p">Vous avez un compte ? <a href="/Login" className="span">Se connecter</a></p>
         <p className="p line">Ou avec</p>
 
         <div className="flex-row">
