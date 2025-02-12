@@ -12,8 +12,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Internship Search",
-  description: "Platform for finding internships",
+  title: "CES'Offres",
+  description: "Platforme Pour trouver un stage",
 };
 
 export default function RootLayout({ children }) {

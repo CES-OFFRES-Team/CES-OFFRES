@@ -20,8 +20,34 @@ const offresDeStages = [
         localisation: 'Lyon, France',
         dateDebut: '15/03/2025',
         duree: '4 mois'
+    },
+    {
+        id: 3,
+        titre: 'Stage Marketing Digital',
+        entreprise: 'Entreprise C',
+        description: 'Gestion des campagnes marketing en ligne.',
+        localisation: 'Marseille, France',
+        dateDebut: '01/04/2025',
+        duree: '5 mois'
+    },
+    {
+        id: 4,
+        titre: 'Stage Ingénieur Logiciel',
+        entreprise: 'Entreprise D',
+        description: 'Développement de logiciels embarqués.',
+        localisation: 'Toulouse, France',
+        dateDebut: '01/05/2025',
+        duree: '6 mois'
+    },
+    {
+        id: 5,
+        titre: 'Stage Consultant IT',
+        entreprise: 'Entreprise E',
+        description: 'Consulting en technologies de l\'information.',
+        localisation: 'Nantes, France',
+        dateDebut: '15/05/2025',
+        duree: '3 mois'
     }
-    // Ajoutez d'autres offres de stages ici
 ];
 
 const OffresPage = () => {
@@ -31,12 +57,17 @@ const OffresPage = () => {
             <ul>
                 {offresDeStages.map(offre => (
                     <li key={offre.id} className="offre">
-                        <h2>{offre.titre}</h2>
-                        <p><strong>Entreprise:</strong> {offre.entreprise}</p>
-                        <p><strong>Description:</strong> {offre.description}</p>
-                        <p><strong>Localisation:</strong> {offre.localisation}</p>
-                        <p><strong>Date de début:</strong> {offre.dateDebut}</p>
-                        <p><strong>Durée:</strong> {offre.duree}</p>
+                        <div className="offre-content">
+                            <div className="offre-details">
+                                <h2>{offre.titre}</h2>
+                                <p><strong>Entreprise:</strong> {offre.entreprise}</p>
+                                <p><strong>Description:</strong> {offre.description}</p>
+                                <p><strong>Localisation:</strong> {offre.localisation}</p>
+                                <p><strong>Date de début:</strong> {offre.dateDebut}</p>
+                                <p><strong>Durée:</strong> {offre.duree}</p>
+                            </div>
+                            <button className="postuler-button">Postuler</button>
+                        </div>
                     </li>
                 ))}
             </ul>
@@ -45,4 +76,3 @@ const OffresPage = () => {
 };
 
 export default OffresPage;
-
