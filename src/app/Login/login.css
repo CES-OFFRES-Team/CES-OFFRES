@@ -83,8 +83,13 @@
   font-size: 14px;
   margin-left: 5px;
   color: var(--primary-color);
-  font-weight: 500;
+  font-weight: 700;  /* Changed from 500 to 700 for bold text */
   cursor: pointer;
+  text-decoration: none;
+}
+
+.span:hover {
+  text-decoration: underline;
 }
 
 .button-submit {
