@@ -361,6 +361,7 @@ main {
     transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     object-fit: contain;
     max-width: 100%;
+    fill: currentColor; /* Pour les SVG qui utilisent la couleur courante */
 }
 
 .sidebar:hover .nav-logo {

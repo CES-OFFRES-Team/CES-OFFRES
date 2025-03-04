@@ -771,15 +771,16 @@ main {
   justify-content: center;
   align-items: center;
   margin-bottom: 1rem;
+  overflow: hidden;
 }
 
 .nav-logo {
   width: 50px;
   height: auto;
   transition: width .5s cubic-bezier(.4, 0, .2, 1);
-  filter: brightness() contrast();
-  mix-blend-mode: normal;
   object-fit: contain;
+  max-width: 100%;
+  fill: currentColor;
 }
 
 .sidebar:hover .nav-logo {

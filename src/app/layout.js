@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
           <nav className="sidebar-nav">
             <div className="logo-container">
               <img
-                src="/images/logo.webp"
+                src="/images/logo.svg"
                 alt="Logo"
                 className="nav-logo"
               />
