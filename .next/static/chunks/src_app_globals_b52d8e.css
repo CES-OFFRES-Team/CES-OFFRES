@@ -595,7 +595,7 @@ footer {
   width: 85px;
   height: 100vh;
   background: #151a2d;
-  transition: all .3s;
+  transition: all .5s cubic-bezier(.4, 0, .2, 1);
   display: flex;
   flex-direction: column;
 }
@@ -662,7 +662,7 @@ footer {
   margin-left: 12px;
   opacity: 0;
   white-space: nowrap;
-  transition: opacity .3s;
+  transition: opacity .4s ease-in-out;
   font-weight: 700;
 }
 
@@ -671,14 +671,16 @@ footer {
 }
 
 main {
-  margin-left: 85px;
   padding: 20px;
-  transition: margin-left .3s;
+  margin-left: 85px;
+  transition: all .5s cubic-bezier(.4, 0, .2, 1);
+  min-height: 100vh;
   width: calc(100% - 85px);
 }
 
 .sidebar:hover ~ main {
   margin-left: 270px;
+  width: calc(100% - 270px);
 }
 
 @media (width <= 1024px) {
@@ -693,6 +695,15 @@ main {
   main {
     margin-left: 70px;
     width: calc(100% - 70px);
+  }
+
+  .sidebar:hover ~ main {
+    margin-left: 240px;
+    width: calc(100% - 240px);
+  }
+
+  .offres-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   }
 }
 
@@ -724,6 +735,11 @@ main {
     padding: 10px;
     border-radius: 5px;
   }
+
+  .offres-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
 }
 
 @media (width <= 480px) {
@@ -733,6 +749,14 @@ main {
 
   .nav-link {
     padding: 8px 12px;
+  }
+
+  .offres-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .offres-container {
+    padding: 1rem;
   }
 }
 
@@ -747,13 +771,14 @@ main {
   justify-content: center;
   align-items: center;
   margin-bottom: 1rem;
-  overflow: hidden;
 }
 
 .nav-logo {
   width: 50px;
   height: auto;
-  transition: all .3s;
+  transition: width .5s cubic-bezier(.4, 0, .2, 1);
+  filter: brightness() contrast();
+  mix-blend-mode: normal;
   object-fit: contain;
 }
 
@@ -764,7 +789,7 @@ main {
 .offres-container {
   padding: 2rem;
   margin-left: 85px;
-  transition: margin-left .3s;
+  transition: all .5s cubic-bezier(.4, 0, .2, 1);
 }
 
 .sidebar:hover ~ main .offres-container {
@@ -776,6 +801,7 @@ main {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 2rem;
   margin-top: 2rem;
+  transition: all .5s cubic-bezier(.4, 0, .2, 1);
 }
 
 .offre-card {

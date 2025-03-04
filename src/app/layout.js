@@ -20,13 +20,10 @@ export default function RootLayout({ children }) {
         <aside className="sidebar">
           <nav className="sidebar-nav">
             <div className="logo-container">
-              <Image
-                src="/logo.webp"
+              <img
+                src="/images/logo.webp"
                 alt="Logo"
-                width={150}
-                height={150}
                 className="nav-logo"
-                priority
               />
             </div>
             <ul className="nav-list primary-nav">

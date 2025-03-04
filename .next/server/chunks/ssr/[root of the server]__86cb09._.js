@@ -83,7 +83,11 @@ function RootLayout({ children }) {
                                         width: 150,
                                         height: 150,
                                         className: "nav-logo",
-                                        priority: true
+                                        priority: true,
+                                        style: {
+                                            maxWidth: '100%',
+                                            height: 'auto'
+                                        }
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/layout.js",
                                         lineNumber: 23,
@@ -108,7 +112,7 @@ function RootLayout({ children }) {
                                                         children: "home"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/layout.js",
-                                                        lineNumber: 35,
+                                                        lineNumber: 39,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -116,18 +120,18 @@ function RootLayout({ children }) {
                                                         children: "Accueil"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/layout.js",
-                                                        lineNumber: 36,
+                                                        lineNumber: 40,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/layout.js",
-                                                lineNumber: 34,
+                                                lineNumber: 38,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/layout.js",
-                                            lineNumber: 33,
+                                            lineNumber: 37,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
@@ -141,7 +145,7 @@ function RootLayout({ children }) {
                                                         children: "work"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/layout.js",
-                                                        lineNumber: 41,
+                                                        lineNumber: 45,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -149,18 +153,18 @@ function RootLayout({ children }) {
                                                         children: "Offres"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/layout.js",
-                                                        lineNumber: 42,
+                                                        lineNumber: 46,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/layout.js",
-                                                lineNumber: 40,
+                                                lineNumber: 44,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/layout.js",
-                                            lineNumber: 39,
+                                            lineNumber: 43,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
@@ -174,7 +178,7 @@ function RootLayout({ children }) {
                                                         children: "contact_support"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/layout.js",
-                                                        lineNumber: 47,
+                                                        lineNumber: 51,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -182,24 +186,24 @@ function RootLayout({ children }) {
                                                         children: "Contact"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/layout.js",
-                                                        lineNumber: 48,
+                                                        lineNumber: 52,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/layout.js",
-                                                lineNumber: 46,
+                                                lineNumber: 50,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/layout.js",
-                                            lineNumber: 45,
+                                            lineNumber: 49,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/layout.js",
-                                    lineNumber: 32,
+                                    lineNumber: 36,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
@@ -215,7 +219,7 @@ function RootLayout({ children }) {
                                                     children: "login"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/layout.js",
-                                                    lineNumber: 55,
+                                                    lineNumber: 59,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -223,23 +227,23 @@ function RootLayout({ children }) {
                                                     children: "Connexion"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/layout.js",
-                                                    lineNumber: 56,
+                                                    lineNumber: 60,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/layout.js",
-                                            lineNumber: 54,
+                                            lineNumber: 58,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/layout.js",
-                                        lineNumber: 53,
+                                        lineNumber: 57,
                                         columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/layout.js",
-                                    lineNumber: 52,
+                                    lineNumber: 56,
                                     columnNumber: 13
                                 }, this)
                             ]
@@ -257,7 +261,7 @@ function RootLayout({ children }) {
                         children: children
                     }, void 0, false, {
                         fileName: "[project]/src/app/layout.js",
-                        lineNumber: 62,
+                        lineNumber: 66,
                         columnNumber: 9
                     }, this)
                 ]

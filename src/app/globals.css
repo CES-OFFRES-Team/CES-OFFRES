@@ -174,7 +174,7 @@ footer {
     width: 85px;
     height: 100vh;
     background: #151A2D;
-    transition: all 0.3s ease;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
 }
@@ -241,7 +241,7 @@ footer {
     margin-left: 12px;
     opacity: 0;
     white-space: nowrap;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.4s ease-in-out;
     font-weight: 700; /* Ajout du font-weight pour le texte en gras */
 }
 
@@ -251,14 +251,17 @@ footer {
 
 /* Style pour le contenu principal */
 main {
-    margin-left: 85px;
     padding: 20px;
-    transition: margin-left 0.3s ease;
+    margin-left: 85px;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 100vh;
     width: calc(100% - 85px);
 }
 
+/* Ajuster le main quand la sidebar est survolée */
 .sidebar:hover ~ main {
     margin-left: 270px;
+    width: calc(100% - 270px);
 }
 
 @media (max-width: 1024px) {
@@ -273,6 +276,15 @@ main {
     main {
         margin-left: 70px;
         width: calc(100% - 70px);
+    }
+
+    .sidebar:hover ~ main {
+        margin-left: 240px;
+        width: calc(100% - 240px);
+    }
+
+    .offres-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     }
 }
 
@@ -304,6 +316,11 @@ main {
         padding: 10px;
         border-radius: 5px;
     }
+
+    .offres-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -313,6 +330,14 @@ main {
 
     .nav-link {
         padding: 8px 12px;
+    }
+
+    .offres-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .offres-container {
+        padding: 1rem;
     }
 }
 
@@ -333,8 +358,9 @@ main {
 .nav-logo {
     width: 50px;
     height: auto;
-    transition: all 0.3s ease;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     object-fit: contain;
+    max-width: 100%;
 }
 
 .sidebar:hover .nav-logo {
@@ -343,68 +369,69 @@ main {
 
 /* Ajoutez ces styles pour les offres */
 .offres-container {
-  padding: 2rem;
-  margin-left: 85px; /* Pour tenir compte de la sidebar */
-  transition: margin-left 0.3s ease;
+    padding: 2rem;
+    margin-left: 85px; /* Pour tenir compte de la sidebar */
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar:hover ~ main .offres-container {
-  margin-left: 270px;
+    margin-left: 270px;
 }
 
 .offres-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .offre-card {
-  background: white;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
 }
 
 .offre-card:hover {
-  transform: translateY(-5px);
+    transform: translateY(-5px);
 }
 
 .offre-card h2 {
-  color: #151A2D;
-  margin-bottom: 1rem;
+    color: #151A2D;
+    margin-bottom: 1rem;
 }
 
 .offre-details {
-  display: flex;
-  justify-content: space-between;
-  margin: 1rem 0;
-  color: #666;
+    display: flex;
+    justify-content: space-between;
+    margin: 1rem 0;
+    color: #666;
 }
 
 .postuler-btn {
-  width: 100%;
-  padding: 0.75rem;
-  background: #151A2D;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.2s ease;
+    width: 100%;
+    padding: 0.75rem;
+    background: #151A2D;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s ease;
 }
 
 .postuler-btn:hover {
-  background: #2a305c;
+    background: #2a305c;
 }
 
 @media (max-width: 768px) {
-  .offres-container {
-    margin-left: 0;
-    padding: 1rem;
-  }
-  
-  .offres-grid {
-    grid-template-columns: 1fr;
-  }
+    .offres-container {
+        margin-left: 0;
+        padding: 1rem;
+    }
+    
+    .offres-grid {
+        grid-template-columns: 1fr;
+    }
 }
