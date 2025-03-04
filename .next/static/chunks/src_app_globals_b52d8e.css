@@ -595,7 +595,7 @@ footer {
   width: 85px;
   height: 100vh;
   background: #151a2d;
-  transition: width .3s;
+  transition: all .3s;
   display: flex;
   flex-direction: column;
 }
@@ -635,17 +635,21 @@ footer {
 }
 
 .nav-link {
-  display: flex;
-  align-items: center;
-  padding: .75rem;
   color: #fff;
-  text-decoration: none;
+  display: flex;
+  gap: 12px;
+  white-space: nowrap;
   border-radius: 8px;
+  padding: 11px 15px;
+  align-items: center;
+  text-decoration: none;
   transition: all .3s;
+  font-weight: 700;
+  border: none;
 }
 
 .nav-link:hover {
-  background: #ffffff1a;
+  background-color: #ffffff1a;
 }
 
 .material-symbols-rounded {
@@ -659,6 +663,7 @@ footer {
   opacity: 0;
   white-space: nowrap;
   transition: opacity .3s;
+  font-weight: 700;
 }
 
 .sidebar:hover .nav-label {
@@ -669,23 +674,65 @@ main {
   margin-left: 85px;
   padding: 20px;
   transition: margin-left .3s;
+  width: calc(100% - 85px);
 }
 
 .sidebar:hover ~ main {
   margin-left: 270px;
 }
 
-@media (width <= 768px) {
+@media (width <= 1024px) {
   .sidebar {
-    left: -85px;
+    width: 70px;
   }
 
   .sidebar:hover {
+    width: 240px;
+  }
+
+  main {
+    margin-left: 70px;
+    width: calc(100% - 70px);
+  }
+}
+
+@media (width <= 768px) {
+  .sidebar {
+    width: 0;
+    left: -85px;
+  }
+
+  .sidebar.active {
+    width: 240px;
     left: 0;
   }
 
   main {
     margin-left: 0;
+    width: 100%;
+  }
+
+  .sidebar-menu-button {
+    display: block;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 20;
+    background: #151a2d;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+  }
+}
+
+@media (width <= 480px) {
+  main {
+    padding: 10px;
+  }
+
+  .nav-link {
+    padding: 8px 12px;
   }
 }
 
@@ -700,16 +747,85 @@ main {
   justify-content: center;
   align-items: center;
   margin-bottom: 1rem;
+  overflow: hidden;
 }
 
 .nav-logo {
   width: 50px;
   height: auto;
-  transition: width .3s;
+  transition: all .3s;
+  object-fit: contain;
 }
 
 .sidebar:hover .nav-logo {
   width: 150px;
+}
+
+.offres-container {
+  padding: 2rem;
+  margin-left: 85px;
+  transition: margin-left .3s;
+}
+
+.sidebar:hover ~ main .offres-container {
+  margin-left: 270px;
+}
+
+.offres-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.offre-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px #0000001a;
+  transition: transform .2s;
+}
+
+.offre-card:hover {
+  transform: translateY(-5px);
+}
+
+.offre-card h2 {
+  color: #151a2d;
+  margin-bottom: 1rem;
+}
+
+.offre-details {
+  display: flex;
+  justify-content: space-between;
+  margin: 1rem 0;
+  color: #666;
+}
+
+.postuler-btn {
+  width: 100%;
+  padding: .75rem;
+  background: #151a2d;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background .2s;
+}
+
+.postuler-btn:hover {
+  background: #2a305c;
+}
+
+@media (width <= 768px) {
+  .offres-container {
+    margin-left: 0;
+    padding: 1rem;
+  }
+
+  .offres-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .hover\:bg-\[\#383838\]:hover {

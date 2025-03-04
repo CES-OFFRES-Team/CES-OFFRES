@@ -1,308 +1,332 @@
-(globalThis.TURBOPACK = globalThis.TURBOPACK || []).push(["static/chunks/node_modules_next_dist_ea69ac._.js", {
+module.exports = {
 
-"[project]/node_modules/next/dist/shared/lib/side-effect.js [app-client] (ecmascript)": (function(__turbopack_context__) {
+"[next]/internal/font/google/inter_92243eee.module.css [app-client] (css module)": ((__turbopack_context__) => {
 
-var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
+var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, t: __turbopack_require_real__ } = __turbopack_context__;
 {
-"use strict";
-Object.defineProperty(exports, "__esModule", {
-    value: true
+__turbopack_export_value__({
+  "className": "inter_92243eee-module__hBCtSW__className",
 });
-Object.defineProperty(exports, "default", {
-    enumerable: true,
-    get: function() {
-        return SideEffect;
-    }
-});
-const _react = __turbopack_require__("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
-const isServer = typeof window === 'undefined';
-const useClientOnlyLayoutEffect = isServer ? ()=>{} : _react.useLayoutEffect;
-const useClientOnlyEffect = isServer ? ()=>{} : _react.useEffect;
-function SideEffect(props) {
-    const { headManager, reduceComponentsToState } = props;
-    function emitChange() {
-        if (headManager && headManager.mountedInstances) {
-            const headElements = _react.Children.toArray(Array.from(headManager.mountedInstances).filter(Boolean));
-            headManager.updateHead(reduceComponentsToState(headElements, props));
-        }
-    }
-    if (isServer) {
-        var _headManager_mountedInstances;
-        headManager == null ? void 0 : (_headManager_mountedInstances = headManager.mountedInstances) == null ? void 0 : _headManager_mountedInstances.add(props.children);
-        emitChange();
-    }
-    useClientOnlyLayoutEffect({
-        "SideEffect.useClientOnlyLayoutEffect": ()=>{
-            var _headManager_mountedInstances;
-            headManager == null ? void 0 : (_headManager_mountedInstances = headManager.mountedInstances) == null ? void 0 : _headManager_mountedInstances.add(props.children);
-            return ({
-                "SideEffect.useClientOnlyLayoutEffect": ()=>{
-                    var _headManager_mountedInstances;
-                    headManager == null ? void 0 : (_headManager_mountedInstances = headManager.mountedInstances) == null ? void 0 : _headManager_mountedInstances.delete(props.children);
-                }
-            })["SideEffect.useClientOnlyLayoutEffect"];
-        }
-    }["SideEffect.useClientOnlyLayoutEffect"]);
-    // We need to call `updateHead` method whenever the `SideEffect` is trigger in all
-    // life-cycles: mount, update, unmount. However, if there are multiple `SideEffect`s
-    // being rendered, we only trigger the method from the last one.
-    // This is ensured by keeping the last unflushed `updateHead` in the `_pendingUpdate`
-    // singleton in the layout effect pass, and actually trigger it in the effect pass.
-    useClientOnlyLayoutEffect({
-        "SideEffect.useClientOnlyLayoutEffect": ()=>{
-            if (headManager) {
-                headManager._pendingUpdate = emitChange;
-            }
-            return ({
-                "SideEffect.useClientOnlyLayoutEffect": ()=>{
-                    if (headManager) {
-                        headManager._pendingUpdate = emitChange;
-                    }
-                }
-            })["SideEffect.useClientOnlyLayoutEffect"];
-        }
-    }["SideEffect.useClientOnlyLayoutEffect"]);
-    useClientOnlyEffect({
-        "SideEffect.useClientOnlyEffect": ()=>{
-            if (headManager && headManager._pendingUpdate) {
-                headManager._pendingUpdate();
-                headManager._pendingUpdate = null;
-            }
-            return ({
-                "SideEffect.useClientOnlyEffect": ()=>{
-                    if (headManager && headManager._pendingUpdate) {
-                        headManager._pendingUpdate();
-                        headManager._pendingUpdate = null;
-                    }
-                }
-            })["SideEffect.useClientOnlyEffect"];
-        }
-    }["SideEffect.useClientOnlyEffect"]);
-    return null;
-} //# sourceMappingURL=side-effect.js.map
 }}),
-"[project]/node_modules/next/dist/shared/lib/amp-context.shared-runtime.js [app-client] (ecmascript)": (function(__turbopack_context__) {
-
-var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
-{
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
+"[next]/internal/font/google/inter_92243eee.js [app-rsc] (ecmascript)": ((__turbopack_context__) => {
 "use strict";
-Object.defineProperty(exports, "__esModule", {
-    value: true
+
+var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, x: __turbopack_external_require__, y: __turbopack_external_import__, z: __turbopack_require_stub__ } = __turbopack_context__;
+{
+__turbopack_esm__({
+    "default": (()=>__TURBOPACK__default__export__)
 });
-Object.defineProperty(exports, "AmpStateContext", {
-    enumerable: true,
-    get: function() {
-        return AmpStateContext;
+var __TURBOPACK__imported__module__$5b$next$5d2f$internal$2f$font$2f$google$2f$inter_92243eee$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__ = __turbopack_import__("[next]/internal/font/google/inter_92243eee.module.css [app-client] (css module)");
+;
+const fontData = {
+    className: __TURBOPACK__imported__module__$5b$next$5d2f$internal$2f$font$2f$google$2f$inter_92243eee$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].className,
+    style: {
+        fontFamily: "'Inter', 'Inter Fallback'",
+        fontStyle: "normal"
     }
-});
-const _interop_require_default = __turbopack_require__("[project]/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [app-client] (ecmascript)");
-const _react = /*#__PURE__*/ _interop_require_default._(__turbopack_require__("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)"));
-const AmpStateContext = _react.default.createContext({});
-if ("TURBOPACK compile-time truthy", 1) {
-    AmpStateContext.displayName = 'AmpStateContext';
-} //# sourceMappingURL=amp-context.shared-runtime.js.map
+};
+if (__TURBOPACK__imported__module__$5b$next$5d2f$internal$2f$font$2f$google$2f$inter_92243eee$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].variable != null) {
+    fontData.variable = __TURBOPACK__imported__module__$5b$next$5d2f$internal$2f$font$2f$google$2f$inter_92243eee$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].variable;
+}
+const __TURBOPACK__default__export__ = fontData;
 }}),
-"[project]/node_modules/next/dist/shared/lib/amp-mode.js [app-client] (ecmascript)": (function(__turbopack_context__) {
-
-var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
-{
+"[project]/src/app/layout.js [app-rsc] (ecmascript)": ((__turbopack_context__) => {
 "use strict";
-Object.defineProperty(exports, "__esModule", {
-    value: true
+
+var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, x: __turbopack_external_require__, y: __turbopack_external_import__, z: __turbopack_require_stub__ } = __turbopack_context__;
+{
+__turbopack_esm__({
+    "default": (()=>RootLayout),
+    "metadata": (()=>metadata)
 });
-Object.defineProperty(exports, "isInAmpMode", {
-    enumerable: true,
-    get: function() {
-        return isInAmpMode;
-    }
-});
-function isInAmpMode(param) {
-    let { ampFirst = false, hybrid = false, hasQuery = false } = param === void 0 ? {} : param;
-    return ampFirst || hybrid && hasQuery;
-} //# sourceMappingURL=amp-mode.js.map
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/rsc/react-jsx-dev-runtime.js [app-rsc] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$next$5d2f$internal$2f$font$2f$google$2f$inter_92243eee$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_import__("[next]/internal/font/google/inter_92243eee.js [app-rsc] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/image.js [app-rsc] (ecmascript)");
+;
+;
+;
+;
+const metadata = {
+    title: "CES'Offres",
+    description: "Platforme Pour trouver un stage"
+};
+function RootLayout({ children }) {
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("html", {
+        lang: "fr",
+        children: [
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("head", {
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("link", {
+                    rel: "stylesheet",
+                    href: "https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0"
+                }, void 0, false, {
+                    fileName: "[project]/src/app/layout.js",
+                    lineNumber: 17,
+                    columnNumber: 9
+                }, this)
+            }, void 0, false, {
+                fileName: "[project]/src/app/layout.js",
+                lineNumber: 16,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("body", {
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("aside", {
+                        className: "sidebar",
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
+                            className: "sidebar-nav",
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "logo-container",
+                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {
+                                        src: "/logo.webp",
+                                        alt: "Logo",
+                                        width: 150,
+                                        height: 150,
+                                        className: "nav-logo",
+                                        priority: true
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/app/layout.js",
+                                        lineNumber: 23,
+                                        columnNumber: 15
+                                    }, this)
+                                }, void 0, false, {
+                                    fileName: "[project]/src/app/layout.js",
+                                    lineNumber: 22,
+                                    columnNumber: 13
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
+                                    className: "nav-list primary-nav",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
+                                            className: "nav-item",
+                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
+                                                href: "/",
+                                                className: "nav-link",
+                                                children: [
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                        className: "material-symbols-rounded",
+                                                        children: "home"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/src/app/layout.js",
+                                                        lineNumber: 35,
+                                                        columnNumber: 19
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                        className: "nav-label",
+                                                        children: "Accueil"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/src/app/layout.js",
+                                                        lineNumber: 36,
+                                                        columnNumber: 19
+                                                    }, this)
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/src/app/layout.js",
+                                                lineNumber: 34,
+                                                columnNumber: 17
+                                            }, this)
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/app/layout.js",
+                                            lineNumber: 33,
+                                            columnNumber: 15
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
+                                            className: "nav-item",
+                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
+                                                href: "/Offres",
+                                                className: "nav-link",
+                                                children: [
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                        className: "material-symbols-rounded",
+                                                        children: "work"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/src/app/layout.js",
+                                                        lineNumber: 41,
+                                                        columnNumber: 19
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                        className: "nav-label",
+                                                        children: "Offres"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/src/app/layout.js",
+                                                        lineNumber: 42,
+                                                        columnNumber: 19
+                                                    }, this)
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/src/app/layout.js",
+                                                lineNumber: 40,
+                                                columnNumber: 17
+                                            }, this)
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/app/layout.js",
+                                            lineNumber: 39,
+                                            columnNumber: 15
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
+                                            className: "nav-item",
+                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
+                                                href: "/Contact",
+                                                className: "nav-link",
+                                                children: [
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                        className: "material-symbols-rounded",
+                                                        children: "contact_support"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/src/app/layout.js",
+                                                        lineNumber: 47,
+                                                        columnNumber: 19
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                        className: "nav-label",
+                                                        children: "Contact"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/src/app/layout.js",
+                                                        lineNumber: 48,
+                                                        columnNumber: 19
+                                                    }, this)
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/src/app/layout.js",
+                                                lineNumber: 46,
+                                                columnNumber: 17
+                                            }, this)
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/app/layout.js",
+                                            lineNumber: 45,
+                                            columnNumber: 15
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/src/app/layout.js",
+                                    lineNumber: 32,
+                                    columnNumber: 13
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
+                                    className: "nav-list secondary-nav",
+                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
+                                        className: "nav-item",
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
+                                            href: "/Login",
+                                            className: "nav-link login-btn",
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                    className: "material-symbols-rounded",
+                                                    children: "login"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/app/layout.js",
+                                                    lineNumber: 55,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                    className: "nav-label",
+                                                    children: "Connexion"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/app/layout.js",
+                                                    lineNumber: 56,
+                                                    columnNumber: 19
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/src/app/layout.js",
+                                            lineNumber: 54,
+                                            columnNumber: 17
+                                        }, this)
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/app/layout.js",
+                                        lineNumber: 53,
+                                        columnNumber: 15
+                                    }, this)
+                                }, void 0, false, {
+                                    fileName: "[project]/src/app/layout.js",
+                                    lineNumber: 52,
+                                    columnNumber: 13
+                                }, this)
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/src/app/layout.js",
+                            lineNumber: 21,
+                            columnNumber: 11
+                        }, this)
+                    }, void 0, false, {
+                        fileName: "[project]/src/app/layout.js",
+                        lineNumber: 20,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
+                        children: children
+                    }, void 0, false, {
+                        fileName: "[project]/src/app/layout.js",
+                        lineNumber: 62,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/src/app/layout.js",
+                lineNumber: 19,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "[project]/src/app/layout.js",
+        lineNumber: 15,
+        columnNumber: 5
+    }, this);
+}
 }}),
-"[project]/node_modules/next/dist/shared/lib/head.js [app-client] (ecmascript)": (function(__turbopack_context__) {
+"[project]/src/app/layout.js [app-rsc] (ecmascript, Next.js server component)": ((__turbopack_context__) => {
 
-var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
+var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, t: __turbopack_require_real__ } = __turbopack_context__;
 {
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
-'use client';
+__turbopack_export_namespace__(__turbopack_import__("[project]/src/app/layout.js [app-rsc] (ecmascript)"));
+}}),
+"[project]/node_modules/next/dist/server/route-modules/app-page/vendored/rsc/react-jsx-dev-runtime.js [app-rsc] (ecmascript)": (function(__turbopack_context__) {
+
+var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, x: __turbopack_external_require__, y: __turbopack_external_import__, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
+{
 "use strict";
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-0 && (module.exports = {
-    default: null,
-    defaultHead: null
-});
-function _export(target, all) {
-    for(var name in all)Object.defineProperty(target, name, {
-        enumerable: true,
-        get: all[name]
-    });
-}
-_export(exports, {
-    default: function() {
-        return _default;
-    },
-    defaultHead: function() {
-        return defaultHead;
-    }
-});
-const _interop_require_default = __turbopack_require__("[project]/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [app-client] (ecmascript)");
-const _interop_require_wildcard = __turbopack_require__("[project]/node_modules/@swc/helpers/cjs/_interop_require_wildcard.cjs [app-client] (ecmascript)");
-const _jsxruntime = __turbopack_require__("[project]/node_modules/next/dist/compiled/react/jsx-runtime.js [app-client] (ecmascript)");
-const _react = /*#__PURE__*/ _interop_require_wildcard._(__turbopack_require__("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)"));
-const _sideeffect = /*#__PURE__*/ _interop_require_default._(__turbopack_require__("[project]/node_modules/next/dist/shared/lib/side-effect.js [app-client] (ecmascript)"));
-const _ampcontextsharedruntime = __turbopack_require__("[project]/node_modules/next/dist/shared/lib/amp-context.shared-runtime.js [app-client] (ecmascript)");
-const _headmanagercontextsharedruntime = __turbopack_require__("[project]/node_modules/next/dist/shared/lib/head-manager-context.shared-runtime.js [app-client] (ecmascript)");
-const _ampmode = __turbopack_require__("[project]/node_modules/next/dist/shared/lib/amp-mode.js [app-client] (ecmascript)");
-const _warnonce = __turbopack_require__("[project]/node_modules/next/dist/shared/lib/utils/warn-once.js [app-client] (ecmascript)");
-function defaultHead(inAmpMode) {
-    if (inAmpMode === void 0) inAmpMode = false;
-    const head = [
-        /*#__PURE__*/ (0, _jsxruntime.jsx)("meta", {
-            charSet: "utf-8"
-        }, "charset")
-    ];
-    if (!inAmpMode) {
-        head.push(/*#__PURE__*/ (0, _jsxruntime.jsx)("meta", {
-            name: "viewport",
-            content: "width=device-width"
-        }, "viewport"));
-    }
-    return head;
-}
-function onlyReactElement(list, child) {
-    // React children can be "string" or "number" in this case we ignore them for backwards compat
-    if (typeof child === 'string' || typeof child === 'number') {
-        return list;
-    }
-    // Adds support for React.Fragment
-    if (child.type === _react.default.Fragment) {
-        return list.concat(_react.default.Children.toArray(child.props.children).reduce((fragmentList, fragmentChild)=>{
-            if (typeof fragmentChild === 'string' || typeof fragmentChild === 'number') {
-                return fragmentList;
-            }
-            return fragmentList.concat(fragmentChild);
-        }, []));
-    }
-    return list.concat(child);
-}
-const METATYPES = [
-    'name',
-    'httpEquiv',
-    'charSet',
-    'itemProp'
-];
-/*
- returns a function for filtering head child elements
- which shouldn't be duplicated, like <title/>
- Also adds support for deduplicated `key` properties
-*/ function unique() {
-    const keys = new Set();
-    const tags = new Set();
-    const metaTypes = new Set();
-    const metaCategories = {};
-    return (h)=>{
-        let isUnique = true;
-        let hasKey = false;
-        if (h.key && typeof h.key !== 'number' && h.key.indexOf('$') > 0) {
-            hasKey = true;
-            const key = h.key.slice(h.key.indexOf('$') + 1);
-            if (keys.has(key)) {
-                isUnique = false;
-            } else {
-                keys.add(key);
-            }
-        }
-        // eslint-disable-next-line default-case
-        switch(h.type){
-            case 'title':
-            case 'base':
-                if (tags.has(h.type)) {
-                    isUnique = false;
-                } else {
-                    tags.add(h.type);
-                }
-                break;
-            case 'meta':
-                for(let i = 0, len = METATYPES.length; i < len; i++){
-                    const metatype = METATYPES[i];
-                    if (!h.props.hasOwnProperty(metatype)) continue;
-                    if (metatype === 'charSet') {
-                        if (metaTypes.has(metatype)) {
-                            isUnique = false;
-                        } else {
-                            metaTypes.add(metatype);
-                        }
-                    } else {
-                        const category = h.props[metatype];
-                        const categories = metaCategories[metatype] || new Set();
-                        if ((metatype !== 'name' || !hasKey) && categories.has(category)) {
-                            isUnique = false;
-                        } else {
-                            categories.add(category);
-                            metaCategories[metatype] = categories;
-                        }
-                    }
-                }
-                break;
-        }
-        return isUnique;
+module.exports = __turbopack_require__("[project]/node_modules/next/dist/server/route-modules/app-page/module.compiled.js [app-rsc] (ecmascript)").vendored['react-rsc'].ReactJsxDevRuntime; //# sourceMappingURL=react-jsx-dev-runtime.js.map
+}}),
+"[project]/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [app-rsc] (ecmascript)": (function(__turbopack_context__) {
+
+var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, x: __turbopack_external_require__, y: __turbopack_external_import__, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
+{
+"use strict";
+function _interop_require_default(obj) {
+    return obj && obj.__esModule ? obj : {
+        default: obj
     };
 }
-/**
- *
- * @param headChildrenElements List of children of <Head>
- */ function reduceComponents(headChildrenElements, props) {
-    const { inAmpMode } = props;
-    return headChildrenElements.reduce(onlyReactElement, []).reverse().concat(defaultHead(inAmpMode).reverse()).filter(unique()).reverse().map((c, i)=>{
-        const key = c.key || i;
-        if ("TURBOPACK compile-time falsy", 0) {
-            "TURBOPACK unreachable";
-        }
-        if ("TURBOPACK compile-time truthy", 1) {
-            // omit JSON-LD structured data snippets from the warning
-            if (c.type === 'script' && c.props['type'] !== 'application/ld+json') {
-                const srcMessage = c.props['src'] ? '<script> tag with src="' + c.props['src'] + '"' : "inline <script>";
-                (0, _warnonce.warnOnce)("Do not add <script> tags using next/head (see " + srcMessage + "). Use next/script instead. \nSee more info here: https://nextjs.org/docs/messages/no-script-tags-in-head-component");
-            } else if (c.type === 'link' && c.props['rel'] === 'stylesheet') {
-                (0, _warnonce.warnOnce)('Do not add stylesheets using next/head (see <link rel="stylesheet"> tag with href="' + c.props['href'] + '"). Use Document instead. \nSee more info here: https://nextjs.org/docs/messages/no-stylesheets-in-head-component');
-            }
-        }
-        return /*#__PURE__*/ _react.default.cloneElement(c, {
-            key
-        });
-    });
-}
-/**
- * This component injects elements to `<head>` of your page.
- * To avoid duplicated `tags` in `<head>` you can use the `key` property, which will make sure every tag is only rendered once.
- */ function Head(param) {
-    let { children } = param;
-    const ampState = (0, _react.useContext)(_ampcontextsharedruntime.AmpStateContext);
-    const headManager = (0, _react.useContext)(_headmanagercontextsharedruntime.HeadManagerContext);
-    return /*#__PURE__*/ (0, _jsxruntime.jsx)(_sideeffect.default, {
-        reduceComponentsToState: reduceComponents,
-        headManager: headManager,
-        inAmpMode: (0, _ampmode.isInAmpMode)(ampState),
-        children: children
-    });
-}
-const _default = Head;
-if ((typeof exports.default === 'function' || typeof exports.default === 'object' && exports.default !== null) && typeof exports.default.__esModule === 'undefined') {
-    Object.defineProperty(exports.default, '__esModule', {
-        value: true
-    });
-    Object.assign(exports.default, exports);
-    module.exports = exports.default;
-} //# sourceMappingURL=head.js.map
+exports._ = _interop_require_default;
 }}),
-"[project]/node_modules/next/dist/shared/lib/image-blur-svg.js [app-client] (ecmascript)": (function(__turbopack_context__) {
+"[project]/node_modules/next/dist/shared/lib/utils/warn-once.js [app-rsc] (ecmascript)": (function(__turbopack_context__) {
 
-var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
+var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, x: __turbopack_external_require__, y: __turbopack_external_import__, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
+{
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "warnOnce", {
+    enumerable: true,
+    get: function() {
+        return warnOnce;
+    }
+});
+let warnOnce = (_)=>{};
+if ("TURBOPACK compile-time truthy", 1) {
+    const warnings = new Set();
+    warnOnce = (msg)=>{
+        if (!warnings.has(msg)) {
+            console.warn(msg);
+        }
+        warnings.add(msg);
+    };
+} //# sourceMappingURL=warn-once.js.map
+}}),
+"[project]/node_modules/next/dist/shared/lib/image-blur-svg.js [app-rsc] (ecmascript)": (function(__turbopack_context__) {
+
+var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, x: __turbopack_external_require__, y: __turbopack_external_import__, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
 {
 /**
  * A shared function, used on both client and server, to generate a SVG blur placeholder.
@@ -326,9 +350,9 @@ function getImageBlurSvg(param) {
     return "%3Csvg xmlns='http://www.w3.org/2000/svg' " + viewBox + "%3E%3Cfilter id='b' color-interpolation-filters='sRGB'%3E%3CfeGaussianBlur stdDeviation='" + std + "'/%3E%3CfeColorMatrix values='1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 100 -1' result='s'/%3E%3CfeFlood x='0' y='0' width='100%25' height='100%25'/%3E%3CfeComposite operator='out' in='s'/%3E%3CfeComposite in2='SourceGraphic'/%3E%3CfeGaussianBlur stdDeviation='" + std + "'/%3E%3C/filter%3E%3Cimage width='100%25' height='100%25' x='0' y='0' preserveAspectRatio='" + preserveAspectRatio + "' style='filter: url(%23b);' href='" + blurDataURL + "'/%3E%3C/svg%3E";
 } //# sourceMappingURL=image-blur-svg.js.map
 }}),
-"[project]/node_modules/next/dist/shared/lib/image-config.js [app-client] (ecmascript)": (function(__turbopack_context__) {
+"[project]/node_modules/next/dist/shared/lib/image-config.js [app-rsc] (ecmascript)": (function(__turbopack_context__) {
 
-var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
+var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, x: __turbopack_external_require__, y: __turbopack_external_import__, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
 {
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -398,11 +422,10 @@ const imageConfigDefault = {
     unoptimized: false
 }; //# sourceMappingURL=image-config.js.map
 }}),
-"[project]/node_modules/next/dist/shared/lib/get-img-props.js [app-client] (ecmascript)": (function(__turbopack_context__) {
+"[project]/node_modules/next/dist/shared/lib/get-img-props.js [app-rsc] (ecmascript)": (function(__turbopack_context__) {
 
-var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
+var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, x: __turbopack_external_require__, y: __turbopack_external_import__, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
 {
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
 "use strict";
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -413,9 +436,9 @@ Object.defineProperty(exports, "getImgProps", {
         return getImgProps;
     }
 });
-const _warnonce = __turbopack_require__("[project]/node_modules/next/dist/shared/lib/utils/warn-once.js [app-client] (ecmascript)");
-const _imageblursvg = __turbopack_require__("[project]/node_modules/next/dist/shared/lib/image-blur-svg.js [app-client] (ecmascript)");
-const _imageconfig = __turbopack_require__("[project]/node_modules/next/dist/shared/lib/image-config.js [app-client] (ecmascript)");
+const _warnonce = __turbopack_require__("[project]/node_modules/next/dist/shared/lib/utils/warn-once.js [app-rsc] (ecmascript)");
+const _imageblursvg = __turbopack_require__("[project]/node_modules/next/dist/shared/lib/image-blur-svg.js [app-rsc] (ecmascript)");
+const _imageconfig = __turbopack_require__("[project]/node_modules/next/dist/shared/lib/image-config.js [app-rsc] (ecmascript)");
 const VALID_LOADING_VALUES = [
     'lazy',
     'eager',
@@ -747,28 +770,8 @@ function getImgProps(param, _state) {
                 (0, _warnonce.warnOnce)('Image with src "' + src + '" has legacy prop "' + legacyKey + '". Did you forget to run the codemod?' + "\nRead more: https://nextjs.org/docs/messages/next-image-upgrade-to-13");
             }
         }
-        if (typeof window !== 'undefined' && !perfObserver && window.PerformanceObserver) {
-            perfObserver = new PerformanceObserver((entryList)=>{
-                for (const entry of entryList.getEntries()){
-                    var _entry_element;
-                    // @ts-ignore - missing "LargestContentfulPaint" class with "element" prop
-                    const imgSrc = (entry == null ? void 0 : (_entry_element = entry.element) == null ? void 0 : _entry_element.src) || '';
-                    const lcpImage = allImgs.get(imgSrc);
-                    if (lcpImage && !lcpImage.priority && lcpImage.placeholder === 'empty' && !lcpImage.src.startsWith('data:') && !lcpImage.src.startsWith('blob:')) {
-                        // https://web.dev/lcp/#measure-lcp-in-javascript
-                        (0, _warnonce.warnOnce)('Image with src "' + lcpImage.src + '" was detected as the Largest Contentful Paint (LCP). Please add the "priority" property if this image is above the fold.' + "\nRead more: https://nextjs.org/docs/api-reference/next/image#priority");
-                    }
-                }
-            });
-            try {
-                perfObserver.observe({
-                    type: 'largest-contentful-paint',
-                    buffered: true
-                });
-            } catch (err) {
-                // Log error but don't crash the app
-                console.error(err);
-            }
+        if ("TURBOPACK compile-time falsy", 0) {
+            "TURBOPACK unreachable";
         }
     }
     const imgStyle = Object.assign(fill ? {
@@ -817,18 +820,8 @@ function getImgProps(param, _state) {
         loader
     });
     if ("TURBOPACK compile-time truthy", 1) {
-        if (typeof window !== 'undefined') {
-            let fullUrl;
-            try {
-                fullUrl = new URL(imgAttributes.src);
-            } catch (e) {
-                fullUrl = new URL(imgAttributes.src, window.location.href);
-            }
-            allImgs.set(fullUrl.href, {
-                src,
-                priority,
-                placeholder
-            });
+        if ("TURBOPACK compile-time falsy", 0) {
+            "TURBOPACK unreachable";
         }
     }
     const props = {
@@ -859,56 +852,34 @@ function getImgProps(param, _state) {
     };
 } //# sourceMappingURL=get-img-props.js.map
 }}),
-"[project]/node_modules/next/dist/shared/lib/image-config-context.shared-runtime.js [app-client] (ecmascript)": (function(__turbopack_context__) {
+"[project]/node_modules/next/dist/client/image-component.js (client proxy) <module evaluation>": (function(__turbopack_context__) {
 
-var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
+var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, x: __turbopack_external_require__, y: __turbopack_external_import__, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
 {
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
-"use strict";
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-Object.defineProperty(exports, "ImageConfigContext", {
-    enumerable: true,
-    get: function() {
-        return ImageConfigContext;
-    }
-});
-const _interop_require_default = __turbopack_require__("[project]/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [app-client] (ecmascript)");
-const _react = /*#__PURE__*/ _interop_require_default._(__turbopack_require__("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)"));
-const _imageconfig = __turbopack_require__("[project]/node_modules/next/dist/shared/lib/image-config.js [app-client] (ecmascript)");
-const ImageConfigContext = _react.default.createContext(_imageconfig.imageConfigDefault);
-if ("TURBOPACK compile-time truthy", 1) {
-    ImageConfigContext.displayName = 'ImageConfigContext';
-} //# sourceMappingURL=image-config-context.shared-runtime.js.map
+const { createClientModuleProxy } = __turbopack_require__("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/rsc/react-server-dom-turbopack-server-edge.js [app-rsc] (ecmascript)");
+__turbopack_export_namespace__(createClientModuleProxy("[project]/node_modules/next/dist/client/image-component.js <module evaluation>"));
 }}),
-"[project]/node_modules/next/dist/shared/lib/router-context.shared-runtime.js [app-client] (ecmascript)": (function(__turbopack_context__) {
+"[project]/node_modules/next/dist/client/image-component.js (client proxy)": (function(__turbopack_context__) {
 
-var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
+var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, x: __turbopack_external_require__, y: __turbopack_external_import__, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
 {
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
-"use strict";
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-Object.defineProperty(exports, "RouterContext", {
-    enumerable: true,
-    get: function() {
-        return RouterContext;
-    }
-});
-const _interop_require_default = __turbopack_require__("[project]/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [app-client] (ecmascript)");
-const _react = /*#__PURE__*/ _interop_require_default._(__turbopack_require__("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)"));
-const RouterContext = _react.default.createContext(null);
-if ("TURBOPACK compile-time truthy", 1) {
-    RouterContext.displayName = 'RouterContext';
-} //# sourceMappingURL=router-context.shared-runtime.js.map
+const { createClientModuleProxy } = __turbopack_require__("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/rsc/react-server-dom-turbopack-server-edge.js [app-rsc] (ecmascript)");
+__turbopack_export_namespace__(createClientModuleProxy("[project]/node_modules/next/dist/client/image-component.js"));
 }}),
-"[project]/node_modules/next/dist/compiled/picomatch/index.js [app-client] (ecmascript)": (function(__turbopack_context__) {
+"[project]/node_modules/next/dist/client/image-component.js [app-rsc] (ecmascript)": ((__turbopack_context__) => {
+"use strict";
 
-var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
+var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, x: __turbopack_external_require__, y: __turbopack_external_import__, z: __turbopack_require_stub__ } = __turbopack_context__;
 {
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$image$2d$component$2e$js__$28$client__proxy$29$__$3c$module__evaluation$3e$__ = __turbopack_import__("[project]/node_modules/next/dist/client/image-component.js (client proxy) <module evaluation>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$image$2d$component$2e$js__$28$client__proxy$29$__ = __turbopack_import__("[project]/node_modules/next/dist/client/image-component.js (client proxy)");
+;
+__turbopack_export_namespace__(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$image$2d$component$2e$js__$28$client__proxy$29$__);
+}}),
+"[project]/node_modules/next/dist/compiled/picomatch/index.js [app-rsc] (ecmascript)": (function(__turbopack_context__) {
+
+var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, x: __turbopack_external_require__, y: __turbopack_external_import__, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
+{
 (()=>{
     "use strict";
     var t = {
@@ -919,8 +890,8 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
                     const t = navigator.platform.toLowerCase();
                     return t === "win32" || t === "windows";
                 }
-                if (typeof __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"] !== "undefined" && __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].platform) {
-                    return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].platform === "win32";
+                if (typeof process !== "undefined" && process.platform) {
+                    return process.platform === "win32";
                 }
                 return false;
             };
@@ -2504,9 +2475,9 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
     module.exports = u;
 })();
 }}),
-"[project]/node_modules/next/dist/shared/lib/match-local-pattern.js [app-client] (ecmascript)": (function(__turbopack_context__) {
+"[project]/node_modules/next/dist/shared/lib/match-local-pattern.js [app-rsc] (ecmascript)": (function(__turbopack_context__) {
 
-var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
+var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, x: __turbopack_external_require__, y: __turbopack_external_import__, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
 {
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -2530,7 +2501,7 @@ _export(exports, {
         return matchLocalPattern;
     }
 });
-const _picomatch = __turbopack_require__("[project]/node_modules/next/dist/compiled/picomatch/index.js [app-client] (ecmascript)");
+const _picomatch = __turbopack_require__("[project]/node_modules/next/dist/compiled/picomatch/index.js [app-rsc] (ecmascript)");
 function matchLocalPattern(pattern, url) {
     if (pattern.search !== undefined) {
         if (pattern.search !== url.search) {
@@ -2554,9 +2525,9 @@ function hasLocalMatch(localPatterns, urlPathAndQuery) {
     return localPatterns.some((p)=>matchLocalPattern(p, url));
 } //# sourceMappingURL=match-local-pattern.js.map
 }}),
-"[project]/node_modules/next/dist/shared/lib/match-remote-pattern.js [app-client] (ecmascript)": (function(__turbopack_context__) {
+"[project]/node_modules/next/dist/shared/lib/match-remote-pattern.js [app-rsc] (ecmascript)": (function(__turbopack_context__) {
 
-var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
+var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, x: __turbopack_external_require__, y: __turbopack_external_import__, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
 {
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -2580,7 +2551,7 @@ _export(exports, {
         return matchRemotePattern;
     }
 });
-const _picomatch = __turbopack_require__("[project]/node_modules/next/dist/compiled/picomatch/index.js [app-client] (ecmascript)");
+const _picomatch = __turbopack_require__("[project]/node_modules/next/dist/compiled/picomatch/index.js [app-rsc] (ecmascript)");
 function matchRemotePattern(pattern, url) {
     if (pattern.protocol !== undefined) {
         const actualProto = url.protocol.slice(0, -1);
@@ -2618,11 +2589,10 @@ function hasRemoteMatch(domains, remotePatterns, url) {
     return domains.some((domain)=>url.hostname === domain) || remotePatterns.some((p)=>matchRemotePattern(p, url));
 } //# sourceMappingURL=match-remote-pattern.js.map
 }}),
-"[project]/node_modules/next/dist/shared/lib/image-loader.js [app-client] (ecmascript)": (function(__turbopack_context__) {
+"[project]/node_modules/next/dist/shared/lib/image-loader.js [app-rsc] (ecmascript)": (function(__turbopack_context__) {
 
-var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
+var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, x: __turbopack_external_require__, y: __turbopack_external_import__, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
 {
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
 "use strict";
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -2655,7 +2625,7 @@ function defaultLoader(param) {
         if (src.startsWith('/') && config.localPatterns) {
             if ("TURBOPACK compile-time truthy", 1) {
                 // We use dynamic require because this should only error in development
-                const { hasLocalMatch } = __turbopack_require__("[project]/node_modules/next/dist/shared/lib/match-local-pattern.js [app-client] (ecmascript)");
+                const { hasLocalMatch } = __turbopack_require__("[project]/node_modules/next/dist/shared/lib/match-local-pattern.js [app-rsc] (ecmascript)");
                 if (!hasLocalMatch(config.localPatterns, src)) {
                     throw new Error("Invalid src prop (" + src + ") on `next/image` does not match `images.localPatterns` configured in your `next.config.js`\n" + "See more info: https://nextjs.org/docs/messages/next-image-unconfigured-localpatterns");
                 }
@@ -2671,7 +2641,7 @@ function defaultLoader(param) {
             }
             if ("TURBOPACK compile-time truthy", 1) {
                 // We use dynamic require because this should only error in development
-                const { hasRemoteMatch } = __turbopack_require__("[project]/node_modules/next/dist/shared/lib/match-remote-pattern.js [app-client] (ecmascript)");
+                const { hasRemoteMatch } = __turbopack_require__("[project]/node_modules/next/dist/shared/lib/match-remote-pattern.js [app-rsc] (ecmascript)");
                 if (!hasRemoteMatch(config.domains, config.remotePatterns, parsedSrc)) {
                     throw new Error("Invalid src prop (" + src + ') on `next/image`, hostname "' + parsedSrc.hostname + '" is not configured under images in your `next.config.js`\n' + "See more info: https://nextjs.org/docs/messages/next-image-unconfigured-host");
                 }
@@ -2689,380 +2659,63 @@ function defaultLoader(param) {
 defaultLoader.__next_img_default = true;
 const _default = defaultLoader; //# sourceMappingURL=image-loader.js.map
 }}),
-"[project]/node_modules/next/dist/client/use-merged-ref.js [app-client] (ecmascript)": (function(__turbopack_context__) {
+"[project]/node_modules/next/dist/shared/lib/image-external.js [app-rsc] (ecmascript)": (function(__turbopack_context__) {
 
-var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
+var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, x: __turbopack_external_require__, y: __turbopack_external_import__, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
 {
 "use strict";
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-Object.defineProperty(exports, "useMergedRef", {
-    enumerable: true,
-    get: function() {
-        return useMergedRef;
-    }
+0 && (module.exports = {
+    default: null,
+    getImageProps: null
 });
-const _react = __turbopack_require__("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
-function useMergedRef(refA, refB) {
-    const cleanupA = (0, _react.useRef)(()=>{});
-    const cleanupB = (0, _react.useRef)(()=>{});
-    return (0, _react.useMemo)(()=>{
-        if (!refA || !refB) {
-            return refA || refB;
-        }
-        return (current)=>{
-            if (current === null) {
-                cleanupA.current();
-                cleanupB.current();
-            } else {
-                cleanupA.current = applyRef(refA, current);
-                cleanupB.current = applyRef(refB, current);
-            }
-        };
-    }, [
-        refA,
-        refB
-    ]);
-}
-function applyRef(refA, current) {
-    if (typeof refA === 'function') {
-        const cleanup = refA(current);
-        if (typeof cleanup === 'function') {
-            return cleanup;
-        } else {
-            return ()=>refA(null);
-        }
-    } else {
-        refA.current = current;
-        return ()=>{
-            refA.current = null;
-        };
-    }
-}
-if ((typeof exports.default === 'function' || typeof exports.default === 'object' && exports.default !== null) && typeof exports.default.__esModule === 'undefined') {
-    Object.defineProperty(exports.default, '__esModule', {
-        value: true
-    });
-    Object.assign(exports.default, exports);
-    module.exports = exports.default;
-} //# sourceMappingURL=use-merged-ref.js.map
-}}),
-"[project]/node_modules/next/dist/client/image-component.js [app-client] (ecmascript)": (function(__turbopack_context__) {
-
-var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
-{
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
-'use client';
-"use strict";
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-Object.defineProperty(exports, "Image", {
-    enumerable: true,
-    get: function() {
-        return Image;
-    }
-});
-const _interop_require_default = __turbopack_require__("[project]/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [app-client] (ecmascript)");
-const _interop_require_wildcard = __turbopack_require__("[project]/node_modules/@swc/helpers/cjs/_interop_require_wildcard.cjs [app-client] (ecmascript)");
-const _jsxruntime = __turbopack_require__("[project]/node_modules/next/dist/compiled/react/jsx-runtime.js [app-client] (ecmascript)");
-const _react = /*#__PURE__*/ _interop_require_wildcard._(__turbopack_require__("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)"));
-const _reactdom = /*#__PURE__*/ _interop_require_default._(__turbopack_require__("[project]/node_modules/next/dist/compiled/react-dom/index.js [app-client] (ecmascript)"));
-const _head = /*#__PURE__*/ _interop_require_default._(__turbopack_require__("[project]/node_modules/next/dist/shared/lib/head.js [app-client] (ecmascript)"));
-const _getimgprops = __turbopack_require__("[project]/node_modules/next/dist/shared/lib/get-img-props.js [app-client] (ecmascript)");
-const _imageconfig = __turbopack_require__("[project]/node_modules/next/dist/shared/lib/image-config.js [app-client] (ecmascript)");
-const _imageconfigcontextsharedruntime = __turbopack_require__("[project]/node_modules/next/dist/shared/lib/image-config-context.shared-runtime.js [app-client] (ecmascript)");
-const _warnonce = __turbopack_require__("[project]/node_modules/next/dist/shared/lib/utils/warn-once.js [app-client] (ecmascript)");
-const _routercontextsharedruntime = __turbopack_require__("[project]/node_modules/next/dist/shared/lib/router-context.shared-runtime.js [app-client] (ecmascript)");
-const _imageloader = /*#__PURE__*/ _interop_require_default._(__turbopack_require__("[project]/node_modules/next/dist/shared/lib/image-loader.js [app-client] (ecmascript)"));
-const _usemergedref = __turbopack_require__("[project]/node_modules/next/dist/client/use-merged-ref.js [app-client] (ecmascript)");
-// This is replaced by webpack define plugin
-const configEnv = ("TURBOPACK compile-time value", JSON.parse('{"deviceSizes":[640,750,828,1080,1200,1920,2048,3840],"imageSizes":[16,32,48,64,96,128,256,384],"path":"/_next/image","loader":"default","dangerouslyAllowSVG":false,"unoptimized":true,"domains":[],"remotePatterns":[]}'));
-if (typeof window === 'undefined') {
-    ;
-    globalThis.__NEXT_IMAGE_IMPORTED = true;
-}
-// See https://stackoverflow.com/q/39777833/266535 for why we use this ref
-// handler instead of the img's onLoad attribute.
-function handleLoading(img, placeholder, onLoadRef, onLoadingCompleteRef, setBlurComplete, unoptimized, sizesInput) {
-    const src = img == null ? void 0 : img.src;
-    if (!img || img['data-loaded-src'] === src) {
-        return;
-    }
-    img['data-loaded-src'] = src;
-    const p = 'decode' in img ? img.decode() : Promise.resolve();
-    p.catch(()=>{}).then(()=>{
-        if (!img.parentElement || !img.isConnected) {
-            // Exit early in case of race condition:
-            // - onload() is called
-            // - decode() is called but incomplete
-            // - unmount is called
-            // - decode() completes
-            return;
-        }
-        if (placeholder !== 'empty') {
-            setBlurComplete(true);
-        }
-        if (onLoadRef == null ? void 0 : onLoadRef.current) {
-            // Since we don't have the SyntheticEvent here,
-            // we must create one with the same shape.
-            // See https://reactjs.org/docs/events.html
-            const event = new Event('load');
-            Object.defineProperty(event, 'target', {
-                writable: false,
-                value: img
-            });
-            let prevented = false;
-            let stopped = false;
-            onLoadRef.current({
-                ...event,
-                nativeEvent: event,
-                currentTarget: img,
-                target: img,
-                isDefaultPrevented: ()=>prevented,
-                isPropagationStopped: ()=>stopped,
-                persist: ()=>{},
-                preventDefault: ()=>{
-                    prevented = true;
-                    event.preventDefault();
-                },
-                stopPropagation: ()=>{
-                    stopped = true;
-                    event.stopPropagation();
-                }
-            });
-        }
-        if (onLoadingCompleteRef == null ? void 0 : onLoadingCompleteRef.current) {
-            onLoadingCompleteRef.current(img);
-        }
-        if ("TURBOPACK compile-time truthy", 1) {
-            const origSrc = new URL(src, 'http://n').searchParams.get('url') || src;
-            if (img.getAttribute('data-nimg') === 'fill') {
-                if (!unoptimized && (!sizesInput || sizesInput === '100vw')) {
-                    let widthViewportRatio = img.getBoundingClientRect().width / window.innerWidth;
-                    if (widthViewportRatio < 0.6) {
-                        if (sizesInput === '100vw') {
-                            (0, _warnonce.warnOnce)('Image with src "' + origSrc + '" has "fill" prop and "sizes" prop of "100vw", but image is not rendered at full viewport width. Please adjust "sizes" to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes');
-                        } else {
-                            (0, _warnonce.warnOnce)('Image with src "' + origSrc + '" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes');
-                        }
-                    }
-                }
-                if (img.parentElement) {
-                    const { position } = window.getComputedStyle(img.parentElement);
-                    const valid = [
-                        'absolute',
-                        'fixed',
-                        'relative'
-                    ];
-                    if (!valid.includes(position)) {
-                        (0, _warnonce.warnOnce)('Image with src "' + origSrc + '" has "fill" and parent element with invalid "position". Provided "' + position + '" should be one of ' + valid.map(String).join(',') + ".");
-                    }
-                }
-                if (img.height === 0) {
-                    (0, _warnonce.warnOnce)('Image with src "' + origSrc + '" has "fill" and a height value of 0. This is likely because the parent element of the image has not been styled to have a set height.');
-                }
-            }
-            const heightModified = img.height.toString() !== img.getAttribute('height');
-            const widthModified = img.width.toString() !== img.getAttribute('width');
-            if (heightModified && !widthModified || !heightModified && widthModified) {
-                (0, _warnonce.warnOnce)('Image with src "' + origSrc + '" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles \'width: "auto"\' or \'height: "auto"\' to maintain the aspect ratio.');
-            }
-        }
+function _export(target, all) {
+    for(var name in all)Object.defineProperty(target, name, {
+        enumerable: true,
+        get: all[name]
     });
 }
-function getDynamicProps(fetchPriority) {
-    if (Boolean(_react.use)) {
-        // In React 19.0.0 or newer, we must use camelCase
-        // prop to avoid "Warning: Invalid DOM property".
-        // See https://github.com/facebook/react/pull/25927
-        return {
-            fetchPriority
-        };
+_export(exports, {
+    default: function() {
+        return _default;
+    },
+    getImageProps: function() {
+        return getImageProps;
     }
-    // In React 18.2.0 or older, we must use lowercase prop
-    // to avoid "Warning: Invalid DOM property".
-    return {
-        fetchpriority: fetchPriority
-    };
-}
-const ImageElement = /*#__PURE__*/ (0, _react.forwardRef)((param, forwardedRef)=>{
-    let { src, srcSet, sizes, height, width, decoding, className, style, fetchPriority, placeholder, loading, unoptimized, fill, onLoadRef, onLoadingCompleteRef, setBlurComplete, setShowAltText, sizesInput, onLoad, onError, ...rest } = param;
-    const ownRef = (0, _react.useCallback)((img)=>{
-        if (!img) {
-            return;
-        }
-        if (onError) {
-            // If the image has an error before react hydrates, then the error is lost.
-            // The workaround is to wait until the image is mounted which is after hydration,
-            // then we set the src again to trigger the error handler (if there was an error).
-            // eslint-disable-next-line no-self-assign
-            img.src = img.src;
-        }
-        if ("TURBOPACK compile-time truthy", 1) {
-            if (!src) {
-                console.error('Image is missing required "src" property:', img);
-            }
-            if (img.getAttribute('alt') === null) {
-                console.error('Image is missing required "alt" property. Please add Alternative Text to describe the image for screen readers and search engines.');
-            }
-        }
-        if (img.complete) {
-            handleLoading(img, placeholder, onLoadRef, onLoadingCompleteRef, setBlurComplete, unoptimized, sizesInput);
-        }
-    }, [
-        src,
-        placeholder,
-        onLoadRef,
-        onLoadingCompleteRef,
-        setBlurComplete,
-        onError,
-        unoptimized,
-        sizesInput
-    ]);
-    const ref = (0, _usemergedref.useMergedRef)(forwardedRef, ownRef);
-    return /*#__PURE__*/ (0, _jsxruntime.jsx)("img", {
-        ...rest,
-        ...getDynamicProps(fetchPriority),
-        // It's intended to keep `loading` before `src` because React updates
-        // props in order which causes Safari/Firefox to not lazy load properly.
-        // See https://github.com/facebook/react/issues/25883
-        loading: loading,
-        width: width,
-        height: height,
-        decoding: decoding,
-        "data-nimg": fill ? 'fill' : '1',
-        className: className,
-        style: style,
-        // It's intended to keep `src` the last attribute because React updates
-        // attributes in order. If we keep `src` the first one, Safari will
-        // immediately start to fetch `src`, before `sizes` and `srcSet` are even
-        // updated by React. That causes multiple unnecessary requests if `srcSet`
-        // and `sizes` are defined.
-        // This bug cannot be reproduced in Chrome or Firefox.
-        sizes: sizes,
-        srcSet: srcSet,
-        src: src,
-        ref: ref,
-        onLoad: (event)=>{
-            const img = event.currentTarget;
-            handleLoading(img, placeholder, onLoadRef, onLoadingCompleteRef, setBlurComplete, unoptimized, sizesInput);
-        },
-        onError: (event)=>{
-            // if the real image fails to load, this will ensure "alt" is visible
-            setShowAltText(true);
-            if (placeholder !== 'empty') {
-                // If the real image fails to load, this will still remove the placeholder.
-                setBlurComplete(true);
-            }
-            if (onError) {
-                onError(event);
-            }
-        }
-    });
 });
-function ImagePreload(param) {
-    let { isAppRouter, imgAttributes } = param;
-    const opts = {
-        as: 'image',
-        imageSrcSet: imgAttributes.srcSet,
-        imageSizes: imgAttributes.sizes,
-        crossOrigin: imgAttributes.crossOrigin,
-        referrerPolicy: imgAttributes.referrerPolicy,
-        ...getDynamicProps(imgAttributes.fetchPriority)
-    };
-    if (isAppRouter && _reactdom.default.preload) {
-        // See https://github.com/facebook/react/pull/26940
-        _reactdom.default.preload(imgAttributes.src, opts);
-        return null;
-    }
-    return /*#__PURE__*/ (0, _jsxruntime.jsx)(_head.default, {
-        children: /*#__PURE__*/ (0, _jsxruntime.jsx)("link", {
-            rel: "preload",
-            // Note how we omit the `href` attribute, as it would only be relevant
-            // for browsers that do not support `imagesrcset`, and in those cases
-            // it would cause the incorrect image to be preloaded.
-            //
-            // https://html.spec.whatwg.org/multipage/semantics.html#attr-link-imagesrcset
-            href: imgAttributes.srcSet ? undefined : imgAttributes.src,
-            ...opts
-        }, '__nimg-' + imgAttributes.src + imgAttributes.srcSet + imgAttributes.sizes)
-    });
-}
-const Image = /*#__PURE__*/ (0, _react.forwardRef)((props, forwardedRef)=>{
-    const pagesRouter = (0, _react.useContext)(_routercontextsharedruntime.RouterContext);
-    // We're in the app directory if there is no pages router.
-    const isAppRouter = !pagesRouter;
-    const configContext = (0, _react.useContext)(_imageconfigcontextsharedruntime.ImageConfigContext);
-    const config = (0, _react.useMemo)(()=>{
-        var _c_qualities;
-        const c = configEnv || configContext || _imageconfig.imageConfigDefault;
-        const allSizes = [
-            ...c.deviceSizes,
-            ...c.imageSizes
-        ].sort((a, b)=>a - b);
-        const deviceSizes = c.deviceSizes.sort((a, b)=>a - b);
-        const qualities = (_c_qualities = c.qualities) == null ? void 0 : _c_qualities.sort((a, b)=>a - b);
-        return {
-            ...c,
-            allSizes,
-            deviceSizes,
-            qualities
-        };
-    }, [
-        configContext
-    ]);
-    const { onLoad, onLoadingComplete } = props;
-    const onLoadRef = (0, _react.useRef)(onLoad);
-    (0, _react.useEffect)(()=>{
-        onLoadRef.current = onLoad;
-    }, [
-        onLoad
-    ]);
-    const onLoadingCompleteRef = (0, _react.useRef)(onLoadingComplete);
-    (0, _react.useEffect)(()=>{
-        onLoadingCompleteRef.current = onLoadingComplete;
-    }, [
-        onLoadingComplete
-    ]);
-    const [blurComplete, setBlurComplete] = (0, _react.useState)(false);
-    const [showAltText, setShowAltText] = (0, _react.useState)(false);
-    const { props: imgAttributes, meta: imgMeta } = (0, _getimgprops.getImgProps)(props, {
+const _interop_require_default = __turbopack_require__("[project]/node_modules/@swc/helpers/cjs/_interop_require_default.cjs [app-rsc] (ecmascript)");
+const _getimgprops = __turbopack_require__("[project]/node_modules/next/dist/shared/lib/get-img-props.js [app-rsc] (ecmascript)");
+const _imagecomponent = __turbopack_require__("[project]/node_modules/next/dist/client/image-component.js [app-rsc] (ecmascript)");
+const _imageloader = /*#__PURE__*/ _interop_require_default._(__turbopack_require__("[project]/node_modules/next/dist/shared/lib/image-loader.js [app-rsc] (ecmascript)"));
+function getImageProps(imgProps) {
+    const { props } = (0, _getimgprops.getImgProps)(imgProps, {
         defaultLoader: _imageloader.default,
-        imgConf: config,
-        blurComplete,
-        showAltText
+        // This is replaced by webpack define plugin
+        imgConf: ("TURBOPACK compile-time value", JSON.parse('{"deviceSizes":[640,750,828,1080,1200,1920,2048,3840],"imageSizes":[16,32,48,64,96,128,256,384],"path":"/_next/image","loader":"default","dangerouslyAllowSVG":false,"unoptimized":true,"domains":[],"remotePatterns":[]}'))
     });
-    return /*#__PURE__*/ (0, _jsxruntime.jsxs)(_jsxruntime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0, _jsxruntime.jsx)(ImageElement, {
-                ...imgAttributes,
-                unoptimized: imgMeta.unoptimized,
-                placeholder: imgMeta.placeholder,
-                fill: imgMeta.fill,
-                onLoadRef: onLoadRef,
-                onLoadingCompleteRef: onLoadingCompleteRef,
-                setBlurComplete: setBlurComplete,
-                setShowAltText: setShowAltText,
-                sizesInput: props.sizes,
-                ref: forwardedRef
-            }),
-            imgMeta.priority ? /*#__PURE__*/ (0, _jsxruntime.jsx)(ImagePreload, {
-                isAppRouter: isAppRouter,
-                imgAttributes: imgAttributes
-            }) : null
-        ]
-    });
-});
-if ((typeof exports.default === 'function' || typeof exports.default === 'object' && exports.default !== null) && typeof exports.default.__esModule === 'undefined') {
-    Object.defineProperty(exports.default, '__esModule', {
-        value: true
-    });
-    Object.assign(exports.default, exports);
-    module.exports = exports.default;
-} //# sourceMappingURL=image-component.js.map
+    // Normally we don't care about undefined props because we pass to JSX,
+    // but this exported function could be used by the end user for anything
+    // so we delete undefined props to clean it up a little.
+    for (const [key, value] of Object.entries(props)){
+        if (value === undefined) {
+            delete props[key];
+        }
+    }
+    return {
+        props
+    };
+}
+const _default = _imagecomponent.Image; //# sourceMappingURL=image-external.js.map
 }}),
-}]);
+"[project]/node_modules/next/image.js [app-rsc] (ecmascript)": (function(__turbopack_context__) {
 
-//# sourceMappingURL=node_modules_next_dist_ea69ac._.js.map
+var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, x: __turbopack_external_require__, y: __turbopack_external_import__, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
+{
+module.exports = __turbopack_require__("[project]/node_modules/next/dist/shared/lib/image-external.js [app-rsc] (ecmascript)");
+}}),
+
+};
+
+//# sourceMappingURL=%5Broot%20of%20the%20server%5D__86cb09._.js.map

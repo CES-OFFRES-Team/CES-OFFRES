@@ -165,6 +165,7 @@ footer {
     padding-top: 2rem; /* Add some padding to the top */
 }
 
+/* Base styles pour la sidebar */
 .sidebar {
     position: fixed;
     top: 0;
@@ -173,7 +174,7 @@ footer {
     width: 85px;
     height: 100vh;
     background: #151A2D;
-    transition: width 0.3s ease;
+    transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
 }
@@ -213,17 +214,21 @@ footer {
 }
 
 .nav-link {
+    color: #fff;
     display: flex;
-    align-items: center;
-    padding: 0.75rem;
-    color: white;
-    text-decoration: none;
+    gap: 12px;
+    white-space: nowrap;
     border-radius: 8px;
+    padding: 11px 15px;
+    align-items: center;
+    text-decoration: none;
     transition: all 0.3s ease;
+    font-weight: 700;
+    border: none; /* Suppression de la bordure */
 }
 
 .nav-link:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.1); /* Pour garder un effet au survol */
 }
 
 .material-symbols-rounded {
@@ -237,33 +242,77 @@ footer {
     opacity: 0;
     white-space: nowrap;
     transition: opacity 0.3s ease;
+    font-weight: 700; /* Ajout du font-weight pour le texte en gras */
 }
 
 .sidebar:hover .nav-label {
     opacity: 1;
 }
 
+/* Style pour le contenu principal */
 main {
     margin-left: 85px;
     padding: 20px;
     transition: margin-left 0.3s ease;
+    width: calc(100% - 85px);
 }
 
 .sidebar:hover ~ main {
     margin-left: 270px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .sidebar {
-        left: -85px;
+        width: 70px;
     }
     
     .sidebar:hover {
+        width: 240px;
+    }
+
+    main {
+        margin-left: 70px;
+        width: calc(100% - 70px);
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 0;
+        left: -85px;
+    }
+
+    .sidebar.active {
+        width: 240px;
         left: 0;
     }
-    
+
     main {
         margin-left: 0;
+        width: 100%;
+    }
+
+    .sidebar-menu-button {
+        display: block;
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 20;
+        background: #151A2D;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    main {
+        padding: 10px;
+    }
+
+    .nav-link {
+        padding: 8px 12px;
     }
 }
 
@@ -278,14 +327,84 @@ main {
     justify-content: center;
     align-items: center;
     margin-bottom: 1rem;
+    overflow: hidden;
 }
 
 .nav-logo {
     width: 50px;
     height: auto;
-    transition: width 0.3s ease;
+    transition: all 0.3s ease;
+    object-fit: contain;
 }
 
 .sidebar:hover .nav-logo {
     width: 150px;
+}
+
+/* Ajoutez ces styles pour les offres */
+.offres-container {
+  padding: 2rem;
+  margin-left: 85px; /* Pour tenir compte de la sidebar */
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar:hover ~ main .offres-container {
+  margin-left: 270px;
+}
+
+.offres-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.offre-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.offre-card:hover {
+  transform: translateY(-5px);
+}
+
+.offre-card h2 {
+  color: #151A2D;
+  margin-bottom: 1rem;
+}
+
+.offre-details {
+  display: flex;
+  justify-content: space-between;
+  margin: 1rem 0;
+  color: #666;
+}
+
+.postuler-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: #151A2D;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.postuler-btn:hover {
+  background: #2a305c;
+}
+
+@media (max-width: 768px) {
+  .offres-container {
+    margin-left: 0;
+    padding: 1rem;
+  }
+  
+  .offres-grid {
+    grid-template-columns: 1fr;
+  }
 }

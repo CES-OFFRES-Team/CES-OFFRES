@@ -53,7 +53,22 @@ const offresDeStages = [
 export default function Offres() {
     return (
         <div className="offres-container">
-            {/* Contenu de la page Offres */}
+            <h1 className="page-title">Offres de Stage</h1>
+            <div className="offres-grid">
+                {offresDeStages.map((offre) => (
+                    <div key={offre.id} className="offre">
+                        <h2>{offre.titre}</h2>
+                        <p><strong>Entreprise:</strong> {offre.entreprise}</p>
+                        <p>{offre.description}</p>
+                        <div className="offre-details">
+                            <p><strong>Localisation:</strong> {offre.localisation}</p>
+                            <p><strong>Date de début:</strong> {offre.dateDebut}</p>
+                            <p><strong>Durée:</strong> {offre.duree}</p>
+                        </div>
+                        <button className="postuler-button">Postuler</button>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }

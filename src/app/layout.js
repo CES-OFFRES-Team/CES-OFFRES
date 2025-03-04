@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Inter } from 'next/font/google'
+import Image from 'next/image'
 
 // If you want to use this font, add these lines at the top of your layout.js
 const inter = Inter({ subsets: ['latin'] })
@@ -19,7 +20,14 @@ export default function RootLayout({ children }) {
         <aside className="sidebar">
           <nav className="sidebar-nav">
             <div className="logo-container">
-              <img src="/logo.webp" alt="Logo" className="nav-logo" />
+              <Image
+                src="/logo.webp"
+                alt="Logo"
+                width={150}
+                height={150}
+                className="nav-logo"
+                priority
+              />
             </div>
             <ul className="nav-list primary-nav">
               <li className="nav-item">

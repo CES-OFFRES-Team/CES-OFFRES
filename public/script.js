@@ -10,19 +10,28 @@ const closeAllDropdowns = () => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  const menuButton = document.querySelector(".sidebar-menu-button");
-  const sidebar = document.querySelector(".sidebar");
+  const sidebar = document.querySelector('.sidebar');
+  const menuButton = document.querySelector('.sidebar-menu-button');
+  const main = document.querySelector('main');
 
-  menuButton?.addEventListener("click", () => {
-    sidebar.classList.toggle("active");
+  // Gestion du menu mobile
+  menuButton?.addEventListener('click', () => {
+    sidebar.classList.toggle('active');
   });
 
-  // Fermer la sidebar en cliquant en dehors sur mobile
-  document.addEventListener("click", (e) => {
+  // Fermer le menu au clic en dehors sur mobile
+  document.addEventListener('click', (e) => {
     if (window.innerWidth <= 768) {
       if (!sidebar.contains(e.target) && !menuButton.contains(e.target)) {
-        sidebar.classList.remove("active");
+        sidebar.classList.remove('active');
       }
+    }
+  });
+
+  // Gestion du redimensionnement de la fenêtre
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+      sidebar.classList.remove('active');
     }
   });
 });
