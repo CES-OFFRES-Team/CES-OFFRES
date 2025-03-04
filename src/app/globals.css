@@ -8,6 +8,12 @@
     --foreground: #000000;
     --primary: #0070f3;
     --secondary: #1a1a1a;
+    --border-radius-xl: 40px;
+    --border-radius-lg: 30px;
+    --border-radius-md: 25px;
+    --border-radius-sm: 20px;
+    --transition-speed: 0.5s;
+    --transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -174,9 +180,10 @@ footer {
     width: 85px;
     height: 100vh;
     background: #151A2D;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: width var(--transition-speed) var(--transition-timing);
     display: flex;
     flex-direction: column;
+    border-radius: 0; /* Suppression des arrondis */
 }
 
 .sidebar:hover {
@@ -207,24 +214,27 @@ footer {
     gap: 0.5rem;
     margin-top: auto;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 20px;
 }
 
 .nav-item {
     width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0 10px;
 }
 
 .nav-link {
-    color: #fff;
     display: flex;
-    gap: 12px;
-    white-space: nowrap;
-    border-radius: 8px;
-    padding: 11px 15px;
     align-items: center;
+    justify-content: center;
+    padding: 12px 15px;
     text-decoration: none;
-    transition: all 0.3s ease;
-    font-weight: 700;
-    border: none; /* Suppression de la bordure */
+    color: white;
+    transition: all var(--transition-speed) var(--transition-timing);
+    position: relative;
+    width: 100%;
+    justify-content: center;  /* Centre les icônes quand replié */
 }
 
 .nav-link:hover {
@@ -234,26 +244,48 @@ footer {
 .material-symbols-rounded {
     font-size: 24px;
     min-width: 24px;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .nav-label {
-    margin-left: 12px;
+    margin-left: 15px;
     opacity: 0;
     white-space: nowrap;
-    transition: opacity 0.4s ease-in-out;
-    font-weight: 700; /* Ajout du font-weight pour le texte en gras */
+    transition: opacity var(--transition-speed) var(--transition-timing);
+    position: absolute;
+    left: 60px;  /* Position absolue pour le label */
+    pointer-events: none;
 }
 
 .sidebar:hover .nav-label {
     opacity: 1;
+    position: relative;
+    left: 0;
+    pointer-events: auto;
+    margin-left: 12px;
+}
+
+.sidebar:hover .nav-link {
+    justify-content: flex-start;
+    padding: 10px 20px;
+}
+
+.nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 /* Style pour le contenu principal */
 main {
     padding: 20px;
     margin-left: 85px;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all var(--transition-speed) var(--transition-timing);
     min-height: 100vh;
     width: calc(100% - 85px);
 }
@@ -292,6 +324,7 @@ main {
     .sidebar {
         width: 0;
         left: -85px;
+        border-radius: 0 25px 25px 0;
     }
 
     .sidebar.active {
@@ -321,6 +354,10 @@ main {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 1rem;
     }
+
+    .sidebar, main, .nav-logo, .nav-label {
+        transition: all var(--transition-speed) var(--transition-timing);
+    }
 }
 
 @media (max-width: 480px) {
@@ -347,25 +384,27 @@ main {
 }
 
 .logo-container {
-    padding: 1rem;
+    width: 100%;
+    padding: 20px 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 20px;
     overflow: hidden;
 }
 
 .nav-logo {
-    width: 50px;
+    width: 45px;
     height: auto;
-    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: width var(--transition-speed) var(--transition-timing);
     object-fit: contain;
     max-width: 100%;
     fill: currentColor; /* Pour les SVG qui utilisent la couleur courante */
+    border-radius: 0; /* Suppression des arrondis */
 }
 
 .sidebar:hover .nav-logo {
-    width: 150px;
+    width: 130px;
 }
 
 /* Ajoutez ces styles pour les offres */
@@ -435,4 +474,250 @@ main {
     .offres-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* Styles pour la page d'accueil */
+.home-container {
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+}
+
+.hero-section {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d79f3 100%);
+  color: white;
+  padding: 6rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--border-radius-xl);
+  margin-bottom: 2rem;
+  margin: 2rem;
+}
+
+.hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+  z-index: 1;
+  position: relative;
+}
+
+.hero-content h1 {
+  font-size: 3.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+.hero-content p {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+.cta-button {
+  display: inline-block;
+  padding: 1.2rem 3rem;
+  background: #2d79f3;
+  color: white;
+  border-radius: var(--border-radius-lg);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  font-size: 1.1rem;
+}
+
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(45, 121, 243, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.features-section {
+  padding: 5rem 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  background: white;
+}
+
+.feature-card {
+  padding: 2.5rem;
+  text-align: center;
+  border-radius: var(--border-radius-lg);
+  background: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.feature-card span {
+  font-size: 2.5rem;
+  color: #2d79f3;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.feature-card h3 {
+  margin: 1rem 0;
+  color: #1a1a1a;
+}
+
+.stats-section {
+  padding: 5rem 2rem;
+  background: #f8f9fa;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  text-align: center;
+}
+
+.stat-item {
+  background: white;
+  padding: 2.5rem;
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
+}
+
+.stat-item:hover {
+  transform: translateY(-5px);
+}
+
+.stat-item h2 {
+  font-size: 2.5rem;
+  color: #2d79f3;
+  margin-bottom: 0.5rem;
+}
+
+.stat-item p {
+  color: #666;
+}
+
+.offre {
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  padding: 2rem;
+}
+
+.form {
+  border-radius: var(--border-radius-xl);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  padding: 3rem;
+}
+
+.inputForm,
+input,
+textarea,
+select {
+  border-radius: var(--border-radius-md) !important;
+  padding: 15px 20px;
+}
+
+.button-submit {
+  border-radius: var(--border-radius-lg);
+  padding: 15px 30px;
+}
+
+.feature-card, .stat-item, .offre {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover, .stat-item:hover, .offre:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+button, 
+.button, 
+input[type="submit"] {
+    border-radius: var(--border-radius-lg);
+    padding: 12px 25px;
+}
+
+/* Styles globaux pour les arrondis */
+* {
+    border-radius: inherit;
+}
+
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero-content p {
+    font-size: 1.1rem;
+  }
+
+  .features-section,
+  .stats-section {
+    padding: 3rem 1rem;
+  }
+
+  .hero-section {
+    border-radius: var(--border-radius-xl);
+    margin: 1rem;
+  }
+  
+  .feature-card,
+  .stat-item,
+  .form {
+    border-radius: var(--border-radius-lg);
+    padding: 2rem;
+  }
+  
+  .sidebar {
+    border-radius: 0 25px 25px 0;
+  }
+  
+  :root {
+    --border-radius-xl: 30px;
+    --border-radius-lg: 25px;
+    --border-radius-md: 20px;
+    --border-radius-sm: 15px;
+  }
+}
+
+/* Images et médias */
+img,
+video,
+iframe {
+    border-radius: var(--border-radius-md);
+}
+
+/* Cards et conteneurs */
+.card,
+.container,
+.box {
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+}
+
+/* Ajustements responsives */
+@media (max-width: 768px) {
+    :root {
+        --border-radius-xl: 30px;
+        --border-radius-lg: 25px;
+        --border-radius-md: 20px;
+        --border-radius-sm: 15px;
+    }
+
+    .hero-section {
+        margin: 1rem;
+    }
+
+    .feature-card,
+    .stat-item,
+    .form {
+        padding: 2rem;
+    }
+}
+
+/* Assurez-vous que les enfants de la sidebar n'héritent pas des border-radius */
+.sidebar * {
+    border-radius: 0;
 }

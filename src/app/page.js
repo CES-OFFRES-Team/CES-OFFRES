@@ -2,14 +2,49 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-8">
-      <h1 className="text-4xl font-bold mb-8">Bienvenue sur CES'OFFRES</h1>
-      <a
-        className="mt-8 rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-        href="/Offres"
-      >
-        Trouver un stage
-      </a>
+    <div className="home-container">
+      <section className="hero-section">
+        <div className="hero-content">
+          <h1>Trouvez le stage idéal</h1>
+          <p>Explorez les meilleures opportunités de stage pour votre carrière</p>
+          <a href="/Offres" className="cta-button">
+            Voir les offres
+          </a>
+        </div>
+      </section>
+
+      <section className="features-section">
+        <div className="feature-card">
+          <span className="material-symbols-rounded">search</span>
+          <h3>Recherche simplifiée</h3>
+          <p>Trouvez rapidement le stage qui vous correspond</p>
+        </div>
+        <div className="feature-card">
+          <span className="material-symbols-rounded">work</span>
+          <h3>Stages qualifiés</h3>
+          <p>Des offres sélectionnées et vérifiées</p>
+        </div>
+        <div className="feature-card">
+          <span className="material-symbols-rounded">timeline</span>
+          <h3>Suivi personnalisé</h3>
+          <p>Accompagnement tout au long de votre recherche</p>
+        </div>
+      </section>
+
+      <section className="stats-section">
+        <div className="stat-item">
+          <h2>500+</h2>
+          <p>Entreprises partenaires</p>
+        </div>
+        <div className="stat-item">
+          <h2>1000+</h2>
+          <p>Stages disponibles</p>
+        </div>
+        <div className="stat-item">
+          <h2>5000+</h2>
+          <p>Étudiants satisfaits</p>
+        </div>
+      </section>
     </div>
   );
 }
