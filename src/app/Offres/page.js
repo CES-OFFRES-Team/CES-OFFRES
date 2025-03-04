@@ -50,29 +50,10 @@ const offresDeStages = [
     }
 ];
 
-const OffresPage = () => {
+export default function Offres() {
     return (
-        <div className="container">
-            <h1>Offres de Stages</h1>
-            <ul>
-                {offresDeStages.map(offre => (
-                    <li key={offre.id} className="offre">
-                        <div className="offre-content">
-                            <div className="offre-details">
-                                <h2>{offre.titre}</h2>
-                                <p><strong>Entreprise:</strong> {offre.entreprise}</p>
-                                <p><strong>Description:</strong> {offre.description}</p>
-                                <p><strong>Localisation:</strong> {offre.localisation}</p>
-                                <p><strong>Date de début:</strong> {offre.dateDebut}</p>
-                                <p><strong>Durée:</strong> {offre.duree}</p>
-                            </div>
-                            <button className="postuler-button">Postuler</button>
-                        </div>
-                    </li>
-                ))}
-            </ul>
+        <div className="offres-container">
+            {/* Contenu de la page Offres */}
         </div>
     );
-};
-
-export default OffresPage;
+}

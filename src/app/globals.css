@@ -1,10 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-    --background: #ffffff; /* Blanc */
-    --foreground: #000000; /* Noir */
+    --background: #ffffff;
+    --foreground: #000000;
     --primary: #0070f3;
     --secondary: #1a1a1a;
 }
@@ -19,9 +20,10 @@
 }
 
 body {
+    font-family: "Poppins", sans-serif;
+    min-height: 100vh;
     color: var(--foreground);
-    background: var(--background);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    background: linear-gradient(#F1F3FF, #CBD4FF);
 }
 
 .header {
@@ -161,4 +163,129 @@ footer {
     align-items: flex-start; /* Align items to the top */
     min-height: 100vh;
     padding-top: 2rem; /* Add some padding to the top */
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    width: 85px;
+    height: 100vh;
+    background: #151A2D;
+    transition: width 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar:hover {
+    width: 270px;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.primary-nav {
+    list-style: none;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex-grow: 1;
+    margin-top: 0;
+}
+
+.secondary-nav {
+    list-style: none;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-item {
+    width: 100%;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.material-symbols-rounded {
+    font-size: 24px;
+    min-width: 24px;
+    text-align: center;
+}
+
+.nav-label {
+    margin-left: 12px;
+    opacity: 0;
+    white-space: nowrap;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar:hover .nav-label {
+    opacity: 1;
+}
+
+main {
+    margin-left: 85px;
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+}
+
+.sidebar:hover ~ main {
+    margin-left: 270px;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        left: -85px;
+    }
+    
+    .sidebar:hover {
+        left: 0;
+    }
+    
+    main {
+        margin-left: 0;
+    }
+}
+
+.login-btn {
+    margin-top: auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo-container {
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.nav-logo {
+    width: 50px;
+    height: auto;
+    transition: width 0.3s ease;
+}
+
+.sidebar:hover .nav-logo {
+    width: 150px;
 }

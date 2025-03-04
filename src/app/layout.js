@@ -1,15 +1,8 @@
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Inter } from 'next/font/google'
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// If you want to use this font, add these lines at the top of your layout.js
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
   title: "CES'Offres",
@@ -18,32 +11,49 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <header className="header">
-          <div className="header-content">
-            <a href="/" className="logo-link">
-              <h1 className="logo">CO</h1>
-            </a>
-            <nav>
-              <ul className="nav-list">
-                <li><a href="/">Acceuil</a></li>
-                <li><a href="/Offres">Offres</a></li>
-                <li><a href="/Contact">Contact</a></li>
-                <li><a href="/Inscription">Inscription</a></li>
-                <li><a href="/About">À propos</a></li>
-              </ul>
-            </nav>
-            <a href="/Login" className="login-button">Connexion</a>
-          </div>
-        </header>
-        <div className="bottom-bar"></div>
+    <html lang="fr">
+      <head>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+      </head>
+      <body>
+        <aside className="sidebar">
+          <nav className="sidebar-nav">
+            <div className="logo-container">
+              <img src="/logo.webp" alt="Logo" className="nav-logo" />
+            </div>
+            <ul className="nav-list primary-nav">
+              <li className="nav-item">
+                <a href="/" className="nav-link">
+                  <span className="material-symbols-rounded">home</span>
+                  <span className="nav-label">Accueil</span>
+                </a>
+              </li>
+              <li className="nav-item">
+                <a href="/Offres" className="nav-link">
+                  <span className="material-symbols-rounded">work</span>
+                  <span className="nav-label">Offres</span>
+                </a>
+              </li>
+              <li className="nav-item">
+                <a href="/Contact" className="nav-link">
+                  <span className="material-symbols-rounded">contact_support</span>
+                  <span className="nav-label">Contact</span>
+                </a>
+              </li>
+            </ul>
+            <ul className="nav-list secondary-nav">
+              <li className="nav-item">
+                <a href="/Login" className="nav-link login-btn">
+                  <span className="material-symbols-rounded">login</span>
+                  <span className="nav-label">Connexion</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </aside>
         <main>
           {children}
         </main>
-        <footer>
-          <p>&copy; 2025 CES'OFFRES. Tous droits réservés.</p>
-        </footer>
       </body>
     </html>
   );

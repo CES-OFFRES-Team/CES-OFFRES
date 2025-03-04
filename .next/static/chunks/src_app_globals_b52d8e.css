@@ -422,11 +422,6 @@ img, video {
   color: var(--background);
 }
 
-.antialiased {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
 .transition-colors {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
   transition-timing-function: cubic-bezier(.4, 0, .2, 1);
@@ -450,9 +445,10 @@ img, video {
 }
 
 body {
+  font-family: Poppins, sans-serif;
+  min-height: 100vh;
   color: var(--foreground);
-  background: var(--background);
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  background: linear-gradient(#f1f3ff, #cbd4ff);
 }
 
 .header {
@@ -589,6 +585,131 @@ footer {
   align-items: flex-start;
   min-height: 100vh;
   padding-top: 2rem;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  width: 85px;
+  height: 100vh;
+  background: #151a2d;
+  transition: width .3s;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar:hover {
+  width: 270px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.primary-nav {
+  list-style: none;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  flex-grow: 1;
+  margin-top: 0;
+}
+
+.secondary-nav {
+  list-style: none;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  margin-top: auto;
+  border-top: 1px solid #ffffff1a;
+}
+
+.nav-item {
+  width: 100%;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  padding: .75rem;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all .3s;
+}
+
+.nav-link:hover {
+  background: #ffffff1a;
+}
+
+.material-symbols-rounded {
+  font-size: 24px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.nav-label {
+  margin-left: 12px;
+  opacity: 0;
+  white-space: nowrap;
+  transition: opacity .3s;
+}
+
+.sidebar:hover .nav-label {
+  opacity: 1;
+}
+
+main {
+  margin-left: 85px;
+  padding: 20px;
+  transition: margin-left .3s;
+}
+
+.sidebar:hover ~ main {
+  margin-left: 270px;
+}
+
+@media (width <= 768px) {
+  .sidebar {
+    left: -85px;
+  }
+
+  .sidebar:hover {
+    left: 0;
+  }
+
+  main {
+    margin-left: 0;
+  }
+}
+
+.login-btn {
+  margin-top: auto;
+  border-top: 1px solid #ffffff1a;
+}
+
+.logo-container {
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.nav-logo {
+  width: 50px;
+  height: auto;
+  transition: width .3s;
+}
+
+.sidebar:hover .nav-logo {
+  width: 150px;
 }
 
 .hover\:bg-\[\#383838\]:hover {
