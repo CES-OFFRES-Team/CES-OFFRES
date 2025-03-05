@@ -534,36 +534,67 @@ main {
 }
 
 .features-section {
-  padding: 5rem 2rem;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  background: white;
+    padding: 5rem 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    background: white;
+    border-radius: 40px;
+    margin: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .feature-card {
-  padding: 2.5rem;
-  text-align: center;
-  border-radius: var(--border-radius-lg);
-  background: white;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
+    padding: 2.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: transparent;
+    box-shadow: none;
 }
 
 .feature-card:hover {
-  transform: translateY(-5px);
+    transform: translateY(-5px);
 }
 
-.feature-card span {
-  font-size: 2.5rem;
-  color: #2d79f3;
-  margin-bottom: 1rem;
-  display: block;
+.stats-section {
+    padding: 5rem 2rem;
+    background: white;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    text-align: center;
+    border-radius: 40px;
+    margin: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-.feature-card h3 {
-  margin: 1rem 0;
-  color: #1a1a1a;
+.stat-item {
+    background: transparent;
+    padding: 2.5rem;
+    transition: transform 0.3s ease;
+    box-shadow: none;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+}
+
+.stat-item h2 {
+    font-size: 2.5rem;
+    color: #2d79f3;
+    margin-bottom: 0.5rem;
+}
+
+.stat-item p {
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    .stats-section {
+        margin: 1rem;
+        border-radius: 30px;
+        padding: 3rem 1rem;
+    }
 }
 
 .stats-section {
@@ -679,6 +710,12 @@ input[type="submit"] {
     --border-radius-lg: 25px;
     --border-radius-md: 20px;
     --border-radius-sm: 15px;
+  }
+
+  .features-section {
+    margin: 1rem;
+    border-radius: 30px;
+    padding: 3rem 1rem;
   }
 }
 

@@ -1,0 +1,107 @@
+.center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.form {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 30px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.5rem;
+}
+
+.flex-column label {
+    color: #333; /* Changement de la couleur des labels */
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.inputForm {
+    display: flex;
+    border: 1.5px solid #ecedec;
+    border-radius: 15px;
+    padding: 0.5rem;
+    background-color: white;
+    transition: 0.3s ease;
+}
+
+.inputForm:focus-within {
+    border-color: #2d79f3;
+    box-shadow: 0 0 0 3px rgba(45, 121, 243, 0.1);
+}
+
+.inputForm span {
+    color: #333; /* Changement de la couleur des icônes */
+    font-size: 1.5rem;
+    margin: 0.5rem;
+}
+
+/* Style spécifique pour l'icône du message */
+.inputForm textarea + span,
+.inputForm textarea ~ span {
+    align-self: flex-start;
+    margin-top: 0.5rem;
+}
+
+.inputForm input, 
+.inputForm textarea {
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 0.5rem;
+    background: none;
+    color: #333; /* Changement de la couleur du texte */
+}
+
+/* Style pour le placeholder */
+.inputForm input::placeholder,
+.inputForm textarea::placeholder {
+    color: #999; /* Couleur plus claire pour les placeholders */
+}
+
+/* Style pour le texte quand il est en focus */
+.inputForm input:focus,
+.inputForm textarea:focus {
+    color: #333;
+}
+
+.inputForm textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.button-submit {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 15px;
+    background-color: #151A2D;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.button-submit:hover {
+    background-color: #2d79f3;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 500px) {
+    .form {
+        padding: 1.5rem;
+        border-radius: 20px;
+    }
+}

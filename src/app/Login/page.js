@@ -85,12 +85,19 @@ export default function LoginPage() {
         {errorMessage && <p className="error-message">{errorMessage}</p>}
 
         <div className="flex-row">
-          <div className="flex-row">
-            <label className="container">
-              <input defaultChecked type="checkbox" />
-              <div className="checkmark"></div>
-              <span className="remember-me-text">Se souvenir de moi</span>
+          <div>
+            <label htmlFor="cbx" className="cbx">
+              <input type="checkbox" id="cbx" />
+              <div className="flip">
+                <div className="front"></div>
+                <div className="back">
+                  <svg viewBox="0 0 16 14" height="14" width="16">
+                    <path d="M2 8.5L6 12.5L14 1.5"></path>
+                  </svg>
+                </div>
+              </div>
             </label>
+            <span className="remember-me-text">Se souvenir de moi</span>
           </div>
           <span className="span">Mot de passe oublié ?</span>
         </div>
