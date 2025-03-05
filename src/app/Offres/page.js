@@ -1,4 +1,6 @@
-import React from 'react';
+"use client";
+
+import React, { useState } from 'react';
 import './Offres.css';
 
 // Exemple de données d'offres de stages
@@ -52,22 +54,26 @@ const offresDeStages = [
 
 export default function Offres() {
     return (
-        <div className="offres-container">
-            <h1 className="page-title">Offres de Stage</h1>
-            <div className="offres-grid">
-                {offresDeStages.map((offre) => (
-                    <div key={offre.id} className="offre">
-                        <h2>{offre.titre}</h2>
-                        <p><strong>Entreprise:</strong> {offre.entreprise}</p>
-                        <p>{offre.description}</p>
-                        <div className="offre-details">
-                            <p><strong>Localisation:</strong> {offre.localisation}</p>
-                            <p><strong>Date de début:</strong> {offre.dateDebut}</p>
-                            <p><strong>Durée:</strong> {offre.duree}</p>
+        <div className="center-container">
+            <div className="offres-form">
+                <h1 className="page-title">Offres de Stage</h1>
+                <div className="offres-grid">
+                    {offresDeStages.map((offre) => (
+                        <div key={offre.id} className="offre">
+                            <h2>{offre.titre}</h2>
+                            <div className="form-group">
+                                <p><strong>Entreprise:</strong> {offre.entreprise}</p>
+                                <p>{offre.description}</p>
+                                <div className="offre-details">
+                                    <p><strong>Localisation:</strong> {offre.localisation}</p>
+                                    <p><strong>Date de début:</strong> {offre.dateDebut}</p>
+                                    <p><strong>Durée:</strong> {offre.duree}</p>
+                                </div>
+                                <button type="submit" className="submit-button">Postuler</button>
+                            </div>
                         </div>
-                        <button className="postuler-button">Postuler</button>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
         </div>
     );

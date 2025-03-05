@@ -507,14 +507,16 @@ ul {
 }
 
 .offres-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 2rem;
-  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .offre {
-  background: #fff;
+  width: 100%;
+  background: var(--background);
   border-radius: 8px;
   padding: 1.5rem;
   box-shadow: 0 2px 4px #0000001a;
@@ -522,7 +524,7 @@ ul {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  border: 1px solid var(--border-color);
+  border: 1px solid #ccc;
 }
 
 .offre:hover {
@@ -532,7 +534,7 @@ ul {
 
 .offre h2 {
   color: var(--primary);
-  margin: 0;
+  margin-bottom: 1rem;
   font-size: 1.25rem;
   font-weight: 600;
 }
@@ -540,7 +542,7 @@ ul {
 .offre-details {
   display: flex;
   flex-direction: column;
-  gap: .75rem;
+  gap: .5rem;
   padding: .5rem 0;
 }
 
@@ -552,7 +554,7 @@ ul {
 
 .offre strong {
   color: var(--primary);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .postuler-button {
@@ -573,9 +575,17 @@ ul {
   transform: translateY(-2px);
 }
 
+.offres-form {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: var(--background);
+  border-radius: 8px;
+  box-shadow: 0 4px 10px #0000001a;
+}
+
 @media (width <= 1024px) {
   .offres-grid {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     padding: 1.5rem;
   }
 }
@@ -586,14 +596,11 @@ ul {
   }
 
   .offres-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
     padding: 1rem;
   }
 
-  .page-title {
-    font-size: 2rem;
-    margin: 1rem 0;
+  .offres-form {
+    padding: 1rem;
   }
 }
 
@@ -657,6 +664,50 @@ ul {
 .error-content p {
   color: #333;
   margin: 0;
+}
+
+.offres-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: var(--background);
+  border-radius: 8px;
+  box-shadow: 0 4px 10px #0000001a;
+}
+
+.offre .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+
+.submit-button {
+  padding: .75rem;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--primary);
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color .3s;
+  margin-top: 1rem;
+}
+
+.submit-button:hover {
+  background-color: #005bb5;
+}
+
+@media (width <= 768px) {
+  .offres-form {
+    padding: 1rem;
+  }
+
+  .offres-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /*# sourceMappingURL=src_app_Offres_Offres_b52d8e.css.map*/
