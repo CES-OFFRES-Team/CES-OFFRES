@@ -1,6 +1,35 @@
 import Image from "next/image";
+import { memo } from 'react';
+
+// Composants memoïsés pour éviter les rendus inutiles
+const FeatureCard = memo(({ icon, title, description }) => (
+  <div className="feature-card">
+    <span className="material-symbols-rounded">{icon}</span>
+    <h3>{title}</h3>
+    <p>{description}</p>
+  </div>
+));
+
+const StatItem = memo(({ number, description }) => (
+  <div className="stat-item">
+    <h2>{number}</h2>
+    <p>{description}</p>
+  </div>
+));
 
 export default function Home() {
+  const features = [
+    { icon: 'search', title: 'Recherche simplifiée', description: 'Trouvez rapidement le stage qui vous correspond' },
+    { icon: 'work', title: 'Stages qualifiés', description: 'Des offres sélectionnées et vérifiées' },
+    { icon: 'timeline', title: 'Suivi personnalisé', description: 'Accompagnement tout au long de votre recherche' }
+  ];
+
+  const stats = [
+    { number: '500+', description: 'Entreprises partenaires' },
+    { number: '1000+', description: 'Stages disponibles' },
+    { number: '5000+', description: 'Étudiants satisfaits' }
+  ];
+
   return (
     <div className="home-container">
       <section className="hero-section">
@@ -14,36 +43,24 @@ export default function Home() {
       </section>
 
       <section className="features-section">
-        <div className="feature-card">
-          <span className="material-symbols-rounded">search</span>
-          <h3>Recherche simplifiée</h3>
-          <p>Trouvez rapidement le stage qui vous correspond</p>
-        </div>
-        <div className="feature-card">
-          <span className="material-symbols-rounded">work</span>
-          <h3>Stages qualifiés</h3>
-          <p>Des offres sélectionnées et vérifiées</p>
-        </div>
-        <div className="feature-card">
-          <span className="material-symbols-rounded">timeline</span>
-          <h3>Suivi personnalisé</h3>
-          <p>Accompagnement tout au long de votre recherche</p>
-        </div>
+        {features.map((feature, index) => (
+          <FeatureCard
+            key={index}
+            icon={feature.icon}
+            title={feature.title}
+            description={feature.description}
+          />
+        ))}
       </section>
 
       <section className="stats-section">
-        <div className="stat-item">
-          <h2>500+</h2>
-          <p>Entreprises partenaires</p>
-        </div>
-        <div className="stat-item">
-          <h2>1000+</h2>
-          <p>Stages disponibles</p>
-        </div>
-        <div className="stat-item">
-          <h2>5000+</h2>
-          <p>Étudiants satisfaits</p>
-        </div>
+        {stats.map((stat, index) => (
+          <StatItem
+            key={index}
+            number={stat.number}
+            description={stat.description}
+          />
+        ))}
       </section>
     </div>
   );

@@ -1,7 +1,24 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import './Offres.css';
+
+// Composant memoïsé pour chaque offre
+const OffreCard = memo(({ offre }) => (
+  <div className="offre">
+    <h2>{offre.titre}</h2>
+    <div className="offre-details">
+      {Object.entries(offre)
+        .filter(([key]) => key !== 'id' && key !== 'titre')
+        .map(([key, value]) => (
+          <p key={key}>
+            <strong>{key.charAt(0).toUpperCase() + key.slice(1)} :</strong> {value}
+          </p>
+        ))}
+    </div>
+    <button className="submit-button">Postuler</button>
+  </div>
+));
 
 // Exemple de données d'offres de stages
 const offresDeStages = [
@@ -55,23 +72,11 @@ const offresDeStages = [
 export default function Offres() {
     return (
         <div className="center-container">
-            <div className="offres-form">
+            <div className="offres-container">
                 <h1 className="page-title">Offres de Stage</h1>
                 <div className="offres-grid">
                     {offresDeStages.map((offre) => (
-                        <div key={offre.id} className="offre">
-                            <h2>{offre.titre}</h2>
-                            <div className="form-group">
-                                <p><strong>Entreprise:</strong> {offre.entreprise}</p>
-                                <p>{offre.description}</p>
-                                <div className="offre-details">
-                                    <p><strong>Localisation:</strong> {offre.localisation}</p>
-                                    <p><strong>Date de début:</strong> {offre.dateDebut}</p>
-                                    <p><strong>Durée:</strong> {offre.duree}</p>
-                                </div>
-                                <button type="submit" className="submit-button">Postuler</button>
-                            </div>
-                        </div>
+                        <OffreCard key={offre.id} offre={offre} />
                     ))}
                 </div>
             </div>

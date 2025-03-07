@@ -305,17 +305,27 @@ img, video {
   flex-direction: row;
 }
 
+.filter {
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
 :root {
   --background: #fff;
   --foreground: #000;
   --primary: #0070f3;
   --secondary: #1a1a1a;
+  --sidebar-bg: #151a2d;
   --border-radius-xl: 40px;
   --border-radius-lg: 30px;
   --border-radius-md: 25px;
   --border-radius-sm: 20px;
   --transition-speed: .5s;
   --transition-timing: cubic-bezier(.4, 0, .2, 1);
+  --sidebar-width: 85px;
+  --sidebar-width-expanded: 270px;
+  --shadow-sm: 0 4px 6px #0000001a;
+  --shadow-md: 0 4px 10px #0000001a;
+  --shadow-lg: 0 8px 20px #00000014;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -475,9 +485,9 @@ footer {
   top: 0;
   left: 0;
   z-index: 10;
-  width: 85px;
+  width: var(--sidebar-width);
   height: 100vh;
-  background: #151a2d;
+  background: var(--sidebar-bg);
   transition: width var(--transition-speed) var(--transition-timing);
   display: flex;
   flex-direction: column;
@@ -485,7 +495,7 @@ footer {
 }
 
 .sidebar:hover {
-  width: 270px;
+  width: var(--sidebar-width-expanded);
 }
 
 .sidebar-nav {
@@ -580,15 +590,15 @@ footer {
 
 main {
   padding: 20px;
-  margin-left: 85px;
+  margin-left: var(--sidebar-width);
   transition: all var(--transition-speed) var(--transition-timing);
   min-height: 100vh;
-  width: calc(100% - 85px);
+  width: calc(100% - var(--sidebar-width));
 }
 
 .sidebar:hover ~ main {
-  margin-left: 270px;
-  width: calc(100% - 270px);
+  margin-left: var(--sidebar-width-expanded);
+  width: calc(100% - var(--sidebar-width-expanded));
 }
 
 @media (width <= 1024px) {
@@ -616,6 +626,13 @@ main {
 }
 
 @media (width <= 768px) {
+  :root {
+    --border-radius-xl: 30px;
+    --border-radius-lg: 25px;
+    --border-radius-md: 20px;
+    --border-radius-sm: 15px;
+  }
+
   .sidebar {
     width: 0;
     left: -85px;
@@ -623,7 +640,7 @@ main {
   }
 
   .sidebar.active {
-    width: 240px;
+    width: var(--sidebar-width-expanded);
     left: 0;
   }
 

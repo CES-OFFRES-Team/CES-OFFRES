@@ -193,57 +193,50 @@ ul {
 
 /* Style principal du conteneur */
 .offres-container {
-    padding: 2rem;
-    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 600px;
     margin: 0 auto;
+    padding: 2rem;
     background-color: var(--background);
-    min-height: 100vh;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Titre de la page */
 .page-title {
+    margin-bottom: 2rem;
     text-align: center;
     color: var(--primary);
-    font-weight: 700;
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
-    padding-top: 1rem;
+    font-size: 2rem;
+    font-weight: 600;
 }
 
 /* Modifier la grille des offres pour un affichage en colonne */
 .offres-grid {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
-    max-width: 800px;
-    margin: 0 auto;
+    gap: 1.5rem;
 }
 
 /* Ajuster le style des cartes d'offres */
 .offre {
-    width: 100%;
-    background: var(--background);
-    border-radius: 8px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    padding: 1rem;
     border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: var(--background);
+    transition: border-color 0.3s ease;
 }
 
 .offre:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-color: var(--primary);
 }
 
 /* Titre de l'offre */
 .offre h2 {
     color: var(--primary);
     margin-bottom: 1rem;
-    font-size: 1.25rem;
-    font-weight: 600;
 }
 
 /* Détails de l'offre */
@@ -251,7 +244,11 @@ ul {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    padding: 0.5rem 0;
+}
+
+.offre-details p {
+    margin: 0;
+    color: var(--foreground);
 }
 
 .offre p {
@@ -287,11 +284,15 @@ ul {
 /* Ajuster le conteneur principal */
 .offres-form {
     max-width: 800px;
+    width: 100%;
     margin: 0 auto;
     padding: 2rem;
     background-color: var(--background);
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 /* Supprimer les media queries pour la grille car elles ne sont plus nécessaires */
@@ -399,6 +400,7 @@ ul {
     font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    width: 100%;
     margin-top: 1rem;
 }
 
