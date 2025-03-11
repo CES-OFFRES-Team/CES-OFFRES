@@ -16,7 +16,10 @@ const OffreCard = memo(({ offre }) => (
           </p>
         ))}
     </div>
-    <button className="submit-button">Postuler</button>
+    
+    <a href="/Postuler" className="postuler-button">
+            Postuler
+          </a>
   </div>
 ));
 

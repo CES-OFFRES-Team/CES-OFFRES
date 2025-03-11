@@ -277,7 +277,7 @@ ul {
 }
 
 .postuler-button:hover {
-    background-color: var(--primary-dark);
+    background-color: #005bb5;
     transform: translateY(-2px);
 }
 

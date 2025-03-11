@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
   title: "CES'Offres",
-  description: "Platforme Pour trouver un stage",
+  description: "Plateforme Pour trouver un stage",
 };
 
 export default function RootLayout({ children }) {
