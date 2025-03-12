@@ -1,5 +1,5 @@
 import "./globals.css";
-import { Inter } from 'next/font/google'
+import { Inter, Poppins } from 'next/font/google'
 import Image from 'next/image'
 
 // If you want to use this font, add these lines at the top of your layout.js

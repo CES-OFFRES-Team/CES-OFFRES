@@ -1,24 +1,37 @@
 "use client";
 
 import React, { useState, memo } from 'react';
+import { useRouter } from 'next/navigation';
 import './Offres.css';
 
 // Composant memoïsé pour chaque offre
-const OffreCard = memo(({ offre }) => (
-  <div className="offre">
-    <h2>{offre.titre}</h2>
-    <div className="offre-details">
-      {Object.entries(offre)
-        .filter(([key]) => key !== 'id' && key !== 'titre')
-        .map(([key, value]) => (
-          <p key={key}>
-            <strong>{key.charAt(0).toUpperCase() + key.slice(1)} :</strong> {value}
-          </p>
-        ))}
+const OffreCard = memo(({ offre }) => {
+  const router = useRouter();
+
+  const handlePostuler = () => {
+    // Sauvegarder les offres dans le localStorage pour y accéder dans la page de postulation
+    localStorage.setItem('offresDeStages', JSON.stringify(offresDeStages));
+    router.push(`/Offres/postuler/${offre.id}`);
+  };
+
+  return (
+    <div className="offre">
+      <h2>{offre.titre}</h2>
+      <div className="offre-details">
+        {Object.entries(offre)
+          .filter(([key]) => key !== 'id' && key !== 'titre')
+          .map(([key, value]) => (
+            <p key={key}>
+              <strong>{key.charAt(0).toUpperCase() + key.slice(1)} :</strong> {value}
+            </p>
+          ))}
+      </div>
+      <button className="postuler-button" onClick={handlePostuler}>
+        Postuler
+      </button>
     </div>
-    <button className="submit-button">Postuler</button>
-  </div>
-));
+  );
+});
 
 // Exemple de données d'offres de stages
 const offresDeStages = [
