@@ -1,13 +1,14 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import './PostulerForm.css';
 
 export default function PostulerForm({ params }) {
   const router = useRouter();
-  const id = React.use(params).id;
-  const [offre, setOffre] = useState(null);
+  const id = params.id;
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     nom: '',
     prenom: '',
@@ -17,34 +18,92 @@ export default function PostulerForm({ params }) {
     lettreMotivation: '',
   });
 
-  useEffect(() => {
-    // Récupérer l'offre depuis le localStorage
-    const offres = JSON.parse(localStorage.getItem('offresDeStages') || '[]');
-    const currentOffre = offres.find(o => o.id === parseInt(id));
-    setOffre(currentOffre);
-  }, [id]);
+  // Offre statique pour le test
+  const offre = {
+    id: id,
+    titre: "Stage de développement web",
+    entreprise: "Entreprise Test",
+    description: "Description du stage"
+  };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Sauvegarder la candidature dans le localStorage
-    const candidatures = JSON.parse(localStorage.getItem('candidatures') || '[]');
-    candidatures.push({
-      ...formData,
-      offreId: params.id,
-      datePostulation: new Date().toISOString(),
-    });
-    localStorage.setItem('candidatures', JSON.stringify(candidatures));
-    
-    // Rediriger vers une page de confirmation
-    router.push('/Offres/confirmation');
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Créer un FormData pour envoyer le fichier et les données
+      const formDataToSend = new FormData();
+      
+      // Ajouter toutes les données du formulaire
+      formDataToSend.append('offre_id', id);
+      formDataToSend.append('nom', formData.nom);
+      formDataToSend.append('prenom', formData.prenom);
+      formDataToSend.append('email', formData.email);
+      formDataToSend.append('telephone', formData.telephone);
+      formDataToSend.append('lettre_motivation', formData.lettreMotivation);
+      
+      // Ajouter le fichier CV
+      if (formData.cv) {
+        formDataToSend.append('cv', formData.cv);
+      }
+
+      // Log des données envoyées
+      console.log('Données envoyées:', {
+        offre_id: id,
+        nom: formData.nom,
+        prenom: formData.prenom,
+        email: formData.email,
+        telephone: formData.telephone,
+        cv: formData.cv ? formData.cv.name : null,
+        lettre_motivation: formData.lettreMotivation
+      });
+
+      const response = await fetch('http://localhost:8000/api/candidatures', {
+        method: 'POST',
+        body: formDataToSend,
+      });
+
+      console.log('Status de la réponse:', response.status);
+      const responseText = await response.text();
+      console.log('Réponse brute:', responseText);
+
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        throw new Error('Réponse non-JSON: ' + responseText);
+      }
+
+      if (data.status === 'success') {
+        router.push('/Offres/confirmation');
+      } else {
+        setError(data.message || 'Erreur lors de l\'envoi de la candidature');
+      }
+    } catch (error) {
+      console.error('Erreur complète:', error);
+      setError('Erreur lors de l\'envoi de la candidature: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleGoBack = () => {
     router.back();
   };
 
-  if (!offre) return <div>Chargement...</div>;
+  if (error) {
+    return (
+      <div className="error-container">
+        <p className="error-message">{error}</p>
+        <button onClick={handleGoBack}>Retour</button>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return <div className="loading">Chargement...</div>;
+  }
 
   return (
     <div className="postuler-container">
@@ -118,7 +177,9 @@ export default function PostulerForm({ params }) {
           />
         </div>
 
-        <button type="submit" className="submit-button">Envoyer ma candidature</button>
+        <button type="submit" className="submit-button" disabled={loading}>
+          {loading ? 'Envoi en cours...' : 'Envoyer ma candidature'}
+        </button>
       </form>
     </div>
   );

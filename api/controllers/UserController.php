@@ -1,63 +1,96 @@
 <?php
-require_once 'models/User.php';
+require_once __DIR__ . '/../models/User.php';
+require_once __DIR__ . '/../config/database.php';
 
-class UserController extends BaseController {
+class UserController {
+    private $db;
     private $user;
-    private $database;
 
     public function __construct() {
-        $this->database = new Database();
-        $db = $this->database->getConnection();
-        $this->user = new User($db);
+        $database = new Database();
+        $this->db = $database->getConnection();
+        $this->user = new User($this->db);
     }
 
-    public function handleRequest() {
-        $method = $_SERVER['REQUEST_METHOD'];
+    public function handleRequest($method) {
+        header('Access-Control-Allow-Origin: *');
+        header('Content-Type: application/json');
+        header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+        header('Access-Control-Allow-Headers: Content-Type');
 
         switch ($method) {
             case 'GET':
-                $this->getUsers();
-                break;
+                return $this->getUsers();
             case 'POST':
-                $this->createUser();
-                break;
+                return $this->createUser();
+            case 'OPTIONS':
+                http_response_code(200);
+                return json_encode(['status' => 'success']);
             default:
-                $this->sendResponse(['error' => 'Method not allowed'], 405);
+                http_response_code(405);
+                return json_encode(['error' => 'Méthode non autorisée']);
         }
     }
 
     private function getUsers() {
-        $stmt = $this->user->read();
-        $users = [];
+        try {
+            $stmt = $this->user->getAll();
+            $users = [];
 
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            extract($row);
-            $user_item = [
-                "id" => $id,
-                "name" => $name,
-                "email" => $email
-            ];
-            array_push($users, $user_item);
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                // On ne renvoie pas le mot de passe
+                unset($row['password']);
+                $users[] = $row;
+            }
+
+            return json_encode([
+                'status' => 'success',
+                'data' => $users
+            ]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Erreur lors de la récupération des utilisateurs'
+            ]);
         }
-
-        $this->sendResponse($users);
     }
 
     private function createUser() {
-        $data = $this->validateRequest(['name', 'email', 'password']);
+        try {
+            $data = json_decode(file_get_contents('php://input'), true);
 
-        $this->user->name = $data['name'];
-        $this->user->email = $data['email'];
-        $this->user->password = $data['password'];
+            if (!$data || !isset($data['name']) || !isset($data['email']) || !isset($data['password'])) {
+                http_response_code(400);
+                return json_encode([
+                    'status' => 'error',
+                    'message' => 'Données manquantes'
+                ]);
+            }
 
-        if($this->user->create()) {
-            $this->sendResponse([
-                "message" => "User was created."
-            ], 201);
-        } else {
-            $this->sendResponse([
-                "message" => "Unable to create user."
-            ], 503);
+            $this->user->name = htmlspecialchars(strip_tags($data['name']));
+            $this->user->email = htmlspecialchars(strip_tags($data['email']));
+            $this->user->password = password_hash($data['password'], PASSWORD_DEFAULT);
+
+            if ($this->user->create()) {
+                http_response_code(201);
+                return json_encode([
+                    'status' => 'success',
+                    'message' => 'Utilisateur créé avec succès'
+                ]);
+            }
+
+            http_response_code(500);
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Erreur lors de la création de l\'utilisateur'
+            ]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Erreur serveur'
+            ]);
         }
     }
 } 

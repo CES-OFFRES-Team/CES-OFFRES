@@ -1,7 +1,7 @@
 <?php
 class User {
     private $conn;
-    private $table_name = "users";
+    private $table = 'users';
 
     public $id;
     public $name;
@@ -12,8 +12,15 @@ class User {
         $this->conn = $db;
     }
 
+    public function getAll() {
+        $query = "SELECT * FROM " . $this->table;
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt;
+    }
+
     public function create() {
-        $query = "INSERT INTO " . $this->table_name . "
+        $query = "INSERT INTO " . $this->table . "
                 SET
                     name = :name,
                     email = :email,
@@ -31,16 +38,16 @@ class User {
         $stmt->bindParam(":email", $this->email);
         $stmt->bindParam(":password", $this->password);
 
-        if($stmt->execute()) {
-            return true;
-        }
-        return false;
+        return $stmt->execute();
     }
 
-    public function read() {
-        $query = "SELECT * FROM " . $this->table_name;
+    public function emailExists() {
+        $query = "SELECT id FROM " . $this->table . " WHERE email = :email LIMIT 1";
         $stmt = $this->conn->prepare($query);
+        
+        $stmt->bindParam(':email', $this->email);
         $stmt->execute();
-        return $stmt;
+        
+        return $stmt->rowCount() > 0;
     }
 } 

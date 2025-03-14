@@ -21,8 +21,9 @@ var _s = __turbopack_refresh__.signature();
 function PostulerForm({ params }) {
     _s();
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
-    const id = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].use(params).id;
-    const [offre, setOffre] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const id = params.id;
+    const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [formData, setFormData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({
         nom: '',
         prenom: '',
@@ -31,41 +32,106 @@ function PostulerForm({ params }) {
         cv: null,
         lettreMotivation: ''
     });
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "PostulerForm.useEffect": ()=>{
-            // Récupérer l'offre depuis le localStorage
-            const offres = JSON.parse(localStorage.getItem('offresDeStages') || '[]');
-            const currentOffre = offres.find({
-                "PostulerForm.useEffect.currentOffre": (o)=>o.id === parseInt(id)
-            }["PostulerForm.useEffect.currentOffre"]);
-            setOffre(currentOffre);
-        }
-    }["PostulerForm.useEffect"], [
-        id
-    ]);
-    const handleSubmit = (e)=>{
+    // Offre statique pour le test
+    const offre = {
+        id: id,
+        titre: "Stage de développement web",
+        entreprise: "Entreprise Test",
+        description: "Description du stage"
+    };
+    const handleSubmit = async (e)=>{
         e.preventDefault();
-        // Sauvegarder la candidature dans le localStorage
-        const candidatures = JSON.parse(localStorage.getItem('candidatures') || '[]');
-        candidatures.push({
-            ...formData,
-            offreId: params.id,
-            datePostulation: new Date().toISOString()
-        });
-        localStorage.setItem('candidatures', JSON.stringify(candidatures));
-        // Rediriger vers une page de confirmation
-        router.push('/Offres/confirmation');
+        setLoading(true);
+        setError(null);
+        try {
+            // Créer un FormData pour envoyer le fichier et les données
+            const formDataToSend = new FormData();
+            // Ajouter toutes les données du formulaire
+            formDataToSend.append('offre_id', id);
+            formDataToSend.append('nom', formData.nom);
+            formDataToSend.append('prenom', formData.prenom);
+            formDataToSend.append('email', formData.email);
+            formDataToSend.append('telephone', formData.telephone);
+            formDataToSend.append('lettre_motivation', formData.lettreMotivation);
+            // Ajouter le fichier CV
+            if (formData.cv) {
+                formDataToSend.append('cv', formData.cv);
+            }
+            // Log des données envoyées
+            console.log('Données envoyées:', {
+                offre_id: id,
+                nom: formData.nom,
+                prenom: formData.prenom,
+                email: formData.email,
+                telephone: formData.telephone,
+                cv: formData.cv ? formData.cv.name : null,
+                lettre_motivation: formData.lettreMotivation
+            });
+            const response = await fetch('http://localhost:8000/api/candidatures', {
+                method: 'POST',
+                body: formDataToSend
+            });
+            console.log('Status de la réponse:', response.status);
+            const responseText = await response.text();
+            console.log('Réponse brute:', responseText);
+            let data;
+            try {
+                data = JSON.parse(responseText);
+            } catch (e) {
+                throw new Error('Réponse non-JSON: ' + responseText);
+            }
+            if (data.status === 'success') {
+                router.push('/Offres/confirmation');
+            } else {
+                setError(data.message || 'Erreur lors de l\'envoi de la candidature');
+            }
+        } catch (error) {
+            console.error('Erreur complète:', error);
+            setError('Erreur lors de l\'envoi de la candidature: ' + error.message);
+        } finally{
+            setLoading(false);
+        }
     };
     const handleGoBack = ()=>{
         router.back();
     };
-    if (!offre) return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        children: "Chargement..."
-    }, void 0, false, {
-        fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-        lineNumber: 47,
-        columnNumber: 22
-    }, this);
+    if (error) {
+        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: "error-container",
+            children: [
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                    className: "error-message",
+                    children: error
+                }, void 0, false, {
+                    fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
+                    lineNumber: 98,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                    onClick: handleGoBack,
+                    children: "Retour"
+                }, void 0, false, {
+                    fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
+                    lineNumber: 99,
+                    columnNumber: 9
+                }, this)
+            ]
+        }, void 0, true, {
+            fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
+            lineNumber: 97,
+            columnNumber: 7
+        }, this);
+    }
+    if (loading) {
+        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: "loading",
+            children: "Chargement..."
+        }, void 0, false, {
+            fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
+            lineNumber: 105,
+            columnNumber: 12
+        }, this);
+    }
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "postuler-container",
         children: [
@@ -75,7 +141,7 @@ function PostulerForm({ params }) {
                 children: "← Retour aux offres"
             }, void 0, false, {
                 fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-                lineNumber: 51,
+                lineNumber: 110,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
@@ -85,7 +151,7 @@ function PostulerForm({ params }) {
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-                lineNumber: 54,
+                lineNumber: 113,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -100,7 +166,7 @@ function PostulerForm({ params }) {
                                 children: "Nom"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-                                lineNumber: 57,
+                                lineNumber: 116,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -114,13 +180,13 @@ function PostulerForm({ params }) {
                                     })
                             }, void 0, false, {
                                 fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-                                lineNumber: 58,
+                                lineNumber: 117,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-                        lineNumber: 56,
+                        lineNumber: 115,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -131,7 +197,7 @@ function PostulerForm({ params }) {
                                 children: "Prénom"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-                                lineNumber: 68,
+                                lineNumber: 127,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -145,13 +211,13 @@ function PostulerForm({ params }) {
                                     })
                             }, void 0, false, {
                                 fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-                                lineNumber: 69,
+                                lineNumber: 128,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-                        lineNumber: 67,
+                        lineNumber: 126,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -162,7 +228,7 @@ function PostulerForm({ params }) {
                                 children: "Email"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-                                lineNumber: 79,
+                                lineNumber: 138,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -176,13 +242,13 @@ function PostulerForm({ params }) {
                                     })
                             }, void 0, false, {
                                 fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-                                lineNumber: 80,
+                                lineNumber: 139,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-                        lineNumber: 78,
+                        lineNumber: 137,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -193,7 +259,7 @@ function PostulerForm({ params }) {
                                 children: "Téléphone"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-                                lineNumber: 90,
+                                lineNumber: 149,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -207,13 +273,13 @@ function PostulerForm({ params }) {
                                     })
                             }, void 0, false, {
                                 fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-                                lineNumber: 91,
+                                lineNumber: 150,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-                        lineNumber: 89,
+                        lineNumber: 148,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -224,7 +290,7 @@ function PostulerForm({ params }) {
                                 children: "CV (PDF)"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-                                lineNumber: 101,
+                                lineNumber: 160,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -238,13 +304,13 @@ function PostulerForm({ params }) {
                                     })
                             }, void 0, false, {
                                 fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-                                lineNumber: 102,
+                                lineNumber: 161,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-                        lineNumber: 100,
+                        lineNumber: 159,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -255,7 +321,7 @@ function PostulerForm({ params }) {
                                 children: "Lettre de motivation"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-                                lineNumber: 112,
+                                lineNumber: 171,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("textarea", {
@@ -268,38 +334,39 @@ function PostulerForm({ params }) {
                                     })
                             }, void 0, false, {
                                 fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-                                lineNumber: 113,
+                                lineNumber: 172,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-                        lineNumber: 111,
+                        lineNumber: 170,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                         type: "submit",
                         className: "submit-button",
-                        children: "Envoyer ma candidature"
+                        disabled: loading,
+                        children: loading ? 'Envoi en cours...' : 'Envoyer ma candidature'
                     }, void 0, false, {
                         fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-                        lineNumber: 121,
+                        lineNumber: 180,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-                lineNumber: 55,
+                lineNumber: 114,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/Offres/postuler/[id]/page.js",
-        lineNumber: 50,
+        lineNumber: 109,
         columnNumber: 5
     }, this);
 }
-_s(PostulerForm, "0HSmEtafTeT3PcaAX1OVwgV31OM=", false, function() {
+_s(PostulerForm, "38kI7+F/tCcJZZw+CtA3VEUcU2k=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
     ];
