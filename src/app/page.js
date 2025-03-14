@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { memo } from 'react';
+import TestAPI from './components/TestAPI';
 
 // Composants memoïsés pour éviter les rendus inutiles
 const FeatureCard = memo(({ icon, title, description }) => (
@@ -29,6 +30,38 @@ export default function Home() {
     { number: '1000+', description: 'Stages disponibles' },
     { number: '5000+', description: 'Étudiants satisfaits' }
   ];
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/api/users');
+      const data = await response.json();
+      console.log('Utilisateurs:', data);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des utilisateurs:', error);
+    }
+  };
+
+  const createUser = async () => {
+    const userData = {
+      name: "Test User",
+      email: "test@example.com",
+      password: "password123"
+    };
+
+    try {
+      const response = await fetch('http://localhost:8000/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+      const data = await response.json();
+      console.log('Réponse de création:', data);
+    } catch (error) {
+      console.error('Erreur lors de la création:', error);
+    }
+  };
 
   return (
     <div className="home-container">
@@ -62,6 +95,8 @@ export default function Home() {
           />
         ))}
       </section>
+
+      <TestAPI />
     </div>
   );
 }
