@@ -30,6 +30,11 @@ switch ($path) {
         $controller = new UserController();
         echo $controller->handleRequest($method);
         break;
+
+    case '/login':
+        $controller = new UserController();
+        echo $controller->handleRequest($method);
+        break;
         
     case '/candidatures':
         $controller = new CandidatureController();
@@ -40,4 +45,4 @@ switch ($path) {
         http_response_code(404);
         echo json_encode(['error' => 'Route non trouvée']);
         break;
-} 
+}

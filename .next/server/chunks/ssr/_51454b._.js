@@ -143,7 +143,7 @@ function Home() {
     ];
     const fetchUsers = async ()=>{
         try {
-            const response = await fetch('http://localhost:8000/api/users');
+            const response = await fetch('http://20.19.36.142:8000/api/users');
             const data = await response.json();
             console.log('Utilisateurs:', data);
         } catch (error) {
@@ -157,7 +157,7 @@ function Home() {
             password: "password123"
         };
         try {
-            const response = await fetch('http://localhost:8000/api/users', {
+            const response = await fetch('http://20.19.36.142:8000/api/users', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

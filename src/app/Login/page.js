@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import './login.css';
+import Cookies from 'js-cookie';
 
 const EmailIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 32 32" height="20">
@@ -30,6 +31,27 @@ const EyeIcon = ({ showPassword }) => (
   )
 );
 
+const loginUser = async (email, password) => {
+  try {
+    const response = await fetch('http://20.19.36.142:8000/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de la connexion');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
@@ -38,13 +60,21 @@ export default function LoginPage() {
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (email === '' || password === '') {
       setErrorMessage('Veuillez remplir tous les champs.');
     } else {
-      setErrorMessage('');
-      // Submit the form
+      try {
+        const data = await loginUser(email, password);
+        setErrorMessage('');
+        // Enregistrer le token dans les cookies
+        Cookies.set('authToken', data.token, { expires: 7 });
+        // Rediriger vers la page protégée
+        window.location.href = '/protected';
+      } catch (error) {
+        setErrorMessage(error.message);
+      }
     }
   };
 

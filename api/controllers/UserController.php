@@ -22,6 +22,9 @@ class UserController {
             case 'GET':
                 return $this->getUsers();
             case 'POST':
+                if ($_SERVER['REQUEST_URI'] === '/api/login') {
+                    return $this->login();
+                }
                 return $this->createUser();
             case 'OPTIONS':
                 http_response_code(200);
@@ -93,4 +96,25 @@ class UserController {
             ]);
         }
     }
-} 
+
+    private function login() {
+        $data = json_decode(file_get_contents('php://input'), true);
+        $email = $data['email'] ?? '';
+        $password = $data['password'] ?? '';
+
+        if (empty($email) || empty($password)) {
+            http_response_code(400);
+            return json_encode(['error' => 'Email et mot de passe requis']);
+        }
+
+        $user = $this->user->findByEmail($email);
+        if ($user && password_verify($password, $user['password'])) {
+            $token = bin2hex(random_bytes(16)); // Générer un jeton d'authentification
+            // Enregistrer le jeton dans la base de données ou le retourner directement
+            return json_encode(['token' => $token]);
+        } else {
+            http_response_code(401);
+            return json_encode(['error' => 'Email ou mot de passe incorrect']);
+        }
+    }
+}
