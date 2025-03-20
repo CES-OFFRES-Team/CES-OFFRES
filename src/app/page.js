@@ -33,7 +33,7 @@ export default function Home() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/users');
+      const response = await fetch('http://20.19.36.142:8000/api/users');
       const data = await response.json();
       console.log('Utilisateurs:', data);
     } catch (error) {
@@ -49,7 +49,7 @@ export default function Home() {
     };
 
     try {
-      const response = await fetch('http://localhost:8000/api/users', {
+      const response = await fetch('http://20.19.36.142:8000/api/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -11,7 +11,7 @@ const TestAPI = memo(() => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:8000/test_system.php');
+      const response = await fetch('http://20.19.36.142:8000/test_system.php');
       const data = await response.json();
       setTestResults(data);
       console.log('Résultats des tests système:', data);
@@ -26,7 +26,7 @@ const TestAPI = memo(() => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:8000/api/users');
+      const response = await fetch('http://20.19.36.142:8000/api/users');
       const data = await response.json();
       setTestResults({ users: data });
       console.log('Utilisateurs:', data);
@@ -47,7 +47,7 @@ const TestAPI = memo(() => {
     };
 
     try {
-      const response = await fetch('http://localhost:8000/api/users', {
+      const response = await fetch('http://20.19.36.142:8000/api/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
