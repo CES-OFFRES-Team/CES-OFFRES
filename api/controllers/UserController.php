@@ -42,7 +42,7 @@ class UserController {
 
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 // On ne renvoie pas le mot de passe
-                unset($row['password']);
+                //unset($row['password']);
                 $users[] = $row;
             }
 
@@ -98,23 +98,28 @@ class UserController {
     }
 
     private function login() {
-        $data = json_decode(file_get_contents('php://input'), true);
-        $email = $data['email'] ?? '';
-        $password = $data['password'] ?? '';
+    $data = json_decode(file_get_contents('php://input'), true);
+    $email = $data['email'] ?? '';
+    $password = $data['password'] ?? '';
 
-        if (empty($email) || empty($password)) {
-            http_response_code(400);
-            return json_encode(['error' => 'Email et mot de passe requis']);
-        }
-
-        $user = $this->user->findByEmail($email);
-        if ($user && password_verify($password, $user['password'])) {
-            $token = bin2hex(random_bytes(16)); // Générer un jeton d'authentification
-            // Enregistrer le jeton dans la base de données ou le retourner directement
-            return json_encode(['token' => $token]);
-        } else {
-            http_response_code(401);
-            return json_encode(['error' => 'Email ou mot de passe incorrect']);
-        }
+    if (empty($email) || empty($password)) {
+        http_response_code(400);
+        return json_encode(['error' => 'Email et mot de passe requis']);
     }
+
+    $user = $this->user->findByEmail($email);
+    error_log('Email: ' . $email);
+    error_log('Password: ' . $password);
+    error_log('User: ' . print_r($user, true));
+
+    if ($user && password_verify($password, $user['password'])) {
+        $token = bin2hex(random_bytes(16)); // Générer un jeton d'authentification
+        // Enregistrer le jeton dans la base de données ou le retourner directement
+        return json_encode(['token' => $token]);
+    } else {
+        http_response_code(401);
+        return json_encode(['error' => 'Email ou mot de passe incorrect']);
+    }
+}
+
 }

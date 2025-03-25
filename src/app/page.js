@@ -1,3 +1,6 @@
+"use client"; // Ajoutez cette ligne en haut du fichier
+
+import React, { useState } from 'react';
 import Image from "next/image";
 import { memo } from 'react';
 import TestAPI from './components/TestAPI';
@@ -19,6 +22,9 @@ const StatItem = memo(({ number, description }) => (
 ));
 
 export default function Home() {
+  const [createdEmail, setCreatedEmail] = useState('');
+  const [createdPassword, setCreatedPassword] = useState('');
+
   const features = [
     { icon: 'search', title: 'Recherche simplifiée', description: 'Trouvez rapidement le stage qui vous correspond' },
     { icon: 'work', title: 'Stages qualifiés', description: 'Des offres sélectionnées et vérifiées' },
@@ -58,6 +64,10 @@ export default function Home() {
       });
       const data = await response.json();
       console.log('Réponse de création:', data);
+
+      // Mettre à jour les états avec l'email et le mot de passe créés
+      setCreatedEmail(userData.email);
+      setCreatedPassword(userData.password);
     } catch (error) {
       console.error('Erreur lors de la création:', error);
     }
@@ -95,6 +105,15 @@ export default function Home() {
           />
         ))}
       </section>
+
+      <button onClick={createUser}>Créer un utilisateur</button>
+
+      {createdEmail && createdPassword && (
+        <div>
+          <p>Email créé : {createdEmail}</p>
+          <p>Mot de passe créé : {createdPassword}</p>
+        </div>
+      )}
 
       <TestAPI />
     </div>
