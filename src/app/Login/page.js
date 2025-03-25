@@ -32,24 +32,28 @@ const EyeIcon = ({ showPassword }) => (
 );
 
 const loginUser = async (email, password) => {
-  try {
-    const response = await fetch('http://20.19.36.142:8000/api/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+        const response = await fetch('http://20.19.36.142:8000/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+        });
 
-    if (!response.ok) {
-      throw new Error('Erreur lors de la connexion');
+        const data = await response.json();
+        console.log('Response status:', response.status);
+        console.log('Response data:', data);
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Erreur lors de la connexion');
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Login error:', error.message);
+        throw new Error(error.message);
     }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw new Error(error.message);
-  }
 };
 
 export default function LoginPage() {
