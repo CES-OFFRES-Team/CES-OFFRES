@@ -60,42 +60,46 @@ class UserController {
     }
 
     private function createUser() {
-        try {
-            $data = json_decode(file_get_contents('php://input'), true);
+    try {
+        $data = json_decode(file_get_contents('php://input'), true);
 
-            if (!$data || !isset($data['name']) || !isset($data['email']) || !isset($data['password'])) {
-                http_response_code(400);
-                return json_encode([
-                    'status' => 'error',
-                    'message' => 'Données manquantes'
-                ]);
-            }
-
-            $this->user->name = htmlspecialchars(strip_tags($data['name']));
-            $this->user->email = htmlspecialchars(strip_tags($data['email']));
-            $this->user->password = password_hash($data['password'], PASSWORD_DEFAULT);
-
-            if ($this->user->create()) {
-                http_response_code(201);
-                return json_encode([
-                    'status' => 'success',
-                    'message' => 'Utilisateur créé avec succès'
-                ]);
-            }
-
-            http_response_code(500);
+        if (!$data || !isset($data['nom_personne']) || !isset($data['prenom_personne']) || !isset($data['téléphone_personne']) || !isset($data['email_personne']) || !isset($data['password_personne']) || !isset($data['role'])) {
+            http_response_code(400);
             return json_encode([
                 'status' => 'error',
-                'message' => 'Erreur lors de la création de l\'utilisateur'
-            ]);
-        } catch (Exception $e) {
-            http_response_code(500);
-            return json_encode([
-                'status' => 'error',
-                'message' => 'Erreur serveur'
+                'message' => 'Données manquantes'
             ]);
         }
+
+        $this->user->nom_personne = htmlspecialchars(strip_tags($data['nom_personne']));
+        $this->user->prenom_personne = htmlspecialchars(strip_tags($data['prenom_personne']));
+        $this->user->téléphone_personne = htmlspecialchars(strip_tags($data['téléphone_personne']));
+        $this->user->email_personne = htmlspecialchars(strip_tags($data['email_personne']));
+        $this->user->password_personne = password_hash($data['password_personne'], PASSWORD_DEFAULT);
+        $this->user->role = htmlspecialchars(strip_tags($data['role']));
+
+        if ($this->user->create()) {
+            http_response_code(201);
+            return json_encode([
+                'status' => 'success',
+                'message' => 'Utilisateur créé avec succès'
+            ]);
+        }
+
+        http_response_code(500);
+        return json_encode([
+            'status' => 'error',
+            'message' => 'Erreur lors de la création de l\'utilisateur'
+        ]);
+    } catch (Exception $e) {
+        http_response_code(500);
+        return json_encode([
+            'status' => 'error',
+            'message' => 'Erreur serveur'
+        ]);
     }
+}
+
 
     private function login() {
     $data = json_decode(file_get_contents('php://input'), true);

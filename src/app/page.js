@@ -48,30 +48,34 @@ export default function Home() {
   };
 
   const createUser = async () => {
-    const userData = {
-      name: "Test User",
-      email: "test@example.com",
-      password: "password123"
-    };
-
-    try {
-      const response = await fetch('http://20.19.36.142:8000/api/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
-      const data = await response.json();
-      console.log('Réponse de création:', data);
-
-      // Mettre à jour les états avec l'email et le mot de passe créés
-      setCreatedEmail(userData.email);
-      setCreatedPassword(userData.password);
-    } catch (error) {
-      console.error('Erreur lors de la création:', error);
-    }
+  const userData = {
+    nom_personne: "NomTest",
+    prenom_personne: "PrenomTest",
+    téléphone_personne: "0123456789",
+    email_personne: "test@example.com",
+    password_personne: "password123",
+    role: "user"
   };
+
+  try {
+    const response = await fetch('http://20.19.36.142:8000/api/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
+    const data = await response.json();
+    console.log('Réponse de création:', data);
+
+    // Mettre à jour les états avec l'email et le mot de passe créés
+    setCreatedEmail(userData.email_personne);
+    setCreatedPassword(userData.password_personne);
+  } catch (error) {
+    console.error('Erreur lors de la création:', error);
+  }
+};
+
 
   return (
     <div className="home-container">
