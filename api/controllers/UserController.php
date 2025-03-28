@@ -54,7 +54,7 @@ class UserController {
             http_response_code(500);
             return json_encode([
                 'status' => 'error',
-                'message' => 'Erreur lors de la récupération des utilisateurs'
+                'message' => 'Erreur lors de la récupération des utlisateurs'
             ]);
         }
     }

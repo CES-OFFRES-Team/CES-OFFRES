@@ -1,7 +1,7 @@
 <?php
 class User {
     private $conn;
-    private $table = 'users';
+    private $table = 'Personnes';
 
     public $id_personne;
     public $nom_personne;
@@ -40,7 +40,7 @@ class User {
             $this->email_personne = trim($this->email_personne);
             $this->role = trim($this->role ?? 'user');
 
-            error_log("[DEBUG] Données à insérer: " . print_r([
+            error_log("[DEBUG] Données à insérer dans la table Personnes: " . print_r([
                 'nom' => $this->nom_personne,
                 'prenom' => $this->prenom_personne,
                 'telephone' => $this->téléphone_personne,
@@ -57,18 +57,18 @@ class User {
             $stmt->bindParam(":role", $this->role);
 
             if($stmt->execute()) {
-                error_log("[SUCCESS] Insertion réussie dans la base de données");
+                error_log("[SUCCESS] Insertion réussie dans la table Personnes");
                 return true;
             }
 
-            error_log("[ERROR] Échec de l'exécution de la requête SQL");
+            error_log("[ERROR] Échec de l'exécution de la requête SQL sur la table Personnes");
             error_log("[ERROR] SQL State: " . $stmt->errorInfo()[0]);
             error_log("[ERROR] Error Code: " . $stmt->errorInfo()[1]);
             error_log("[ERROR] Message: " . $stmt->errorInfo()[2]);
             return false;
 
         } catch(PDOException $e) {
-            error_log("[ERROR] Exception PDO lors de la création: " . $e->getMessage());
+            error_log("[ERROR] Exception PDO lors de la création dans Personnes: " . $e->getMessage());
             throw $e;
         }
     }
@@ -83,7 +83,7 @@ class User {
             
             return $stmt->rowCount() > 0;
         } catch(PDOException $e) {
-            error_log("[ERROR] Exception lors de la vérification de l'email: " . $e->getMessage());
+            error_log("[ERROR] Exception lors de la vérification de l'email dans Personnes: " . $e->getMessage());
             throw $e;
         }
     }
@@ -98,7 +98,7 @@ class User {
             
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch(PDOException $e) {
-            error_log("[ERROR] Exception lors de la recherche par email: " . $e->getMessage());
+            error_log("[ERROR] Exception lors de la recherche par email dans Personnes: " . $e->getMessage());
             throw $e;
         }
     }
