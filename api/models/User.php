@@ -27,7 +27,7 @@ class User {
             $query = "INSERT INTO " . $this->table . "
                     (nom_personne, prenom_personne, téléphone_personne, email_personne, password_personne, role)
                     VALUES
-                    (:nom_personne, :prenom_personne, :téléphone_personne, :email_personne, :password_personne, :role)";
+                    (:nom_personne, :prenom_personne, :telephone_personne, :email_personne, :password_personne, :role)";
 
             error_log("[DEBUG] Requête SQL: " . $query);
 
@@ -45,13 +45,14 @@ class User {
                 'prenom' => $this->prenom_personne,
                 'telephone' => $this->téléphone_personne,
                 'email' => $this->email_personne,
+                'password' => 'HIDDEN',
                 'role' => $this->role
             ], true));
 
-            // Liaison des paramètres
+            // Liaison des paramètres avec les noms exacts
             $stmt->bindParam(":nom_personne", $this->nom_personne);
             $stmt->bindParam(":prenom_personne", $this->prenom_personne);
-            $stmt->bindParam(":téléphone_personne", $this->téléphone_personne);
+            $stmt->bindParam(":telephone_personne", $this->téléphone_personne);
             $stmt->bindParam(":email_personne", $this->email_personne);
             $stmt->bindParam(":password_personne", $this->password_personne);
             $stmt->bindParam(":role", $this->role);
@@ -61,10 +62,11 @@ class User {
                 return true;
             }
 
+            $error = $stmt->errorInfo();
             error_log("[ERROR] Échec de l'exécution de la requête SQL sur la table Personnes");
-            error_log("[ERROR] SQL State: " . $stmt->errorInfo()[0]);
-            error_log("[ERROR] Error Code: " . $stmt->errorInfo()[1]);
-            error_log("[ERROR] Message: " . $stmt->errorInfo()[2]);
+            error_log("[ERROR] SQL State: " . $error[0]);
+            error_log("[ERROR] Error Code: " . $error[1]);
+            error_log("[ERROR] Message: " . $error[2]);
             return false;
 
         } catch(PDOException $e) {
