@@ -31,7 +31,8 @@ class User {
         // Protection contre les injections SQL
         $this->name = htmlspecialchars(strip_tags($this->name));
         $this->email = htmlspecialchars(strip_tags($this->email));
-        $this->password = password_hash($this->password, PASSWORD_DEFAULT);
+        //$this->password = password_hash($this->password, PASSWORD_DEFAULT);
+        $this->user->password = $data['password']; // Stockage en clair
 
         // Liaison des paramètres
         $stmt->bindParam(":name", $this->name);

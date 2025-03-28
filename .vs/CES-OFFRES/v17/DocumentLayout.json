@@ -11,6 +11,10 @@
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:api\\controllers\\UserController.php||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\api\\models\\User.php||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:api\\models\\User.php||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\api\\index.php||{3B902123-F8A7-4915-9F01-361F908088D0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:api\\index.php||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
@@ -21,10 +25,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\src\\app\\page.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\page.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\api\\models\\User.php||{3B902123-F8A7-4915-9F01-361F908088D0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:api\\models\\User.php||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\src\\app\\layout.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
@@ -58,7 +58,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 2,
               "Title": "User.php",
               "DocumentMoniker": "C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\api\\models\\User.php",
               "RelativeDocumentMoniker": "api\\models\\User.php",
@@ -66,8 +66,7 @@
               "RelativeToolTip": "api\\models\\User.php",
               "ViewState": "AgIAACQAAAAAAAAAAAAswBIAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002338|",
-              "WhenOpened": "2025-03-20T10:37:25.598Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-20T10:37:25.598Z"
             },
             {
               "$type": "Document",
@@ -77,14 +76,14 @@
               "RelativeDocumentMoniker": "api\\controllers\\UserController.php",
               "ToolTip": "C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\api\\controllers\\UserController.php",
               "RelativeToolTip": "api\\controllers\\UserController.php",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAAAHcAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002338|",
               "WhenOpened": "2025-03-20T10:34:09.741Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "index.php",
               "DocumentMoniker": "C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\api\\index.php",
               "RelativeDocumentMoniker": "api\\index.php",
@@ -92,8 +91,7 @@
               "RelativeToolTip": "api\\index.php",
               "ViewState": "AgIAABgAAAAAAAAAAAAswCkAAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002338|",
-              "WhenOpened": "2025-03-20T10:33:02.872Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-20T10:33:02.872Z"
             },
             {
               "$type": "Document",
@@ -103,14 +101,14 @@
               "RelativeDocumentMoniker": "src\\app\\Login\\page.js",
               "ToolTip": "C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\src\\app\\Login\\page.js",
               "RelativeToolTip": "src\\app\\Login\\page.js",
-              "ViewState": "AgIAABsAAAAAAAAAAAAAACYAAAArAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
               "WhenOpened": "2025-03-20T10:10:13.213Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "TestAPI.js",
               "DocumentMoniker": "C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\src\\app\\components\\TestAPI.js",
               "RelativeDocumentMoniker": "src\\app\\components\\TestAPI.js",
@@ -118,12 +116,11 @@
               "RelativeToolTip": "src\\app\\components\\TestAPI.js",
               "ViewState": "AgIAACcAAAAAAAAAAAAAADEAAABBAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2025-03-20T10:06:33.844Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-20T10:06:33.844Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "page.js",
               "DocumentMoniker": "C:\\Users\\jalil\\source\\repos\\CES-OFFRES-Team\\CES-OFFRES\\src\\app\\page.js",
               "RelativeDocumentMoniker": "src\\app\\page.js",
@@ -131,8 +128,7 @@
               "RelativeToolTip": "src\\app\\page.js",
               "ViewState": "AgIAADAAAAAAAAAAAAAAACgAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2025-02-12T18:08:45.956Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-12T18:08:45.956Z"
             },
             {
               "$type": "Document",
@@ -156,8 +152,7 @@
               "RelativeToolTip": "src\\app\\layout.js",
               "ViewState": "AgIAAAsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2025-02-12T17:57:35.466Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-12T17:57:35.466Z"
             }
           ]
         }
