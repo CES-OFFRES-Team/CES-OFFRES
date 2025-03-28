@@ -61,41 +61,100 @@ class UserController {
 
     private function createUser() {
     try {
-        $data = json_decode(file_get_contents('php://input'), true);
-
-        if (!$data || !isset($data['nom_personne']) || !isset($data['prenom_personne']) || !isset($data['téléphone_personne']) || !isset($data['email_personne']) || !isset($data['password_personne']) || !isset($data['role'])) {
+        $rawData = file_get_contents('php://input');
+        error_log("[DEBUG] Données reçues brutes: " . $rawData);
+        
+        $data = json_decode($rawData, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log("[ERROR] Erreur JSON: " . json_last_error_msg());
             http_response_code(400);
             return json_encode([
                 'status' => 'error',
-                'message' => 'Données manquantes'
+                'message' => 'Format JSON invalide'
             ]);
         }
+        
+        error_log("[DEBUG] Données décodées: " . print_r($data, true));
 
-        $this->user->nom_personne = htmlspecialchars(strip_tags($data['nom_personne']));
-        $this->user->prenom_personne = htmlspecialchars(strip_tags($data['prenom_personne']));
-        $this->user->téléphone_personne = htmlspecialchars(strip_tags($data['téléphone_personne']));
-        $this->user->email_personne = htmlspecialchars(strip_tags($data['email_personne']));
-        $this->user->password_personne = password_hash($data['password_personne'], PASSWORD_DEFAULT);
-        $this->user->role = htmlspecialchars(strip_tags($data['role']));
+        // Vérification des champs requis
+        $required_fields = ['nom_personne', 'prenom_personne', 'téléphone_personne', 'email_personne', 'password_personne'];
+        $missing_fields = [];
+        
+        foreach ($required_fields as $field) {
+            if (!isset($data[$field]) || trim($data[$field]) === '') {
+                $missing_fields[] = $field;
+            }
+        }
 
-        if ($this->user->create()) {
-            http_response_code(201);
+        if (!empty($missing_fields)) {
+            error_log("[ERROR] Champs manquants: " . implode(', ', $missing_fields));
+            http_response_code(400);
             return json_encode([
-                'status' => 'success',
-                'message' => 'Utilisateur créé avec succès'
+                'status' => 'error',
+                'message' => 'Champs obligatoires manquants: ' . implode(', ', $missing_fields)
             ]);
         }
 
-        http_response_code(500);
-        return json_encode([
-            'status' => 'error',
-            'message' => 'Erreur lors de la création de l\'utilisateur'
-        ]);
+        // Vérification du format de l'email
+        if (!filter_var($data['email_personne'], FILTER_VALIDATE_EMAIL)) {
+            error_log("[ERROR] Format d'email invalide: " . $data['email_personne']);
+            http_response_code(400);
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Format d\'email invalide'
+            ]);
+        }
+
+        // Vérification si l'email existe déjà
+        $this->user->email_personne = $data['email_personne'];
+        if ($this->user->emailExists()) {
+            error_log("[ERROR] Email déjà utilisé: " . $data['email_personne']);
+            http_response_code(409);
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Cet email est déjà utilisé'
+            ]);
+        }
+
+        // Nettoyage et assignation des données
+        try {
+            $this->user->nom_personne = htmlspecialchars(strip_tags(trim($data['nom_personne'])));
+            $this->user->prenom_personne = htmlspecialchars(strip_tags(trim($data['prenom_personne'])));
+            $this->user->téléphone_personne = htmlspecialchars(strip_tags(trim($data['téléphone_personne'])));
+            $this->user->email_personne = htmlspecialchars(strip_tags(trim($data['email_personne'])));
+            $this->user->password_personne = password_hash($data['password_personne'], PASSWORD_DEFAULT);
+            $this->user->role = isset($data['role']) ? htmlspecialchars(strip_tags(trim($data['role']))) : 'user';
+
+            error_log("[DEBUG] Données nettoyées: " . print_r([
+                'nom' => $this->user->nom_personne,
+                'prenom' => $this->user->prenom_personne,
+                'email' => $this->user->email_personne,
+                'telephone' => $this->user->téléphone_personne,
+                'role' => $this->user->role
+            ], true));
+
+            if ($this->user->create()) {
+                error_log("[SUCCESS] Utilisateur créé avec succès");
+                http_response_code(201);
+                return json_encode([
+                    'status' => 'success',
+                    'message' => 'Utilisateur créé avec succès'
+                ]);
+            } else {
+                error_log("[ERROR] Échec de la création dans la base de données");
+                throw new Exception("Échec de l'insertion dans la base de données");
+            }
+        } catch (PDOException $e) {
+            error_log("[ERROR] Erreur PDO: " . $e->getMessage());
+            throw $e;
+        }
     } catch (Exception $e) {
+        error_log("[ERROR] Exception: " . $e->getMessage());
+        error_log("[ERROR] Trace: " . $e->getTraceAsString());
         http_response_code(500);
         return json_encode([
             'status' => 'error',
-            'message' => 'Erreur serveur'
+            'message' => 'Erreur serveur: ' . $e->getMessage()
         ]);
     }
 }

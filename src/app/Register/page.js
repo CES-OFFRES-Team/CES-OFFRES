@@ -76,7 +76,7 @@ export default function RegisterPage() {
         téléphone_personne: normalizedPhone
       };
 
-      console.log('Données envoyées:', dataToSend);
+      console.log('Tentative d\'envoi des données:', dataToSend);
       
       const response = await fetch('http://20.19.36.142:8000/api/users', {
         method: 'POST',
@@ -90,13 +90,16 @@ export default function RegisterPage() {
       console.log('Status de la réponse:', response.status);
       const responseText = await response.text();
       console.log('Réponse brute du serveur:', responseText);
+      console.log('En-têtes de la réponse:', Object.fromEntries(response.headers));
 
       let data;
       try {
         data = JSON.parse(responseText);
+        console.log('Données parsées:', data);
       } catch (e) {
         console.error('Erreur lors du parsing JSON:', e);
-        throw new Error('Réponse invalide du serveur');
+        setError('Le serveur a renvoyé une réponse invalide. Détails: ' + responseText);
+        return;
       }
 
       if (response.ok) {
@@ -105,15 +108,19 @@ export default function RegisterPage() {
           router.push('/Login');
         }, 2000);
       } else {
-        if (data.message && data.message.includes('email')) {
-          setError('Cet email est déjà utilisé');
+        if (response.status === 400) {
+          setError(data.message || 'Données invalides. Veuillez vérifier vos informations.');
+        } else if (response.status === 409) {
+          setError('Cet email est déjà utilisé.');
+        } else if (response.status === 500) {
+          setError('Erreur serveur. Veuillez réessayer plus tard.');
         } else {
-          setError(data.message || 'Erreur lors de l\'inscription. Veuillez réessayer.');
+          setError(data.message || 'Une erreur est survenue. Veuillez réessayer.');
         }
       }
     } catch (error) {
       console.error('Erreur complète:', error);
-      setError('Erreur de connexion au serveur. Veuillez réessayer plus tard.');
+      setError('Impossible de contacter le serveur. Vérifiez votre connexion et réessayez.');
     } finally {
       setIsSubmitting(false);
     }
