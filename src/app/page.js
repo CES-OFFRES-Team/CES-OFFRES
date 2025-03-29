@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Image from "next/image";
 import { memo } from 'react';
 import TestAPI from './components/TestAPI';
+import Navigation from './components/Navigation';
 
 // Composants memoïsés pour éviter les rendus inutiles
 const FeatureCard = memo(({ icon, title, description }) => (
@@ -78,48 +79,51 @@ export default function Home() {
 
 
   return (
-    <div className="home-container">
-      <section className="hero-section">
-        <div className="hero-content">
-          <h1>Trouvez le stage idéal</h1>
-          <p>Explorez les meilleures opportunités de stage pour votre carrière</p>
-          <a href="/Offres" className="cta-button">
-            Voir les offres
-          </a>
-        </div>
-      </section>
+    <main>
+      <Navigation />
+      <div className="home-container">
+        <section className="hero-section">
+          <div className="hero-content">
+            <h1>Trouvez le stage idéal</h1>
+            <p>Explorez les meilleures opportunités de stage pour votre carrière</p>
+            <a href="/Offres" className="cta-button">
+              Voir les offres
+            </a>
+          </div>
+        </section>
 
-      <section className="features-section">
-        {features.map((feature, index) => (
-          <FeatureCard
-            key={index}
-            icon={feature.icon}
-            title={feature.title}
-            description={feature.description}
-          />
-        ))}
-      </section>
+        <section className="features-section">
+          {features.map((feature, index) => (
+            <FeatureCard
+              key={index}
+              icon={feature.icon}
+              title={feature.title}
+              description={feature.description}
+            />
+          ))}
+        </section>
 
-      <section className="stats-section">
-        {stats.map((stat, index) => (
-          <StatItem
-            key={index}
-            number={stat.number}
-            description={stat.description}
-          />
-        ))}
-      </section>
+        <section className="stats-section">
+          {stats.map((stat, index) => (
+            <StatItem
+              key={index}
+              number={stat.number}
+              description={stat.description}
+            />
+          ))}
+        </section>
 
-      <button onClick={createUser}>Créer un utilisateur</button>
+        <button onClick={createUser}>Créer un utilisateur</button>
 
-      {createdEmail && createdPassword && (
-        <div>
-          <p>Email créé : {createdEmail}</p>
-          <p>Mot de passe créé : {createdPassword}</p>
-        </div>
-      )}
+        {createdEmail && createdPassword && (
+          <div>
+            <p>Email créé : {createdEmail}</p>
+            <p>Mot de passe créé : {createdPassword}</p>
+          </div>
+        )}
 
-      <TestAPI />
-    </div>
+        <TestAPI />
+      </div>
+    </main>
   );
 }

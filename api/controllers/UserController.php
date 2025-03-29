@@ -161,6 +161,55 @@ class UserController {
 
 
     private function login() {
+        try {
+            $data = json_decode(file_get_contents('php://input'), true);
+            
+            if (!isset($data['email']) || !isset($data['password'])) {
+                http_response_code(400);
+                return json_encode(['error' => 'Email et mot de passe requis']);
+            }
+
+            $email = $data['email'];
+            $password = $data['password'];
+
+            $user = $this->user->findByEmail($email);
+            error_log('[DEBUG] Tentative de connexion - Email: ' . $email);
+            error_log('[DEBUG] Personne trouvée: ' . ($user ? 'Oui' : 'Non'));
+
+            if ($user && password_verify($password, $user['password_personne'])) {
+                // Générer un nouveau token
+                $token = bin2hex(random_bytes(32));
+                
+                // Sauvegarder le token dans la base de données
+                if ($this->user->updateToken($user['id_personne'], $token)) {
+                    error_log('[SUCCESS] Connexion réussie pour la personne: ' . $email);
+                    return json_encode([
+                        'status' => 'success',
+                        'token' => $token,
+                        'user' => [
+                            'id' => $user['id_personne'],
+                            'nom' => $user['nom_personne'],
+                            'prenom' => $user['prenom_personne'],
+                            'email' => $user['email_personne'],
+                            'role' => $user['role']
+                        ]
+                    ]);
+                }
+            }
+
+            error_log('[ERROR] Échec de connexion pour: ' . $email);
+            http_response_code(401);
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Email ou mot de passe incorrect'
+            ]);
+
+        } catch (Exception $e) {
+            error_log('[ERROR] Exception lors de la connexion: ' . $e->getMessage());
+            http_response_code(500);
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Erreur lors de la connexion'
         $data = json_decode(file_get_contents('php://input'), true);
         $email = $data['email'] ?? '';
         $password = $data['password'] ?? '';
@@ -194,6 +243,60 @@ class UserController {
             return json_encode([
                 'status' => 'error',
                 'message' => 'Email ou mot de passe incorrect'
+            ]);
+        }
+    }
+
+    private function verifyToken() {
+        try {
+            // Récupérer le header Authorization
+            $headers = getallheaders();
+            $authHeader = $headers['Authorization'] ?? '';
+
+            // Vérifier si le header commence par "Bearer "
+            if (!preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
+                http_response_code(401);
+                return json_encode([
+                    'status' => 'error',
+                    'message' => 'Token non fourni ou format invalide'
+                ]);
+            }
+
+            $token = $matches[1];
+            error_log("[DEBUG] Vérification du token: " . substr($token, 0, 10) . "...");
+
+            // Vérifier si le token correspond à un utilisateur valide
+            $user = $this->user->findByToken($token);
+            
+            if ($user) {
+                error_log("[SUCCESS] Token valide pour l'utilisateur: " . $user['email_personne']);
+                http_response_code(200);
+                return json_encode([
+                    'status' => 'success',
+                    'message' => 'Token valide',
+                    'user' => [
+                        'id' => $user['id_personne'],
+                        'email' => $user['email_personne'],
+                        'nom' => $user['nom_personne'],
+                        'prenom' => $user['prenom_personne'],
+                        'role' => $user['role']
+                    ]
+                ]);
+            }
+
+            error_log("[ERROR] Token invalide ou expiré");
+            http_response_code(401);
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Token invalide ou expiré'
+            ]);
+
+        } catch (Exception $e) {
+            error_log("[ERROR] Erreur lors de la vérification du token: " . $e->getMessage());
+            http_response_code(500);
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Erreur lors de la vérification du token'
             ]);
         }
     }

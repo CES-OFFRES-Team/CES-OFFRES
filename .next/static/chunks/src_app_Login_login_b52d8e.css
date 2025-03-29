@@ -284,4 +284,26 @@
   }
 }
 
+.success-message {
+  color: #4caf50;
+  background-color: #e8f5e9;
+  border: 1px solid #4caf50;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 10px 0;
+  text-align: center;
+  font-size: 14px;
+}
+
+.error-message {
+  color: #f44336;
+  background-color: #ffebee;
+  border: 1px solid #f44336;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 10px 0;
+  text-align: center;
+  font-size: 14px;
+}
+
 /*# sourceMappingURL=src_app_Login_login_b52d8e.css.map*/

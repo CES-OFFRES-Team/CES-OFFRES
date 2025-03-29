@@ -61,21 +61,31 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage('');
+    setSuccessMessage('');
+
     if (email === '' || password === '') {
       setErrorMessage('Veuillez remplir tous les champs.');
     } else {
       try {
         const data = await loginUser(email, password);
-        setErrorMessage('');
-        // Enregistrer le token dans les cookies
-        Cookies.set('authToken', data.token, { expires: 7 });
-        // Rediriger vers la page protégée
-        window.location.href = '/protected';
+        // Afficher le message de succès
+        setSuccessMessage(`Connexion réussie ! Bienvenue ${data.user.prenom} ${data.user.nom}`);
+        
+        // Utiliser les nouvelles fonctions d'authentification
+        setAuthToken(data.token);
+        setUserData(data.user);
+        
+        // Attendre un peu pour que l'utilisateur puisse voir le message de succès
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 1500);
       } catch (error) {
         setErrorMessage(error.message);
       }
@@ -85,6 +95,9 @@ export default function LoginPage() {
   return (
     <div className="center-container">
       <form className="form" onSubmit={handleSubmit}>
+        {successMessage && <p className="success-message">{successMessage}</p>}
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
+
         <div className="flex-column">
           <label>Email</label>
         </div>
@@ -115,8 +128,6 @@ export default function LoginPage() {
             <EyeIcon showPassword={showPassword} />
           </button>
         </div>
-
-        {errorMessage && <p className="error-message">{errorMessage}</p>}
 
         <div className="flex-row">
           <div>

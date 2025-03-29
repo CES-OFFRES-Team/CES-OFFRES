@@ -104,4 +104,52 @@ class User {
             throw $e;
         }
     }
+
+    public function findByToken($token) {
+        try {
+            $query = "SELECT * FROM " . $this->table . " WHERE token = :token";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(":token", $token);
+            
+            error_log("[DEBUG] Recherche d'un utilisateur par token");
+            
+            if($stmt->execute()) {
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                if($user) {
+                    error_log("[SUCCESS] Utilisateur trouvé avec le token");
+                    return $user;
+                }
+                error_log("[INFO] Aucun utilisateur trouvé avec ce token");
+                return null;
+            }
+            
+            error_log("[ERROR] Erreur lors de l'exécution de la requête de recherche par token");
+            return null;
+        } catch(PDOException $e) {
+            error_log("[ERROR] Exception PDO lors de la recherche par token: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    // Méthode pour mettre à jour le token d'un utilisateur
+    public function updateToken($userId, $token) {
+        try {
+            $query = "UPDATE " . $this->table . " SET token = :token WHERE id_personne = :id";
+            $stmt = $this->conn->prepare($query);
+            
+            $stmt->bindParam(":token", $token);
+            $stmt->bindParam(":id", $userId);
+            
+            if($stmt->execute()) {
+                error_log("[SUCCESS] Token mis à jour pour l'utilisateur ID: " . $userId);
+                return true;
+            }
+            
+            error_log("[ERROR] Échec de la mise à jour du token pour l'utilisateur ID: " . $userId);
+            return false;
+        } catch(PDOException $e) {
+            error_log("[ERROR] Exception PDO lors de la mise à jour du token: " . $e->getMessage());
+            return false;
+        }
+    }
 }

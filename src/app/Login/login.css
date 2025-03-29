@@ -283,3 +283,25 @@
     padding: 10px;
   }
 }
+
+.success-message {
+  color: #4CAF50;
+  background-color: #E8F5E9;
+  border: 1px solid #4CAF50;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 10px 0;
+  text-align: center;
+  font-size: 14px;
+}
+
+.error-message {
+  color: #f44336;
+  background-color: #FFEBEE;
+  border: 1px solid #f44336;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 10px 0;
+  text-align: center;
+  font-size: 14px;
+}
