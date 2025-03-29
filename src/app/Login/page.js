@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import './login.css';
 import Cookies from 'js-cookie';
+import { setAuthToken, setUserData } from '../utils/auth';
 
 const EmailIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 32 32" height="20">
@@ -94,12 +95,13 @@ export default function LoginPage() {
     } else {
       try {
         const data = await loginUser(email, password);
+        
+        // Sauvegarder le token et les données utilisateur
+        Cookies.set('authToken', data.token, { expires: 7 });
+        Cookies.set('userData', JSON.stringify(data.user), { expires: 7 });
+        
         // Afficher le message de succès
         setSuccessMessage(`Connexion réussie ! Bienvenue ${data.user.prenom} ${data.user.nom}`);
-        
-        // Utiliser les nouvelles fonctions d'authentification
-        setAuthToken(data.token);
-        setUserData(data.user);
         
         // Attendre un peu pour que l'utilisateur puisse voir le message de succès
         setTimeout(() => {
