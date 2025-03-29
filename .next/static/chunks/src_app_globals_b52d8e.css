@@ -1136,4 +1136,26 @@ img, video, iframe {
   overflow-x: auto;
 }
 
+.account-btn {
+  border-radius: 4px;
+  transition: background-color .3s;
+  background-color: #4caf50 !important;
+  color: #fff !important;
+}
+
+.account-btn:hover {
+  background-color: #45a049 !important;
+}
+
+.login-btn {
+  background-color: #0000;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: all .3s;
+}
+
+.login-btn:hover {
+  background-color: #f5f5f5;
+}
+
 /*# sourceMappingURL=src_app_globals_b52d8e.css.map*/

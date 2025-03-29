@@ -1,6 +1,6 @@
 import "./globals.css";
-import { Inter, Poppins } from 'next/font/google'
-import Image from 'next/image'
+import { Inter } from 'next/font/google'
+import Navigation from './components/Navigation'
 
 // If you want to use this font, add these lines at the top of your layout.js
 const inter = Inter({ subsets: ['latin'] })
@@ -10,53 +10,16 @@ export const metadata = {
   description: "Platforme Pour trouver un stage",
 };
 
+// Le layout principal reste un composant serveur
 export default function RootLayout({ children }) {
   return (
-    <html lang="fr">
+    <html lang="fr" className={inter.className}>
       <head>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
       </head>
       <body>
-        <aside className="sidebar">
-          <nav className="sidebar-nav">
-            <div className="logo-container">
-              <img
-                src="/images/logo.svg"
-                alt="Logo"
-                className="nav-logo"
-              />
-            </div>
-            <ul className="nav-list primary-nav">
-              <li className="nav-item">
-                <a href="/" className="nav-link">
-                  <span className="material-symbols-rounded">home</span>
-                  <span className="nav-label">Accueil</span>
-                </a>
-              </li>
-              <li className="nav-item">
-                <a href="/Offres" className="nav-link">
-                  <span className="material-symbols-rounded">work</span>
-                  <span className="nav-label">Offres</span>
-                </a>
-              </li>
-              <li className="nav-item">
-                <a href="/Contact" className="nav-link">
-                  <span className="material-symbols-rounded">contact_support</span>
-                  <span className="nav-label">Contact</span>
-                </a>
-              </li>
-            </ul>
-            <ul className="nav-list secondary-nav">
-              <li className="nav-item">
-                <a href="/Login" className="nav-link login-btn">
-                  <span className="material-symbols-rounded">login</span>
-                  <span className="nav-label">Connexion</span>
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </aside>
+        <Navigation />
         <main>
           {children}
         </main>
