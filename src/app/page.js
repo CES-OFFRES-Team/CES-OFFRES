@@ -1,10 +1,8 @@
-"use client"; // Ajoutez cette ligne en haut du fichier
-
+"use client";
 import React, { useState } from 'react';
 import Image from "next/image";
 import { memo } from 'react';
 import TestAPI from './components/TestAPI';
-import Navigation from './components/Navigation';
 
 // Composants memoïsés pour éviter les rendus inutiles
 const FeatureCard = memo(({ icon, title, description }) => (
@@ -38,49 +36,36 @@ export default function Home() {
     { number: '5000+', description: 'Étudiants satisfaits' }
   ];
 
-  const fetchUsers = async () => {
+  const createUser = async () => {
+    const userData = {
+      nom_personne: "NomTest",
+      prenom_personne: "PrenomTest",
+      téléphone_personne: "0123456789",
+      email_personne: "test@example.com",
+      password_personne: "password123",
+      role: "user"
+    };
+
     try {
-      const response = await fetch('http://20.19.36.142:8000/api/users');
+      const response = await fetch('http://20.19.36.142:8000/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
       const data = await response.json();
-      console.log('Utilisateurs:', data);
+      console.log('Réponse de création:', data);
+
+      setCreatedEmail(userData.email_personne);
+      setCreatedPassword(userData.password_personne);
     } catch (error) {
-      console.error('Erreur lors de la récupération des utilisateurs:', error);
+      console.error('Erreur lors de la création:', error);
     }
   };
 
-  const createUser = async () => {
-  const userData = {
-    nom_personne: "NomTest",
-    prenom_personne: "PrenomTest",
-    téléphone_personne: "0123456789",
-    email_personne: "test@example.com",
-    password_personne: "password123",
-    role: "user"
-  };
-
-  try {
-    const response = await fetch('http://20.19.36.142:8000/api/users', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
-    });
-    const data = await response.json();
-    console.log('Réponse de création:', data);
-
-    // Mettre à jour les états avec l'email et le mot de passe créés
-    setCreatedEmail(userData.email_personne);
-    setCreatedPassword(userData.password_personne);
-  } catch (error) {
-    console.error('Erreur lors de la création:', error);
-  }
-};
-
-
   return (
     <main>
-      <Navigation />
       <div className="home-container">
         <section className="hero-section">
           <div className="hero-content">

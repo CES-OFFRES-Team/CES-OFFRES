@@ -33,6 +33,8 @@ const EyeIcon = ({ showPassword }) => (
 
 const loginUser = async (email, password) => {
     try {
+        console.log('Tentative de connexion avec:', { email });
+        
         const response = await fetch('http://20.19.36.142:8000/api/login', {
             method: 'POST',
             headers: {
@@ -41,18 +43,35 @@ const loginUser = async (email, password) => {
             body: JSON.stringify({ email, password }),
         });
 
-        const data = await response.json();
-        console.log('Response status:', response.status);
-        console.log('Response data:', data);
+        console.log('Status de la réponse:', response.status);
+        
+        // Vérifier si la réponse est vide
+        const text = await response.text();
+        console.log('Réponse brute du serveur:', text);
+
+        if (!text) {
+            throw new Error('Réponse vide du serveur');
+        }
+
+        // Essayer de parser le JSON
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            console.error('Erreur de parsing JSON:', e);
+            throw new Error('Réponse invalide du serveur');
+        }
+
+        console.log('Données parsées:', data);
 
         if (!response.ok) {
-            throw new Error(data.error || 'Erreur lors de la connexion');
+            throw new Error(data.error || data.message || 'Erreur lors de la connexion');
         }
 
         return data;
     } catch (error) {
-        console.error('Login error:', error.message);
-        throw new Error(error.message);
+        console.error('Erreur complète:', error);
+        throw new Error(error.message || 'Erreur de connexion au serveur');
     }
 };
 

@@ -162,29 +162,39 @@ class UserController {
 
     private function login() {
         try {
+            // Récupérer et vérifier les données POST
             $data = json_decode(file_get_contents('php://input'), true);
+            error_log('[DEBUG] Données reçues: ' . print_r($data, true));
             
             if (!isset($data['email']) || !isset($data['password'])) {
+                error_log('[ERROR] Données manquantes');
                 http_response_code(400);
-                return json_encode(['error' => 'Email et mot de passe requis']);
+                return json_encode([
+                    'status' => 'error',
+                    'message' => 'Email et mot de passe requis'
+                ]);
             }
 
             $email = $data['email'];
             $password = $data['password'];
 
+            // Rechercher l'utilisateur
             $user = $this->user->findByEmail($email);
-            error_log('[DEBUG] Tentative de connexion - Email: ' . $email);
-            error_log('[DEBUG] Personne trouvée: ' . ($user ? 'Oui' : 'Non'));
+            error_log('[DEBUG] Recherche utilisateur avec email: ' . $email);
+            error_log('[DEBUG] Utilisateur trouvé: ' . ($user ? 'Oui' : 'Non'));
 
             if ($user && password_verify($password, $user['password_personne'])) {
                 // Générer un nouveau token
                 $token = bin2hex(random_bytes(32));
+                error_log('[DEBUG] Nouveau token généré');
                 
-                // Sauvegarder le token dans la base de données
+                // Sauvegarder le token
                 if ($this->user->updateToken($user['id_personne'], $token)) {
-                    error_log('[SUCCESS] Connexion réussie pour la personne: ' . $email);
+                    error_log('[SUCCESS] Connexion réussie pour: ' . $email);
+                    http_response_code(200);
                     return json_encode([
                         'status' => 'success',
+                        'message' => 'Connexion réussie',
                         'token' => $token,
                         'user' => [
                             'id' => $user['id_personne'],
@@ -209,40 +219,7 @@ class UserController {
             http_response_code(500);
             return json_encode([
                 'status' => 'error',
-                'message' => 'Erreur lors de la connexion'
-        $data = json_decode(file_get_contents('php://input'), true);
-        $email = $data['email'] ?? '';
-        $password = $data['password'] ?? '';
-
-        if (empty($email) || empty($password)) {
-            http_response_code(400);
-            return json_encode(['error' => 'Email et mot de passe requis']);
-        }
-
-        $user = $this->user->findByEmail($email);
-        error_log('[DEBUG] Tentative de connexion - Email: ' . $email);
-        error_log('[DEBUG] Personne trouvée: ' . ($user ? 'Oui' : 'Non'));
-
-        if ($user && password_verify($password, $user['password_personne'])) {
-            $token = bin2hex(random_bytes(16));
-            error_log('[SUCCESS] Connexion réussie pour la personne: ' . $email);
-            return json_encode([
-                'status' => 'success',
-                'token' => $token,
-                'user' => [
-                    'id' => $user['id_personne'],
-                    'nom' => $user['nom_personne'],
-                    'prenom' => $user['prenom_personne'],
-                    'email' => $user['email_personne'],
-                    'role' => $user['role']
-                ]
-            ]);
-        } else {
-            error_log('[ERROR] Échec de connexion pour: ' . $email);
-            http_response_code(401);
-            return json_encode([
-                'status' => 'error',
-                'message' => 'Email ou mot de passe incorrect'
+                'message' => 'Erreur serveur lors de la connexion'
             ]);
         }
     }
