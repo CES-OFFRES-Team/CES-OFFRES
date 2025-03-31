@@ -2,10 +2,17 @@
 import { useState, useEffect } from 'react';
 import { getUserData, logout } from '../utils/auth';
 import ProtectedRoute from '../components/ProtectedRoute';
+import { FaUser, FaBriefcase, FaEnvelope, FaCog, FaSearch } from 'react-icons/fa';
 import './dashboard.css';
 
 export default function Dashboard() {
     const [userData, setUserData] = useState(null);
+    const [stats, setStats] = useState({
+        offresVues: 45,
+        candidatures: 12,
+        offresEnregistrees: 8,
+        messagesNonLus: 3
+    });
 
     useEffect(() => {
         const user = getUserData();
@@ -17,39 +24,82 @@ export default function Dashboard() {
             <div className="dashboard-container">
                 <nav className="dashboard-nav">
                     <div className="nav-brand">CES OFFRES</div>
-                    <button onClick={logout} className="logout-button">
-                        Se déconnecter
-                    </button>
+                    <div className="nav-actions">
+                        <button onClick={logout} className="logout-button">
+                            Se déconnecter
+                        </button>
+                    </div>
                 </nav>
                 
                 <div className="dashboard-content">
                     <div className="dashboard-header">
                         <h1>Tableau de bord</h1>
                         {userData && (
-                            <p>Bienvenue, {userData.prenom} {userData.nom}</p>
+                            <p>Bienvenue sur votre espace personnel, {userData.prenom} {userData.nom}</p>
                         )}
+                    </div>
+
+                    <div className="stats-container">
+                        <div className="stat-card">
+                            <div className="stat-number">{stats.offresVues}</div>
+                            <div className="stat-label">Offres consultées</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="stat-number">{stats.candidatures}</div>
+                            <div className="stat-label">Candidatures envoyées</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="stat-number">{stats.offresEnregistrees}</div>
+                            <div className="stat-label">Offres sauvegardées</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="stat-number">{stats.messagesNonLus}</div>
+                            <div className="stat-label">Messages non lus</div>
+                        </div>
                     </div>
                     
                     <div className="dashboard-grid">
                         <div className="dashboard-card">
-                            <h3>Mon Profil</h3>
-                            <p>Gérer vos informations personnelles</p>
+                            <h3><FaUser /> Mon Profil</h3>
+                            <p>Gérer votre CV, vos compétences et informations personnelles</p>
+                            <div className="card-stats">
+                                <div className="card-stat">
+                                    <div className="card-stat-number">85%</div>
+                                    <div className="card-stat-label">Profil complété</div>
+                                </div>
+                            </div>
                         </div>
                         <div className="dashboard-card">
-                            <h3>Mes Offres</h3>
-                            <p>Voir et gérer vos offres</p>
+                            <h3><FaBriefcase /> Mes Candidatures</h3>
+                            <p>Suivez l'état de vos candidatures et gérez vos offres</p>
+                            <div className="card-stats">
+                                <div className="card-stat">
+                                    <div className="card-stat-number">{stats.candidatures}</div>
+                                    <div className="card-stat-label">En cours</div>
+                                </div>
+                            </div>
                         </div>
                         <div className="dashboard-card">
-                            <h3>Messages</h3>
-                            <p>Voir vos messages</p>
+                            <h3><FaEnvelope /> Messages</h3>
+                            <p>Consultez vos messages et échanges avec les recruteurs</p>
+                            <div className="card-stats">
+                                <div className="card-stat">
+                                    <div className="card-stat-number">{stats.messagesNonLus}</div>
+                                    <div className="card-stat-label">Non lus</div>
+                                </div>
+                            </div>
                         </div>
                         <div className="dashboard-card">
-                            <h3>Paramètres</h3>
-                            <p>Gérer vos préférences</p>
+                            <h3><FaSearch /> Recherche d'offres</h3>
+                            <p>Trouvez de nouvelles opportunités correspondant à votre profil</p>
+                            <div className="card-stats">
+                                <div className="card-stat-number">150+</div>
+                                <div className="card-stat-label">Offres disponibles</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </ProtectedRoute>
     );
-} 
+}
