@@ -1,97 +1,139 @@
 "use client";
 
-import React, { useState, memo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { HiLocationMarker, HiCalendar, HiClock, HiBriefcase, HiHeart } from 'react-icons/hi';
+import Filters from './components/Filters';
+import { offresDeStages } from '@/data/offresData';
 import './Offres.css';
 
-// Composant memoïsé pour chaque offre
-const OffreCard = memo(({ offre }) => {
-  const router = useRouter();
+const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fr-FR', {
+        month: 'long',
+        year: 'numeric'
+    });
+};
 
-  const handlePostuler = () => {
-    // Sauvegarder les offres dans le localStorage pour y accéder dans la page de postulation
-    localStorage.setItem('offresDeStages', JSON.stringify(offresDeStages));
-    router.push(`/Offres/postuler/${offre.id}`);
-  };
+const OffreCard = ({ offre, onFavorite, isFavorite }) => {
+    const router = useRouter();
 
-  return (
-    <div className="offre">
-      <h2>{offre.titre}</h2>
-      <div className="offre-details">
-        {Object.entries(offre)
-          .filter(([key]) => key !== 'id' && key !== 'titre')
-          .map(([key, value]) => (
-            <p key={key}>
-              <strong>{key.charAt(0).toUpperCase() + key.slice(1)} :</strong> {value}
-            </p>
-          ))}
-      </div>
-      <button className="postuler-button" onClick={handlePostuler}>
-        Postuler
-      </button>
-    </div>
-  );
-});
+    const handlePostuler = () => {
+        router.push(`/Offres/postuler/${offre.id}`);
+    };
 
-// Exemple de données d'offres de stages
-const offresDeStages = [
-    {
-        id: 1,
-        titre: 'Stage Développeur Web',
-        entreprise: 'Entreprise A',
-        description: 'Développement de fonctionnalités web.',
-        localisation: 'Paris, France',
-        dateDebut: '01/03/2025',
-        duree: '6 mois'
-    },
-    {
-        id: 2,
-        titre: 'Stage Data Analyst',
-        entreprise: 'Entreprise B',
-        description: 'Analyse de données et création de rapports.',
-        localisation: 'Lyon, France',
-        dateDebut: '15/03/2025',
-        duree: '4 mois'
-    },
-    {
-        id: 3,
-        titre: 'Stage Marketing Digital',
-        entreprise: 'Entreprise C',
-        description: 'Gestion des campagnes marketing en ligne.',
-        localisation: 'Marseille, France',
-        dateDebut: '01/04/2025',
-        duree: '5 mois'
-    },
-    {
-        id: 4,
-        titre: 'Stage Ingénieur Logiciel',
-        entreprise: 'Entreprise D',
-        description: 'Développement de logiciels embarqués.',
-        localisation: 'Toulouse, France',
-        dateDebut: '01/05/2025',
-        duree: '6 mois'
-    },
-    {
-        id: 5,
-        titre: 'Stage Consultant IT',
-        entreprise: 'Entreprise E',
-        description: 'Consulting en technologies de l\'information.',
-        localisation: 'Nantes, France',
-        dateDebut: '15/05/2025',
-        duree: '3 mois'
-    }
-];
+    return (
+        <div className="offre-card">
+            <div className="offre-header">
+                <h2 className="offre-title">{offre.titre}</h2>
+                <div className="offre-company">{offre.entreprise}</div>
+            </div>
+            <div className="offre-content">
+                <div className="offre-details">
+                    <div className="detail-item">
+                        <HiLocationMarker />
+                        <span>{offre.localisation}</span>
+                    </div>
+                    <div className="detail-item">
+                        <HiCalendar />
+                        <span>Début : {formatDate(offre.dateDebut)}</span>
+                    </div>
+                    <div className="detail-item">
+                        <HiClock />
+                        <span>Durée : {offre.duree} mois</span>
+                    </div>
+                    <div className="detail-item">
+                        <HiBriefcase />
+                        <span>{offre.description}</span>
+                    </div>
+                </div>
+            </div>
+            <div className="offre-actions">
+                <button 
+                    className={`btn btn-outline ${isFavorite ? 'favorite' : ''}`}
+                    onClick={() => onFavorite(offre.id)}
+                >
+                    <HiHeart />
+                </button>
+                <button className="btn btn-primary" onClick={handlePostuler}>
+                    Postuler
+                </button>
+            </div>
+        </div>
+    );
+};
 
 export default function Offres() {
+    const [offres, setOffres] = useState(offresDeStages);
+    const [filtres, setFiltres] = useState({
+        villes: [],
+        duree: { min: '', max: '' },
+        moisDebut: ''
+    });
+    const [favoris, setFavoris] = useState([]);
+
+    useEffect(() => {
+        const savedFavoris = localStorage.getItem('favoris');
+        if (savedFavoris) {
+            setFavoris(JSON.parse(savedFavoris));
+        }
+    }, []);
+
+    const handleFiltreChange = (type, value) => {
+        setFiltres(prev => ({
+            ...prev,
+            [type]: value
+        }));
+    };
+
+    const filtrerOffres = () => {
+        return offres.filter(offre => {
+            // Filtre par villes
+            const matchVilles = filtres.villes.length === 0 || 
+                filtres.villes.some(ville => 
+                    offre.localisation.toLowerCase().includes(ville.toLowerCase())
+                );
+
+            // Filtre par durée
+            const dureeMois = parseInt(offre.duree);
+            const matchDuree = (!filtres.duree.min || dureeMois >= parseInt(filtres.duree.min)) &&
+                             (!filtres.duree.max || dureeMois <= parseInt(filtres.duree.max));
+
+            // Filtre par mois de début
+            const moisOffre = new Date(offre.dateDebut).getMonth() + 1;
+            const matchMois = !filtres.moisDebut || moisOffre === parseInt(filtres.moisDebut);
+
+            return matchVilles && matchDuree && matchMois;
+        });
+    };
+
+    const toggleFavori = (offreId) => {
+        const newFavoris = favoris.includes(offreId)
+            ? favoris.filter(id => id !== offreId)
+            : [...favoris, offreId];
+        
+        setFavoris(newFavoris);
+        localStorage.setItem('favoris', JSON.stringify(newFavoris));
+    };
+
     return (
-        <div className="center-container">
-            <div className="offres-container">
-                <h1 className="page-title">Offres de Stage</h1>
-                <div className="offres-grid">
-                    {offresDeStages.map((offre) => (
-                        <OffreCard key={offre.id} offre={offre} />
-                    ))}
-                </div>
+        <div className="offres-container">
+            <div className="offres-header">
+                <h1>Offres de Stage</h1>
+                <p>Trouvez le stage qui correspond à vos attentes</p>
+            </div>
+
+            <Filters onFilterChange={handleFiltreChange} />
+
+            <div className="offres-grid">
+                {filtrerOffres().map((offre) => (
+                    <OffreCard
+                        key={offre.id}
+                        offre={offre}
+                        onFavorite={toggleFavori}
+                        isFavorite={favoris.includes(offre.id)}
+                    />
+                ))}
             </div>
         </div>
     );

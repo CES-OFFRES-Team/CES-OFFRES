@@ -193,113 +193,236 @@ ul {
 
 /* Style principal du conteneur */
 .offres-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    max-width: 600px;
-    margin: 0 auto;
+    min-height: 100vh;
+    background-color: #f8fafc;
     padding: 2rem;
-    background-color: var(--background);
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Titre de la page */
-.page-title {
-    margin-bottom: 2rem;
+.offres-header {
+    max-width: 1400px;
+    margin: 0 auto 3rem auto;
     text-align: center;
-    color: var(--primary);
-    font-size: 2rem;
-    font-weight: 600;
 }
 
-/* Modifier la grille des offres pour un affichage en colonne */
-.offres-grid {
-    display: flex;
-    flex-direction: column;
+.offres-header h1 {
+    color: #1a237e;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.offres-header p {
+    color: #64748b;
+    font-size: 1.2rem;
+}
+
+/* Filtres des offres */
+.offres-filters {
+    max-width: 1400px;
+    margin: 0 auto 2rem auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1.5rem;
 }
 
-/* Ajuster le style des cartes d'offres */
-.offre {
-    padding: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: var(--background);
-    transition: border-color 0.3s ease;
-}
-
-.offre:hover {
-    border-color: var(--primary);
-}
-
-/* Titre de l'offre */
-.offre h2 {
-    color: var(--primary);
-    margin-bottom: 1rem;
-}
-
-/* Détails de l'offre */
-.offre-details {
+.filter-item {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.8rem;
 }
 
-.offre-details p {
-    margin: 0;
-    color: var(--foreground);
-}
-
-.offre p {
-    margin: 0;
-    color: var(--foreground);
+.filter-item label {
+    color: #1a237e;
+    font-weight: 600;
     font-size: 0.95rem;
 }
 
-.offre strong {
-    color: var(--primary);
-    font-weight: 500;
+.filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
 }
 
-/* Bouton postuler */
-.postuler-button {
-    background-color: var(--primary);
-    color: white;
-    padding: 0.75rem;
-    border: none;
-    border-radius: 4px;
+.filter-chip {
+    background: #e3f2fd;
+    color: #1a237e;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: auto;
-    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.filter-chip:hover {
+    background: #bbdefb;
+}
+
+.filter-chip button {
+    background: none;
+    border: none;
+    color: #1a237e;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.duration-inputs {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.duration-inputs input {
+    width: 80px;
+}
+
+.month-select {
+    padding: 0.8rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #1a237e;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.month-select:hover {
+    border-color: #1a237e;
+}
+
+.filter-input {
+    padding: 0.8rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.filter-input:focus {
+    outline: none;
+    border-color: #1a237e;
+    box-shadow: 0 0 0 2px rgba(26, 35, 126, 0.1);
+}
+
+/* Modifier la grille des offres */
+.offres-grid {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+/* Ajuster le style des cartes d'offres */
+.offre-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+
+.offre-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    border-color: #1a237e;
+}
+
+/* En-tête de l'offre */
+.offre-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+.offre-title {
+    color: #1a237e;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.offre-company {
+    color: #64748b;
     font-size: 1rem;
 }
 
-.postuler-button:hover {
-    background-color: var(--primary-dark);
-    transform: translateY(-2px);
+/* Contenu de l'offre */
+.offre-content {
+    padding: 1.5rem;
 }
 
-/* Ajuster le conteneur principal */
-.offres-form {
-    max-width: 800px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 2rem;
-    background-color: var(--background);
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+.offre-details {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
-/* Supprimer les media queries pour la grille car elles ne sont plus nécessaires */
-@media (max-width: 1024px) {
-    .offres-grid {
-        padding: 1.5rem;
-    }
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #64748b;
+}
+
+.detail-item svg {
+    color: #1a237e;
+}
+
+/* Actions de l'offre */
+.offre-actions {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex: 1;
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: #1a237e;
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #283593;
+    transform: translateY(-1px);
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 1px solid #1a237e;
+    color: #1a237e;
+}
+
+.btn-outline:hover {
+    background-color: #f8fafc;
+    transform: translateY(-1px);
 }
 
 @media (max-width: 768px) {
@@ -307,18 +430,12 @@ ul {
         padding: 1rem;
     }
 
+    .offres-header h1 {
+        font-size: 2rem;
+    }
+
     .offres-grid {
-        padding: 1rem;
-    }
-
-    .offres-form {
-        padding: 1rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .offre {
-        padding: 1rem;
+        grid-template-columns: 1fr;
     }
 }
 

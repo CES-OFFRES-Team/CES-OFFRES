@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { getUserData, logout } from '../utils/auth';
 import ProtectedRoute from '../components/ProtectedRoute';
-import { FaUser, FaBriefcase, FaEnvelope, FaCog, FaSearch } from 'react-icons/fa';
+import { HiUser, HiBriefcase, HiMail, HiCog, HiSearch } from 'react-icons/hi';
 import './dashboard.css';
 
 export default function Dashboard() {
@@ -60,7 +60,7 @@ export default function Dashboard() {
                     
                     <div className="dashboard-grid">
                         <div className="dashboard-card">
-                            <h3><FaUser /> Mon Profil</h3>
+                            <h3><HiUser className="card-icon" /> Mon Profil</h3>
                             <p>Gérer votre CV, vos compétences et informations personnelles</p>
                             <div className="card-stats">
                                 <div className="card-stat">
@@ -70,7 +70,7 @@ export default function Dashboard() {
                             </div>
                         </div>
                         <div className="dashboard-card">
-                            <h3><FaBriefcase /> Mes Candidatures</h3>
+                            <h3><HiBriefcase className="card-icon" /> Mes Candidatures</h3>
                             <p>Suivez l'état de vos candidatures et gérez vos offres</p>
                             <div className="card-stats">
                                 <div className="card-stat">
@@ -80,7 +80,7 @@ export default function Dashboard() {
                             </div>
                         </div>
                         <div className="dashboard-card">
-                            <h3><FaEnvelope /> Messages</h3>
+                            <h3><HiMail className="card-icon" /> Messages</h3>
                             <p>Consultez vos messages et échanges avec les recruteurs</p>
                             <div className="card-stats">
                                 <div className="card-stat">
@@ -90,11 +90,13 @@ export default function Dashboard() {
                             </div>
                         </div>
                         <div className="dashboard-card">
-                            <h3><FaSearch /> Recherche d'offres</h3>
+                            <h3><HiSearch className="card-icon" /> Recherche d'offres</h3>
                             <p>Trouvez de nouvelles opportunités correspondant à votre profil</p>
                             <div className="card-stats">
-                                <div className="card-stat-number">150+</div>
-                                <div className="card-stat-label">Offres disponibles</div>
+                                <div className="card-stat">
+                                    <div className="card-stat-number">150+</div>
+                                    <div className="card-stat-label">Offres disponibles</div>
+                                </div>
                             </div>
                         </div>
                     </div>

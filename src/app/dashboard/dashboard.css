@@ -161,6 +161,12 @@
     margin-top: 0.25rem;
 }
 
+.card-icon {
+    width: 24px;
+    height: 24px;
+    color: #1a237e;
+}
+
 @media (max-width: 1024px) {
     .stats-container {
         grid-template-columns: repeat(2, 1fr);
