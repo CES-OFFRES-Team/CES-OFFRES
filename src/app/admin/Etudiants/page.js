@@ -5,6 +5,86 @@ import { HiPhone, HiMail, HiUser, HiTrash } from 'react-icons/hi';
 import '../../Offres/Offres.css';
 import Cookies from 'js-cookie';
 
+const ModalModifier = ({ etudiant, onClose, onSave }) => {
+    const [formData, setFormData] = useState({
+        nom_personne: etudiant.nom_personne,
+        prenom_personne: etudiant.prenom_personne,
+        téléphone_personne: etudiant.téléphone_personne,
+        email_personne: etudiant.email_personne
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSave(etudiant.id_personne, formData);
+    };
+
+    return (
+        <div className="modal-overlay">
+            <div className="modal-content">
+                <h2>Modifier l'étudiant</h2>
+                <form onSubmit={handleSubmit}>
+                    <div className="form-group">
+                        <label htmlFor="nom_personne">Nom</label>
+                        <input
+                            type="text"
+                            id="nom_personne"
+                            name="nom_personne"
+                            value={formData.nom_personne}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="prenom_personne">Prénom</label>
+                        <input
+                            type="text"
+                            id="prenom_personne"
+                            name="prenom_personne"
+                            value={formData.prenom_personne}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="téléphone_personne">Téléphone</label>
+                        <input
+                            type="tel"
+                            id="téléphone_personne"
+                            name="téléphone_personne"
+                            value={formData.téléphone_personne}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="email_personne">Email</label>
+                        <input
+                            type="email"
+                            id="email_personne"
+                            name="email_personne"
+                            value={formData.email_personne}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div className="modal-actions">
+                        <button type="button" className="btn btn-outline" onClick={onClose}>Annuler</button>
+                        <button type="submit" className="btn btn-primary">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
+
 const EtudiantCard = ({ etudiant, onModifier, onSupprimer }) => {
     return (
         <div className="offre-card">
@@ -39,6 +119,8 @@ export default function AdminEtudiantsPage() {
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [selectedEtudiant, setSelectedEtudiant] = useState(null);
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         fetchEtudiants();
@@ -72,8 +154,37 @@ export default function AdminEtudiantsPage() {
     };
 
     const handleModifier = (etudiant) => {
-        // TODO: Implémenter la modification
-        console.log('Modifier:', etudiant);
+        setSelectedEtudiant(etudiant);
+        setShowModal(true);
+    };
+
+    const handleSaveModification = async (id, formData) => {
+        try {
+            const token = Cookies.get('authToken');
+            const response = await fetch(`http://20.19.36.142:8000/api/users/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (!response.ok) {
+                throw new Error('Erreur lors de la modification');
+            }
+
+            // Mettre à jour la liste des étudiants
+            setEtudiants(etudiants.map(e => 
+                e.id_personne === id ? { ...e, ...formData } : e
+            ));
+
+            setShowModal(false);
+            setSelectedEtudiant(null);
+        } catch (error) {
+            console.error('Erreur:', error);
+            alert('Erreur lors de la modification de l\'étudiant');
+        }
     };
 
     const handleSupprimer = async (id) => {
@@ -154,6 +265,17 @@ export default function AdminEtudiantsPage() {
                     />
                 ))}
             </div>
+
+            {showModal && selectedEtudiant && (
+                <ModalModifier
+                    etudiant={selectedEtudiant}
+                    onClose={() => {
+                        setShowModal(false);
+                        setSelectedEtudiant(null);
+                    }}
+                    onSave={handleSaveModification}
+                />
+            )}
         </div>
     );
 }

@@ -398,4 +398,71 @@ class UserController {
         }
     }
 
+    public function updateUser($id) {
+        try {
+            // Récupération des données du corps de la requête
+            $data = json_decode(file_get_contents("php://input"), true);
+            
+            if (!$data) {
+                error_log("[ERROR] Données JSON invalides reçues pour la mise à jour de l'utilisateur ID: " . $id);
+                http_response_code(400);
+                echo json_encode(["message" => "Données invalides"]);
+                return;
+            }
+
+            // Validation des champs requis
+            $requiredFields = ['nom_personne', 'prenom_personne', 'téléphone_personne', 'email_personne'];
+            foreach ($requiredFields as $field) {
+                if (!isset($data[$field]) || empty(trim($data[$field]))) {
+                    error_log("[ERROR] Champ manquant: " . $field . " pour l'utilisateur ID: " . $id);
+                    http_response_code(400);
+                    echo json_encode(["message" => "Le champ " . $field . " est requis"]);
+                    return;
+                }
+            }
+
+            // Validation de l'email
+            if (!filter_var($data['email_personne'], FILTER_VALIDATE_EMAIL)) {
+                error_log("[ERROR] Format d'email invalide pour l'utilisateur ID: " . $id);
+                http_response_code(400);
+                echo json_encode(["message" => "Format d'email invalide"]);
+                return;
+            }
+
+            // Vérification si l'email existe déjà pour un autre utilisateur
+            $existingUser = $this->user->findByEmail($data['email_personne']);
+            if ($existingUser && $existingUser['id_personne'] != $id) {
+                error_log("[ERROR] Email déjà utilisé pour l'utilisateur ID: " . $id);
+                http_response_code(400);
+                echo json_encode(["message" => "Cet email est déjà utilisé"]);
+                return;
+            }
+
+            // Mise à jour de l'utilisateur
+            if ($this->user->update($id, $data)) {
+                error_log("[SUCCESS] Utilisateur ID: " . $id . " mis à jour avec succès");
+                http_response_code(200);
+                echo json_encode([
+                    "message" => "Utilisateur mis à jour avec succès",
+                    "user" => [
+                        "id" => $id,
+                        "nom" => $data['nom_personne'],
+                        "prenom" => $data['prenom_personne'],
+                        "telephone" => $data['téléphone_personne'],
+                        "email" => $data['email_personne']
+                    ]
+                ]);
+            } else {
+                error_log("[ERROR] Échec de la mise à jour de l'utilisateur ID: " . $id);
+                http_response_code(500);
+                echo json_encode(["message" => "Erreur lors de la mise à jour de l'utilisateur"]);
+            }
+
+        } catch (Exception $e) {
+            error_log("[ERROR] Exception lors de la mise à jour de l'utilisateur ID: " . $id . " - " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(["message" => "Erreur serveur lors de la mise à jour"]);
+        }
+    }
+
 }

@@ -184,4 +184,49 @@ class User {
             return false;
         }
     }
+
+    public function update($id, $data) {
+        try {
+            $query = "UPDATE " . $this->table . "
+                     SET nom_personne = :nom_personne,
+                         prenom_personne = :prenom_personne,
+                         téléphone_personne = :telephone_personne,
+                         email_personne = :email_personne
+                     WHERE id_personne = :id";
+
+            error_log("[DEBUG] Requête de mise à jour: " . $query);
+            error_log("[DEBUG] Données à mettre à jour: " . print_r($data, true));
+
+            $stmt = $this->conn->prepare($query);
+
+            // Nettoyage des données
+            $data['nom_personne'] = htmlspecialchars(strip_tags(trim($data['nom_personne'])));
+            $data['prenom_personne'] = htmlspecialchars(strip_tags(trim($data['prenom_personne'])));
+            $data['téléphone_personne'] = htmlspecialchars(strip_tags(trim($data['téléphone_personne'])));
+            $data['email_personne'] = htmlspecialchars(strip_tags(trim($data['email_personne'])));
+
+            // Liaison des paramètres
+            $stmt->bindParam(":nom_personne", $data['nom_personne']);
+            $stmt->bindParam(":prenom_personne", $data['prenom_personne']);
+            $stmt->bindParam(":telephone_personne", $data['téléphone_personne']);
+            $stmt->bindParam(":email_personne", $data['email_personne']);
+            $stmt->bindParam(":id", $id);
+
+            if($stmt->execute()) {
+                error_log("[SUCCESS] Mise à jour réussie pour l'utilisateur ID: " . $id);
+                return true;
+            }
+
+            $error = $stmt->errorInfo();
+            error_log("[ERROR] Échec de la mise à jour pour l'utilisateur ID: " . $id);
+            error_log("[ERROR] SQL State: " . $error[0]);
+            error_log("[ERROR] Error Code: " . $error[1]);
+            error_log("[ERROR] Message: " . $error[2]);
+            return false;
+
+        } catch(PDOException $e) {
+            error_log("[ERROR] Exception PDO lors de la mise à jour: " . $e->getMessage());
+            throw $e;
+        }
+    }
 }
