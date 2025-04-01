@@ -82,6 +82,8 @@ export default function AdminEntreprisesPage() {
             console.log('Données reçues:', data);
             
             if (data.status === 'success') {
+                console.log('Nombre d\'entreprises reçues:', data.data.length);
+                console.log('Données des entreprises:', data.data);
                 setEntreprises(data.data);
             } else {
                 setError('Erreur lors de la récupération des entreprises: ' + (data.message || 'Erreur inconnue'));
@@ -197,14 +199,20 @@ export default function AdminEntreprisesPage() {
             )}
 
             <div className="entreprises-grid">
-                {entreprisesFiltrees.map((entreprise) => (
-                    <EntrepriseCard 
-                        key={entreprise.id_entreprise} 
-                        entreprise={entreprise}
-                        onModifier={handleModifier}
-                        onSupprimer={handleSupprimer}
-                    />
-                ))}
+                {entreprises.length === 0 ? (
+                    <div className="no-data-message">
+                        Aucune entreprise trouvée
+                    </div>
+                ) : (
+                    entreprisesFiltrees.map((entreprise) => (
+                        <EntrepriseCard 
+                            key={entreprise.id_entreprise} 
+                            entreprise={entreprise}
+                            onModifier={handleModifier}
+                            onSupprimer={handleSupprimer}
+                        />
+                    ))
+                )}
             </div>
 
             {modalOpen && (
