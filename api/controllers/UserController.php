@@ -15,8 +15,8 @@ class UserController {
     public function handleRequest($method) {
         header('Access-Control-Allow-Origin: *');
         header('Content-Type: application/json');
-        header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-        header('Access-Control-Allow-Headers: Content-Type');
+        header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+        header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
         // Récupérer l'URL complète
         $requestUri = $_SERVER['REQUEST_URI'];
@@ -25,6 +25,20 @@ class UserController {
         $isEtudiantsEndpoint = strpos($requestUri, '/etudiants') !== false;
         $isPilotesEndpoint = strpos($requestUri, '/pilotes') !== false;
         $isLoginEndpoint = strpos($requestUri, '/login') !== false;
+
+        // Vérifier si c'est une requête avec un ID
+        if (preg_match('/\/users\/(\d+)/', $requestUri, $matches)) {
+            $id = $matches[1];
+            switch ($method) {
+                case 'PUT':
+                    return $this->updateUser($id);
+                case 'DELETE':
+                    return $this->deleteUser($id);
+                default:
+                    http_response_code(405);
+                    return json_encode(['error' => 'Méthode non autorisée']);
+            }
+        }
 
         switch ($method) {
             case 'GET':
@@ -466,6 +480,65 @@ class UserController {
             error_log("[ERROR] Exception lors de la mise à jour de l'utilisateur ID: " . $id . " - " . $e->getMessage());
             http_response_code(500);
             echo json_encode(["message" => "Erreur serveur lors de la mise à jour"]);
+        }
+    }
+
+    public function deleteUser($id) {
+        try {
+            // Vérifier le token d'authentification
+            $headers = getallheaders();
+            $authHeader = $headers['Authorization'] ?? '';
+            
+            if (!preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
+                http_response_code(401);
+                return json_encode([
+                    'status' => 'error',
+                    'message' => 'Token non fourni ou format invalide'
+                ]);
+            }
+
+            $token = $matches[1];
+            $user = $this->user->findByToken($token);
+
+            if (!$user) {
+                http_response_code(401);
+                return json_encode([
+                    'status' => 'error',
+                    'message' => 'Token invalide'
+                ]);
+            }
+
+            // Vérifier si l'utilisateur est admin
+            if ($user['role'] !== 'Admin') {
+                http_response_code(403);
+                return json_encode([
+                    'status' => 'error',
+                    'message' => 'Accès non autorisé'
+                ]);
+            }
+
+            if ($this->user->delete($id)) {
+                error_log("[SUCCESS] Utilisateur ID: " . $id . " supprimé avec succès");
+                http_response_code(200);
+                return json_encode([
+                    'status' => 'success',
+                    'message' => 'Utilisateur supprimé avec succès'
+                ]);
+            } else {
+                error_log("[ERROR] Échec de la suppression de l'utilisateur ID: " . $id);
+                http_response_code(500);
+                return json_encode([
+                    'status' => 'error',
+                    'message' => 'Erreur lors de la suppression de l\'utilisateur'
+                ]);
+            }
+        } catch (Exception $e) {
+            error_log("[ERROR] Exception lors de la suppression de l'utilisateur ID: " . $id . " - " . $e->getMessage());
+            http_response_code(500);
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Erreur serveur lors de la suppression'
+            ]);
         }
     }
 

@@ -229,4 +229,29 @@ class User {
             throw $e;
         }
     }
+
+    public function delete($id) {
+        try {
+            $query = "DELETE FROM " . $this->table . " WHERE id_personne = :id";
+            $stmt = $this->conn->prepare($query);
+            
+            $stmt->bindParam(":id", $id);
+            
+            if($stmt->execute()) {
+                error_log("[SUCCESS] Suppression réussie de l'utilisateur ID: " . $id);
+                return true;
+            }
+            
+            $error = $stmt->errorInfo();
+            error_log("[ERROR] Échec de la suppression de l'utilisateur ID: " . $id);
+            error_log("[ERROR] SQL State: " . $error[0]);
+            error_log("[ERROR] Error Code: " . $error[1]);
+            error_log("[ERROR] Message: " . $error[2]);
+            return false;
+            
+        } catch(PDOException $e) {
+            error_log("[ERROR] Exception PDO lors de la suppression: " . $e->getMessage());
+            throw $e;
+        }
+    }
 }
