@@ -1,7 +1,7 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-export default function EntrepriseModal({ onClose, onSubmit }) {
+export default function EntrepriseModal({ entreprise, onClose, onSubmit }) {
     const [formData, setFormData] = useState({
         nom_entreprise: '',
         adresse: '',
@@ -10,6 +10,19 @@ export default function EntrepriseModal({ onClose, onSubmit }) {
         description: '',
         moyenne_eval: 0
     });
+
+    useEffect(() => {
+        if (entreprise) {
+            setFormData({
+                nom_entreprise: entreprise.nom_entreprise || '',
+                adresse: entreprise.adresse || '',
+                email: entreprise.email || '',
+                téléphone: entreprise.téléphone || '',
+                description: entreprise.description || '',
+                moyenne_eval: entreprise.moyenne_eval || 0
+            });
+        }
+    }, [entreprise]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -27,7 +40,7 @@ export default function EntrepriseModal({ onClose, onSubmit }) {
     return (
         <div className="modal-overlay">
             <div className="modal-content">
-                <h2>Ajouter une entreprise</h2>
+                <h2>{entreprise ? 'Modifier' : 'Ajouter'} une entreprise</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label htmlFor="nom_entreprise">Nom de l'entreprise *</label>
@@ -93,7 +106,7 @@ export default function EntrepriseModal({ onClose, onSubmit }) {
                             Annuler
                         </button>
                         <button type="submit" className="btn-submit">
-                            Créer
+                            {entreprise ? 'Modifier' : 'Créer'}
                         </button>
                     </div>
                 </form>

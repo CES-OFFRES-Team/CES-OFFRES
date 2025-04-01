@@ -27,18 +27,18 @@ const EntrepriseCard = ({ entreprise, onModifier, onSupprimer }) => {
     return (
         <div className="entreprise-card">
             <div className="entreprise-header">
-                <h2 className="entreprise-title">{entreprise.nom}</h2>
-                <div className="entreprise-secteur">{entreprise.secteur}</div>
+                <h2 className="entreprise-title">{entreprise.nom_entreprise}</h2>
+                <div className="entreprise-secteur">{entreprise.adresse}</div>
             </div>
             <div className="entreprise-content">
                 <div className="entreprise-details">
                     <div className="detail-item">
                         <HiPhone />
-                        <span>{entreprise.telephone}</span>
+                        <span>{entreprise.téléphone}</span>
                     </div>
                     <div className="detail-item">
                         <HiMail />
-                        <span>{entreprise.mail}</span>
+                        <span>{entreprise.email}</span>
                     </div>
                 </div>
             </div>
@@ -46,7 +46,7 @@ const EntrepriseCard = ({ entreprise, onModifier, onSupprimer }) => {
                 <button className="btn btn-outline" onClick={() => onModifier(entreprise)}>
                     Modifier
                 </button>
-                <button className="btn btn-outline" onClick={() => onSupprimer(entreprise.id)}>
+                <button className="btn btn-outline" onClick={() => onSupprimer(entreprise.id_entreprise)}>
                     <HiTrash className="trash-icon" />
                 </button>
             </div>
@@ -56,7 +56,9 @@ const EntrepriseCard = ({ entreprise, onModifier, onSupprimer }) => {
 
 export default function AdminEntreprisesPage() {
     const [entreprises, setEntreprises] = useState([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [search, setSearch] = useState('');
+    const [modalOpen, setModalOpen] = useState(false);
+    const [selectedEntreprise, setSelectedEntreprise] = useState(null);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
 
@@ -80,24 +82,62 @@ export default function AdminEntreprisesPage() {
         }
     };
 
-    const handleCreateEntreprise = async (entrepriseData) => {
+    const handleCreate = () => {
+        setSelectedEntreprise(null);
+        setModalOpen(true);
+    };
+
+    const handleModifier = (entreprise) => {
+        setSelectedEntreprise(entreprise);
+        setModalOpen(true);
+    };
+
+    const handleSupprimer = async (id) => {
+        if (window.confirm('Êtes-vous sûr de vouloir supprimer cette entreprise ?')) {
+            try {
+                const response = await fetch(`http://localhost:8000/api/entreprises/${id}`, {
+                    method: 'DELETE',
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    setSuccess('Entreprise supprimée avec succès');
+                    fetchEntreprises();
+                } else {
+                    setError(data.message || 'Erreur lors de la suppression de l\'entreprise');
+                }
+            } catch (error) {
+                setError('Erreur de connexion au serveur');
+                console.error('Erreur:', error);
+            }
+        }
+    };
+
+    const handleModalSubmit = async (formData) => {
         try {
-            const response = await fetch('http://localhost:8000/api/entreprises', {
-                method: 'POST',
+            const url = selectedEntreprise 
+                ? `http://localhost:8000/api/entreprises/${selectedEntreprise.id_entreprise}`
+                : 'http://localhost:8000/api/entreprises';
+            
+            const method = selectedEntreprise ? 'PUT' : 'POST';
+
+            const response = await fetch(url, {
+                method,
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(entrepriseData),
+                body: JSON.stringify(formData),
             });
 
             const data = await response.json();
 
             if (data.status === 'success') {
-                setSuccess('Entreprise créée avec succès');
-                setIsModalOpen(false);
-                fetchEntreprises(); // Rafraîchir la liste
+                setSuccess(selectedEntreprise ? 'Entreprise modifiée avec succès' : 'Entreprise créée avec succès');
+                setModalOpen(false);
+                fetchEntreprises();
             } else {
-                setError(data.message || 'Erreur lors de la création de l\'entreprise');
+                setError(data.message || `Erreur lors de ${selectedEntreprise ? 'la modification' : 'la création'} de l'entreprise`);
             }
         } catch (error) {
             setError('Erreur de connexion au serveur');
@@ -105,16 +145,29 @@ export default function AdminEntreprisesPage() {
         }
     };
 
+    const handleSearchChange = (e) => {
+        setSearch(e.target.value);
+    };
+
+    const entreprisesFiltrees = entreprises.filter((e) =>
+        e.nom_entreprise.toLowerCase().includes(search.toLowerCase()) ||
+        e.adresse.toLowerCase().includes(search.toLowerCase())
+    );
+
     return (
-        <div className="admin-entreprises-container">
-            <div className="admin-entreprises-header">
+        <div className="entreprises-container">
+            <div className="entreprises-header">
                 <h1>Gestion des Entreprises</h1>
-                <button 
-                    className="btn-add"
-                    onClick={() => setIsModalOpen(true)}
-                >
-                    Ajouter une entreprise
+                <button className="btn btn-primary" onClick={handleCreate}>
+                    <HiPlus /> Nouvelle Entreprise
                 </button>
+                <input
+                    type="text"
+                    placeholder="Rechercher une entreprise..."
+                    value={search}
+                    onChange={handleSearchChange}
+                    className="filter-input"
+                />
             </div>
 
             {error && (
@@ -129,40 +182,22 @@ export default function AdminEntreprisesPage() {
                 </div>
             )}
 
-            <div className="entreprises-list">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nom</th>
-                            <th>Adresse</th>
-                            <th>Email</th>
-                            <th>Téléphone</th>
-                            <th>Note moyenne</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {entreprises.map((entreprise) => (
-                            <tr key={entreprise.id_entreprise}>
-                                <td>{entreprise.nom_entreprise}</td>
-                                <td>{entreprise.adresse}</td>
-                                <td>{entreprise.email}</td>
-                                <td>{entreprise.téléphone}</td>
-                                <td>{entreprise.moyenne_eval || '0'}</td>
-                                <td>
-                                    <button className="btn-edit">Modifier</button>
-                                    <button className="btn-delete">Supprimer</button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+            <div className="entreprises-grid">
+                {entreprisesFiltrees.map((entreprise) => (
+                    <EntrepriseCard 
+                        key={entreprise.id_entreprise} 
+                        entreprise={entreprise}
+                        onModifier={handleModifier}
+                        onSupprimer={handleSupprimer}
+                    />
+                ))}
             </div>
 
-            {isModalOpen && (
+            {modalOpen && (
                 <EntrepriseModal
-                    onClose={() => setIsModalOpen(false)}
-                    onSubmit={handleCreateEntreprise}
+                    entreprise={selectedEntreprise}
+                    onClose={() => setModalOpen(false)}
+                    onSubmit={handleModalSubmit}
                 />
             )}
         </div>
