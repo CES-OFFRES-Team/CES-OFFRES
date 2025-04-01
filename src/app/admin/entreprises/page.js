@@ -70,17 +70,25 @@ export default function AdminEntreprisesPage() {
 
     const fetchEntreprises = async () => {
         try {
+            console.log('Tentative de connexion à:', `${API_URL}/entreprises`);
             const response = await fetch(`${API_URL}/entreprises`);
+            console.log('Réponse reçue:', response.status, response.statusText);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
             const data = await response.json();
+            console.log('Données reçues:', data);
             
             if (data.status === 'success') {
                 setEntreprises(data.data);
             } else {
-                setError('Erreur lors de la récupération des entreprises');
+                setError('Erreur lors de la récupération des entreprises: ' + (data.message || 'Erreur inconnue'));
             }
         } catch (error) {
-            setError('Erreur de connexion au serveur');
-            console.error('Erreur:', error);
+            console.error('Erreur détaillée:', error);
+            setError(`Erreur de connexion au serveur: ${error.message}`);
         }
     };
 
