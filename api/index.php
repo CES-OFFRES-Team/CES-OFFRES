@@ -41,6 +41,11 @@ switch ($path) {
         echo $controller->handleRequest($method);
         break;
 
+    case (preg_match('/^\/users\/\d+$/', $path) ? true : false):
+        $controller = new UserController();
+        echo $controller->handleRequest($method);
+        break;
+
     case '/login':
         $controller = new UserController();
         echo $controller->handleRequest($method);
