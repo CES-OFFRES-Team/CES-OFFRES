@@ -6,6 +6,7 @@ import EntrepriseModal from './EntrepriseModal';
 import './Entreprises.css';
 
 const API_URL = 'http://20.19.36.124:8000/api';
+const BACKUP_API_URL = 'https://ces-offres.000webhostapp.com/api';
 
 // Données fictives pour les entreprises
 const entreprisesDeTest = [
@@ -26,21 +27,22 @@ const entreprisesDeTest = [
 ];
 
 const EntrepriseCard = ({ entreprise, onModifier, onSupprimer }) => {
+    console.log('Rendu de la carte entreprise:', entreprise);
     return (
         <div className="entreprise-card">
             <div className="entreprise-header">
-                <h2 className="entreprise-title">{entreprise.nom_entreprise}</h2>
-                <div className="entreprise-secteur">{entreprise.adresse}</div>
+                <h2 className="entreprise-title">{entreprise.nom || entreprise.nom_entreprise}</h2>
+                <div className="entreprise-secteur">{entreprise.secteur || entreprise.adresse}</div>
             </div>
             <div className="entreprise-content">
                 <div className="entreprise-details">
                     <div className="detail-item">
                         <HiPhone />
-                        <span>{entreprise.téléphone}</span>
+                        <span>{entreprise.telephone || entreprise.téléphone}</span>
                     </div>
                     <div className="detail-item">
                         <HiMail />
-                        <span>{entreprise.email}</span>
+                        <span>{entreprise.mail || entreprise.email}</span>
                     </div>
                 </div>
             </div>
@@ -48,7 +50,7 @@ const EntrepriseCard = ({ entreprise, onModifier, onSupprimer }) => {
                 <button className="btn btn-outline" onClick={() => onModifier(entreprise)}>
                     Modifier
                 </button>
-                <button className="btn btn-outline" onClick={() => onSupprimer(entreprise.id_entreprise)}>
+                <button className="btn btn-outline" onClick={() => onSupprimer(entreprise.id || entreprise.id_entreprise)}>
                     <HiTrash className="trash-icon" />
                 </button>
             </div>
@@ -71,7 +73,16 @@ export default function AdminEntreprisesPage() {
     const fetchEntreprises = async () => {
         try {
             console.log('Tentative de connexion à:', `${API_URL}/entreprises`);
-            const response = await fetch(`${API_URL}/entreprises`);
+            const response = await fetch(`${API_URL}/entreprises`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                mode: 'cors',
+                credentials: 'omit'
+            });
+            
             console.log('Réponse reçue:', response.status, response.statusText);
             
             if (!response.ok) {
@@ -89,8 +100,34 @@ export default function AdminEntreprisesPage() {
                 setError('Erreur lors de la récupération des entreprises: ' + (data.message || 'Erreur inconnue'));
             }
         } catch (error) {
-            console.error('Erreur détaillée:', error);
-            setError(`Erreur de connexion au serveur: ${error.message}`);
+            console.error('Erreur avec la première URL:', error);
+            try {
+                console.log('Tentative avec l\'URL de secours:', `${BACKUP_API_URL}/entreprises`);
+                const response = await fetch(`${BACKUP_API_URL}/entreprises`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    mode: 'cors',
+                    credentials: 'omit'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    setEntreprises(data.data);
+                } else {
+                    setError('Erreur lors de la récupération des entreprises: ' + (data.message || 'Erreur inconnue'));
+                }
+            } catch (backupError) {
+                console.error('Erreur avec l\'URL de secours:', backupError);
+                setError('Impossible de se connecter au serveur. Vérifiez que le serveur est en cours d\'exécution et accessible.');
+            }
         }
     };
 
