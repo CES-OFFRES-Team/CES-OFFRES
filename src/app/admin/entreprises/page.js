@@ -5,6 +5,8 @@ import { HiBuildingOffice, HiPhone, HiMail, HiTrash, HiPlus } from 'react-icons/
 import EntrepriseModal from './EntrepriseModal';
 import './Entreprises.css';
 
+const API_URL = 'https://ces-offres.000webhostapp.com/api';
+
 // Données fictives pour les entreprises
 const entreprisesDeTest = [
     {
@@ -68,7 +70,7 @@ export default function AdminEntreprisesPage() {
 
     const fetchEntreprises = async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/entreprises');
+            const response = await fetch(`${API_URL}/entreprises`);
             const data = await response.json();
             
             if (data.status === 'success') {
@@ -95,7 +97,7 @@ export default function AdminEntreprisesPage() {
     const handleSupprimer = async (id) => {
         if (window.confirm('Êtes-vous sûr de vouloir supprimer cette entreprise ?')) {
             try {
-                const response = await fetch(`http://localhost:8000/api/entreprises/${id}`, {
+                const response = await fetch(`${API_URL}/entreprises/${id}`, {
                     method: 'DELETE',
                 });
 
@@ -117,8 +119,8 @@ export default function AdminEntreprisesPage() {
     const handleModalSubmit = async (formData) => {
         try {
             const url = selectedEntreprise 
-                ? `http://localhost:8000/api/entreprises/${selectedEntreprise.id_entreprise}`
-                : 'http://localhost:8000/api/entreprises';
+                ? `${API_URL}/entreprises/${selectedEntreprise.id_entreprise}`
+                : `${API_URL}/entreprises`;
             
             const method = selectedEntreprise ? 'PUT' : 'POST';
 
