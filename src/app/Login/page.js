@@ -106,7 +106,7 @@ export default function LoginPage() {
         // Redirection en fonction du rôle
         let redirectPath = '/dashboard';
         if (data.user.role === 'Admin') {
-          redirectPath = '/admin/dashboard';
+          redirectPath = '/admin';
         } else if (data.user.role === 'Pilote') {
           redirectPath = '/pilote/dashboard';
         } else if (data.user.role === 'Etudiant') {

@@ -1,8 +1,5 @@
 {
   "/Login/page": "app/Login/page.js",
-  "/Offres/page": "app/Offres/page.js",
-  "/Register/page": "app/Register/page.js",
-  "/_not-found/page": "app/_not-found/page.js",
   "/dashboard/page": "app/dashboard/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/page": "app/page.js"

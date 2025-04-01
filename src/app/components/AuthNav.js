@@ -1,12 +1,11 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 
 export default function AuthNav() {
   const router = useRouter();
-  const [showLogout, setShowLogout] = useState(false);
   const userData = Cookies.get('userData');
   let user = null;
 
@@ -49,23 +48,17 @@ export default function AuthNav() {
           <Link 
             href={getDashboardPath()} 
             className="mon-compte-button"
-            onMouseEnter={() => setShowLogout(true)}
-            onMouseLeave={() => setShowLogout(false)}
           >
             <i className="fas fa-user-circle"></i>
             Mon Compte
           </Link>
-          {showLogout && (
-            <button 
-              className="deconnexion-button"
-              onClick={handleLogout}
-              onMouseEnter={() => setShowLogout(true)}
-              onMouseLeave={() => setShowLogout(false)}
-            >
-              <i className="fas fa-sign-out-alt"></i>
-              Déconnexion
-            </button>
-          )}
+          <button 
+            className="deconnexion-button"
+            onClick={handleLogout}
+          >
+            <i className="fas fa-sign-out-alt"></i>
+            Déconnexion
+          </button>
         </>
       ) : (
         <Link 
