@@ -13,16 +13,23 @@ class Entreprise {
 
     public function __construct($db) {
         $this->conn = $db;
+        error_log("[DEBUG] Initialisation du modèle Entreprise");
     }
 
     public function getAll() {
         try {
+            error_log("[DEBUG] Tentative de récupération de toutes les entreprises");
             $query = "SELECT * FROM " . $this->table;
+            error_log("[DEBUG] Requête SQL: " . $query);
+            
             $stmt = $this->conn->prepare($query);
             $stmt->execute();
+            
+            error_log("[DEBUG] Requête exécutée avec succès");
             return $stmt;
         } catch(PDOException $e) {
             error_log("[ERROR] Exception lors de la récupération des entreprises: " . $e->getMessage());
+            error_log("[ERROR] Code d'erreur SQL: " . $e->getCode());
             throw $e;
         }
     }

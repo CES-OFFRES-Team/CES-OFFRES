@@ -7,50 +7,76 @@ class EntrepriseController {
     private $entreprise;
 
     public function __construct() {
+        error_log("[DEBUG] Initialisation du contrôleur Entreprise");
         $database = new Database();
         $this->db = $database->getConnection();
         $this->entreprise = new Entreprise($this->db);
     }
 
-    public function handleRequest($method) {
-        header('Access-Control-Allow-Origin: *');
-        header('Content-Type: application/json');
-        header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-        header('Access-Control-Allow-Headers: Content-Type, Authorization');
+    public function handleRequest() {
+        error_log("[DEBUG] Début du traitement de la requête");
+        header("Access-Control-Allow-Origin: *");
+        header("Content-Type: application/json; charset=UTF-8");
+        header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+        header("Access-Control-Max-Age: 3600");
+        header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-        switch ($method) {
+        $method = $_SERVER['REQUEST_METHOD'];
+        error_log("[DEBUG] Méthode HTTP: " . $method);
+
+        switch($method) {
             case 'GET':
-                return $this->getEntreprises();
+                $this->getEntreprises();
+                break;
             case 'POST':
-                return $this->createEntreprise();
+                $this->createEntreprise();
+                break;
             case 'OPTIONS':
                 http_response_code(200);
-                return json_encode(['status' => 'success']);
+                break;
             default:
                 http_response_code(405);
-                return json_encode(['error' => 'Méthode non autorisée']);
+                echo json_encode(array("message" => "Méthode non autorisée"));
+                break;
         }
     }
 
-    private function getEntreprises() {
+    public function getEntreprises() {
         try {
+            error_log("[DEBUG] Début de la récupération des entreprises");
             $stmt = $this->entreprise->getAll();
-            $entreprises = [];
+            $num = $stmt->rowCount();
+            error_log("[DEBUG] Nombre d'entreprises trouvées: " . $num);
 
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $entreprises[] = $row;
+            if($num > 0) {
+                $entreprises_arr = array();
+                $entreprises_arr["records"] = array();
+
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    extract($row);
+                    $entreprise_item = array(
+                        "id_entreprise" => $id_entreprise,
+                        "nom_entreprise" => $nom_entreprise,
+                        "adresse" => $adresse,
+                        "email" => $email,
+                        "téléphone" => $téléphone,
+                        "moyenne_eval" => $moyenne_eval,
+                        "description" => $description
+                    );
+                    array_push($entreprises_arr["records"], $entreprise_item);
+                }
+                error_log("[DEBUG] Données des entreprises: " . json_encode($entreprises_arr));
+                http_response_code(200);
+                echo json_encode($entreprises_arr);
+            } else {
+                error_log("[DEBUG] Aucune entreprise trouvée");
+                http_response_code(404);
+                echo json_encode(array("message" => "Aucune entreprise trouvée."));
             }
-
-            return json_encode([
-                'status' => 'success',
-                'data' => $entreprises
-            ]);
-        } catch (Exception $e) {
-            http_response_code(500);
-            return json_encode([
-                'status' => 'error',
-                'message' => 'Erreur lors de la récupération des entreprises'
-            ]);
+        } catch(Exception $e) {
+            error_log("[ERROR] Exception dans getEntreprises: " . $e->getMessage());
+            http_response_code(503);
+            echo json_encode(array("message" => "Impossible de récupérer les entreprises."));
         }
     }
 

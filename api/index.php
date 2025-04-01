@@ -59,15 +59,22 @@ switch ($path) {
         
     case '/entreprises':
         $controller = new EntrepriseController();
-        echo $controller->handleRequest($method);
+        $controller->handleRequest();
         break;
 
     case (preg_match('/^\/entreprises\/\d+$/', $path) ? true : false):
         $controller = new EntrepriseController();
-        $id = explode('/', $path)[2];
-        switch ($method) {
+        $id = substr($path, strrpos($path, '/') + 1);
+        switch($method) {
             case 'GET':
-                echo $controller->getEntreprise($id);
+                $entreprise = $controller->entreprise->getById($id);
+                if($entreprise) {
+                    http_response_code(200);
+                    echo json_encode($entreprise);
+                } else {
+                    http_response_code(404);
+                    echo json_encode(array("message" => "Entreprise non trouvée."));
+                }
                 break;
             case 'PUT':
                 echo $controller->updateEntreprise($id);
@@ -77,13 +84,13 @@ switch ($path) {
                 break;
             default:
                 http_response_code(405);
-                echo json_encode(['error' => 'Méthode non autorisée']);
+                echo json_encode(array("message" => "Méthode non autorisée"));
                 break;
         }
         break;
 
     default:
         http_response_code(404);
-        echo json_encode(['error' => 'Route non trouvée']);
+        echo json_encode(array("message" => "Route non trouvée"));
         break;
 }
