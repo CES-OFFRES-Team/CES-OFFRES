@@ -1,12 +1,23 @@
-import React from 'react';
+'use client';
+import React, { useState } from 'react';
 
-const EntrepriseModal = ({ entreprise, onClose, onSubmit }) => {
-    const [formData, setFormData] = React.useState({
-        nom: entreprise?.nom || '',
-        secteur: entreprise?.secteur || '',
-        telephone: entreprise?.telephone || '',
-        mail: entreprise?.mail || ''
+export default function EntrepriseModal({ onClose, onSubmit }) {
+    const [formData, setFormData] = useState({
+        nom_entreprise: '',
+        adresse: '',
+        email: '',
+        téléphone: '',
+        description: '',
+        moyenne_eval: 0
     });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -16,56 +27,77 @@ const EntrepriseModal = ({ entreprise, onClose, onSubmit }) => {
     return (
         <div className="modal-overlay">
             <div className="modal-content">
-                <h2>{entreprise ? 'Modifier' : 'Créer'} une entreprise</h2>
+                <h2>Ajouter une entreprise</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label>Nom</label>
+                        <label htmlFor="nom_entreprise">Nom de l'entreprise *</label>
                         <input
                             type="text"
-                            value={formData.nom}
-                            onChange={(e) => setFormData({...formData, nom: e.target.value})}
+                            id="nom_entreprise"
+                            name="nom_entreprise"
+                            value={formData.nom_entreprise}
+                            onChange={handleChange}
                             required
                         />
                     </div>
+
                     <div className="form-group">
-                        <label>Secteur</label>
+                        <label htmlFor="adresse">Adresse *</label>
                         <input
                             type="text"
-                            value={formData.secteur}
-                            onChange={(e) => setFormData({...formData, secteur: e.target.value})}
+                            id="adresse"
+                            name="adresse"
+                            value={formData.adresse}
+                            onChange={handleChange}
                             required
                         />
                     </div>
+
                     <div className="form-group">
-                        <label>Téléphone</label>
-                        <input
-                            type="tel"
-                            value={formData.telephone}
-                            onChange={(e) => setFormData({...formData, telephone: e.target.value})}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>Email</label>
+                        <label htmlFor="email">Email *</label>
                         <input
                             type="email"
-                            value={formData.mail}
-                            onChange={(e) => setFormData({...formData, mail: e.target.value})}
+                            id="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
                             required
                         />
                     </div>
+
+                    <div className="form-group">
+                        <label htmlFor="téléphone">Téléphone *</label>
+                        <input
+                            type="tel"
+                            id="téléphone"
+                            name="téléphone"
+                            value={formData.téléphone}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="description">Description</label>
+                        <textarea
+                            id="description"
+                            name="description"
+                            value={formData.description}
+                            onChange={handleChange}
+                            rows="4"
+                        />
+                    </div>
+
                     <div className="modal-actions">
-                        <button type="button" className="btn btn-outline" onClick={onClose}>
+                        <button type="button" className="btn-cancel" onClick={onClose}>
                             Annuler
                         </button>
-                        <button type="submit" className="btn btn-primary">
-                            {entreprise ? 'Modifier' : 'Créer'}
+                        <button type="submit" className="btn-submit">
+                            Créer
                         </button>
                     </div>
                 </form>
             </div>
         </div>
     );
-};
-
-export default EntrepriseModal;
+}

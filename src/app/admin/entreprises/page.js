@@ -56,87 +56,113 @@ const EntrepriseCard = ({ entreprise, onModifier, onSupprimer }) => {
 
 export default function AdminEntreprisesPage() {
     const [entreprises, setEntreprises] = useState([]);
-    const [search, setSearch] = useState('');
-    const [modalOpen, setModalOpen] = useState(false);
-    const [selectedEntreprise, setSelectedEntreprise] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
 
     useEffect(() => {
-        setEntreprises(entreprisesDeTest);
+        fetchEntreprises();
     }, []);
 
-    const handleCreate = () => {
-        setSelectedEntreprise(null);
-        setModalOpen(true);
-    };
-
-    const handleModifier = (entreprise) => {
-        setSelectedEntreprise(entreprise);
-        setModalOpen(true);
-    };
-
-    const handleSupprimer = (id) => {
-        if (window.confirm('Êtes-vous sûr de vouloir supprimer cette entreprise ?')) {
-            setEntreprises(entreprises.filter(e => e.id !== id));
+    const fetchEntreprises = async () => {
+        try {
+            const response = await fetch('http://localhost:8000/api/entreprises');
+            const data = await response.json();
+            
+            if (data.status === 'success') {
+                setEntreprises(data.data);
+            } else {
+                setError('Erreur lors de la récupération des entreprises');
+            }
+        } catch (error) {
+            setError('Erreur de connexion au serveur');
+            console.error('Erreur:', error);
         }
     };
 
-    const handleModalSubmit = (formData) => {
-        if (selectedEntreprise) {
-            // Modification
-            setEntreprises(entreprises.map(e => 
-                e.id === selectedEntreprise.id ? { ...formData, id: e.id } : e
-            ));
-        } else {
-            // Création
-            setEntreprises([
-                ...entreprises,
-                { ...formData, id: Math.max(...entreprises.map(e => e.id)) + 1 }
-            ]);
+    const handleCreateEntreprise = async (entrepriseData) => {
+        try {
+            const response = await fetch('http://localhost:8000/api/entreprises', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(entrepriseData),
+            });
+
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                setSuccess('Entreprise créée avec succès');
+                setIsModalOpen(false);
+                fetchEntreprises(); // Rafraîchir la liste
+            } else {
+                setError(data.message || 'Erreur lors de la création de l\'entreprise');
+            }
+        } catch (error) {
+            setError('Erreur de connexion au serveur');
+            console.error('Erreur:', error);
         }
-        setModalOpen(false);
     };
-
-    const handleSearchChange = (e) => {
-        setSearch(e.target.value);
-    };
-
-    const entreprisesFiltrees = entreprises.filter((e) =>
-        e.nom.toLowerCase().includes(search.toLowerCase()) ||
-        e.secteur.toLowerCase().includes(search.toLowerCase())
-    );
 
     return (
-        <div className="entreprises-container">
-            <div className="entreprises-header">
+        <div className="admin-entreprises-container">
+            <div className="admin-entreprises-header">
                 <h1>Gestion des Entreprises</h1>
-                <button className="btn btn-primary" onClick={handleCreate}>
-                    <HiPlus /> Nouvelle Entreprise
+                <button 
+                    className="btn-add"
+                    onClick={() => setIsModalOpen(true)}
+                >
+                    Ajouter une entreprise
                 </button>
-                <input
-                    type="text"
-                    placeholder="Rechercher une entreprise..."
-                    value={search}
-                    onChange={handleSearchChange}
-                    className="filter-input"
-                />
             </div>
 
-            <div className="entreprises-grid">
-                {entreprisesFiltrees.map((entreprise) => (
-                    <EntrepriseCard 
-                        key={entreprise.id} 
-                        entreprise={entreprise}
-                        onModifier={handleModifier}
-                        onSupprimer={handleSupprimer}
-                    />
-                ))}
+            {error && (
+                <div className="alert alert-error">
+                    {error}
+                </div>
+            )}
+
+            {success && (
+                <div className="alert alert-success">
+                    {success}
+                </div>
+            )}
+
+            <div className="entreprises-list">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Adresse</th>
+                            <th>Email</th>
+                            <th>Téléphone</th>
+                            <th>Note moyenne</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {entreprises.map((entreprise) => (
+                            <tr key={entreprise.id_entreprise}>
+                                <td>{entreprise.nom_entreprise}</td>
+                                <td>{entreprise.adresse}</td>
+                                <td>{entreprise.email}</td>
+                                <td>{entreprise.téléphone}</td>
+                                <td>{entreprise.moyenne_eval || '0'}</td>
+                                <td>
+                                    <button className="btn-edit">Modifier</button>
+                                    <button className="btn-delete">Supprimer</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
 
-            {modalOpen && (
+            {isModalOpen && (
                 <EntrepriseModal
-                    entreprise={selectedEntreprise}
-                    onClose={() => setModalOpen(false)}
-                    onSubmit={handleModalSubmit}
+                    onClose={() => setIsModalOpen(false)}
+                    onSubmit={handleCreateEntreprise}
                 />
             )}
         </div>
