@@ -22,7 +22,7 @@ export default function AuthNav() {
     
     switch (user.role) {
       case 'Admin':
-        return '/admin/dashboard';
+        return '/admin';
       case 'Pilote':
         return '/pilote/dashboard';
       case 'Etudiant':
