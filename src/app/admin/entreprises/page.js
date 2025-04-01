@@ -84,13 +84,13 @@ export default function AdminEntreprisesPage() {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
-                mode: 'cors',
-                credentials: 'omit'
+                mode: 'cors'
             });
             
             console.log('Réponse reçue:', response.status, response.statusText);
+            console.log('Headers de la réponse:', Object.fromEntries(response.headers.entries()));
             
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
