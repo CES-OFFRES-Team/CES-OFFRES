@@ -13,7 +13,7 @@ class EntrepriseController {
         $this->entreprise = new Entreprise($this->db);
     }
 
-    public function handleRequest() {
+    public function handleRequest($method = null, $id = null) {
         error_log("[DEBUG] Début du traitement de la requête");
         header("Access-Control-Allow-Origin: *");
         header("Content-Type: application/json; charset=UTF-8");
@@ -21,15 +21,37 @@ class EntrepriseController {
         header("Access-Control-Max-Age: 3600");
         header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method === null) {
+            $method = $_SERVER['REQUEST_METHOD'];
+        }
         error_log("[DEBUG] Méthode HTTP: " . $method);
 
         switch($method) {
             case 'GET':
-                $this->getEntreprises();
+                if ($id !== null) {
+                    $this->getEntreprise($id);
+                } else {
+                    $this->getEntreprises();
+                }
                 break;
             case 'POST':
                 $this->createEntreprise();
+                break;
+            case 'PUT':
+                if ($id !== null) {
+                    $this->updateEntreprise($id);
+                } else {
+                    http_response_code(400);
+                    echo json_encode(array("message" => "ID requis pour la mise à jour"));
+                }
+                break;
+            case 'DELETE':
+                if ($id !== null) {
+                    $this->deleteEntreprise($id);
+                } else {
+                    http_response_code(400);
+                    echo json_encode(array("message" => "ID requis pour la suppression"));
+                }
                 break;
             case 'OPTIONS':
                 http_response_code(200);
