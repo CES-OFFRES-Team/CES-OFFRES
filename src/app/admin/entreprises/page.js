@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { HiBuildingOffice, HiPhone, HiMail, HiTrash, HiPlus } from 'react-icons/hi';
+import { HiBuildingOffice, HiPhone, HiMail, HiTrash, HiPlus, HiRefresh } from 'react-icons/hi';
 import EntrepriseModal from './EntrepriseModal';
 import './Entreprises.css';
 
@@ -10,18 +10,22 @@ const API_URL = 'http://20.19.36.124:8000/api';
 // Données fictives pour les entreprises
 const entreprisesDeTest = [
     {
-        id: 1,
-        nom: 'TechCorp',
-        secteur: 'Informatique',
-        telephone: '0123456789',
-        mail: 'contact@techcorp.com',
+        id_entreprise: 1,
+        nom_entreprise: 'TechCorp',
+        adresse: 'Paris, France',
+        téléphone: '0123456789',
+        email: 'contact@techcorp.com',
+        description: 'Entreprise spécialisée dans le développement informatique',
+        moyenne_eval: 4.5
     },
     {
-        id: 2,
-        nom: 'EcoSolutions',
-        secteur: 'Énergie',
-        telephone: '0987654321',
-        mail: 'info@ecosolutions.fr',
+        id_entreprise: 2,
+        nom_entreprise: 'EcoSolutions',
+        adresse: 'Lyon, France',
+        téléphone: '0987654321',
+        email: 'info@ecosolutions.fr',
+        description: 'Solutions écologiques innovantes',
+        moyenne_eval: 4.2
     },
 ];
 
@@ -30,18 +34,18 @@ const EntrepriseCard = ({ entreprise, onModifier, onSupprimer }) => {
     return (
         <div className="entreprise-card">
             <div className="entreprise-header">
-                <h2 className="entreprise-title">{entreprise.nom || entreprise.nom_entreprise}</h2>
-                <div className="entreprise-secteur">{entreprise.secteur || entreprise.adresse}</div>
+                <h2 className="entreprise-title">{entreprise.nom_entreprise}</h2>
+                <div className="entreprise-secteur">{entreprise.adresse}</div>
             </div>
             <div className="entreprise-content">
                 <div className="entreprise-details">
                     <div className="detail-item">
                         <HiPhone />
-                        <span>{entreprise.telephone || entreprise.téléphone}</span>
+                        <span>{entreprise.téléphone}</span>
                     </div>
                     <div className="detail-item">
                         <HiMail />
-                        <span>{entreprise.mail || entreprise.email}</span>
+                        <span>{entreprise.email}</span>
                     </div>
                 </div>
             </div>
@@ -49,7 +53,7 @@ const EntrepriseCard = ({ entreprise, onModifier, onSupprimer }) => {
                 <button className="btn btn-outline" onClick={() => onModifier(entreprise)}>
                     Modifier
                 </button>
-                <button className="btn btn-outline" onClick={() => onSupprimer(entreprise.id || entreprise.id_entreprise)}>
+                <button className="btn btn-outline" onClick={() => onSupprimer(entreprise.id_entreprise)}>
                     <HiTrash className="trash-icon" />
                 </button>
             </div>
@@ -64,6 +68,8 @@ export default function AdminEntreprisesPage() {
     const [selectedEntreprise, setSelectedEntreprise] = useState(null);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [cacheInfo, setCacheInfo] = useState({ used: false, timestamp: null });
 
     useEffect(() => {
         fetchEntreprises();
@@ -71,6 +77,39 @@ export default function AdminEntreprisesPage() {
 
     const fetchEntreprises = async () => {
         try {
+            setLoading(true);
+            console.log("Vérification du cache...");
+            
+            // Vérifier si des données sont en cache
+            const cachedData = localStorage.getItem('adminEntreprisesCache');
+            const cacheTimestamp = localStorage.getItem('adminEntreprisesCacheTimestamp');
+            
+            // Si des données sont en cache et le cache a moins de 10 minutes
+            if (cachedData && cacheTimestamp) {
+                const parsedData = JSON.parse(cachedData);
+                const timestamp = parseInt(cacheTimestamp);
+                const now = new Date().getTime();
+                const cacheAge = now - timestamp;
+                const cacheMaxAge = 10 * 60 * 1000; // 10 minutes en millisecondes
+                
+                if (cacheAge < cacheMaxAge && parsedData.length > 0) {
+                    console.log("Utilisation des données en cache");
+                    setEntreprises(parsedData);
+                    setCacheInfo({ 
+                        used: true, 
+                        timestamp: new Date(timestamp).toLocaleString(),
+                        age: Math.round(cacheAge / 1000 / 60) + " minutes"
+                    });
+                    setError(null);
+                    setLoading(false);
+                    return;
+                } else {
+                    console.log("Cache expiré ou vide, nouvelle requête à l'API");
+                }
+            } else {
+                console.log("Pas de cache disponible, première requête à l'API");
+            }
+            
             console.log('Tentative de connexion à:', `${API_URL}/entreprises`);
             const response = await fetch(`${API_URL}/entreprises`, {
                 method: 'GET',
@@ -82,30 +121,89 @@ export default function AdminEntreprisesPage() {
                 credentials: 'omit'
             });
             
+            // Enregistrement du temps de réponse
             console.log('Réponse reçue:', response.status, response.statusText);
             
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             
+            const contentType = response.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+                throw new Error("La réponse n'est pas au format JSON");
+            }
+            
             const data = await response.json();
             console.log('Données reçues:', data);
             
-            if (data.status === 'success') {
+            let entreprisesData = [];
+            
+            // Gestion de différents formats possibles
+            if (data.status === 'success' && data.data) {
                 console.log('Nombre d\'entreprises reçues:', data.data.length);
-                console.log('Données des entreprises:', data.data);
-                setEntreprises(data.data);
+                entreprisesData = data.data;
+            } else if (data.records) {
+                console.log('Format alternatif - Nombre d\'entreprises:', data.records.length);
+                entreprisesData = data.records;
+            } else if (Array.isArray(data)) {
+                console.log('Les données sont directement un tableau:', data.length);
+                entreprisesData = data;
             } else {
-                setError('Erreur lors de la récupération des entreprises: ' + (data.message || 'Erreur inconnue'));
+                throw new Error('Format de données non reconnu: ' + JSON.stringify(data).substring(0, 100));
             }
+            
+            // Mise à jour de l'état
+            setEntreprises(entreprisesData);
+            setError(null);
+            
+            // Mise en cache des données
+            localStorage.setItem('adminEntreprisesCache', JSON.stringify(entreprisesData));
+            const timestamp = new Date().getTime();
+            localStorage.setItem('adminEntreprisesCacheTimestamp', timestamp);
+            setCacheInfo({ 
+                used: false, 
+                timestamp: new Date(timestamp).toLocaleString(),
+                fresh: true
+            });
+            
         } catch (error) {
             console.error('Erreur détaillée:', error);
-            if (error.message === 'Failed to fetch') {
-                setError('Impossible de se connecter au serveur. Vérifiez que le serveur est en cours d\'exécution et accessible.');
+            
+            // Essayer de récupérer les données du cache en cas d'erreur
+            const cachedData = localStorage.getItem('adminEntreprisesCache');
+            if (cachedData) {
+                console.log("Utilisation du cache suite à une erreur");
+                const parsedData = JSON.parse(cachedData);
+                const cacheTimestamp = localStorage.getItem('adminEntreprisesCacheTimestamp');
+                
+                setEntreprises(parsedData);
+                setError(`Erreur API: ${error.message}. Affichage des données en cache.`);
+                setCacheInfo({ 
+                    used: true, 
+                    timestamp: cacheTimestamp ? new Date(parseInt(cacheTimestamp)).toLocaleString() : "inconnu",
+                    fromError: true
+                });
             } else {
-                setError(`Erreur de connexion au serveur: ${error.message}`);
+                // En dernier recours, utiliser les données de test
+                if (error.message === 'Failed to fetch') {
+                    setError('Impossible de se connecter au serveur. Affichage des données de test.');
+                } else {
+                    setError(`Erreur: ${error.message}. Affichage des données de test.`);
+                }
+                setEntreprises(entreprisesDeTest);
             }
+        } finally {
+            setLoading(false);
         }
+    };
+
+    const forceRefresh = () => {
+        // Supprimer le cache
+        localStorage.removeItem('adminEntreprisesCache');
+        localStorage.removeItem('adminEntreprisesCacheTimestamp');
+        // Lancer une nouvelle recherche
+        fetchEntreprises();
+        setSuccess('Actualisation des données en cours...');
     };
 
     const handleCreate = () => {
@@ -125,17 +223,24 @@ export default function AdminEntreprisesPage() {
                     method: 'DELETE',
                 });
 
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
                 const data = await response.json();
 
                 if (data.status === 'success') {
                     setSuccess('Entreprise supprimée avec succès');
+                    // Supprimer du cache aussi
+                    localStorage.removeItem('adminEntreprisesCache');
+                    localStorage.removeItem('adminEntreprisesCacheTimestamp');
                     fetchEntreprises();
                 } else {
                     setError(data.message || 'Erreur lors de la suppression de l\'entreprise');
                 }
             } catch (error) {
-                setError('Erreur de connexion au serveur');
-                console.error('Erreur:', error);
+                console.error('Erreur détaillée:', error);
+                setError(`Erreur lors de la suppression: ${error.message}`);
             }
         }
     };
@@ -159,19 +264,27 @@ export default function AdminEntreprisesPage() {
             });
 
             console.log('Réponse reçue:', response.status, response.statusText);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
             const data = await response.json();
             console.log('Données reçues:', data);
 
             if (data.status === 'success') {
                 setSuccess(selectedEntreprise ? 'Entreprise modifiée avec succès' : 'Entreprise créée avec succès');
                 setModalOpen(false);
+                // Supprimer le cache pour recharger les données fraîches
+                localStorage.removeItem('adminEntreprisesCache');
+                localStorage.removeItem('adminEntreprisesCacheTimestamp');
                 fetchEntreprises();
             } else {
                 setError(data.message || `Erreur lors de ${selectedEntreprise ? 'la modification' : 'la création'} de l'entreprise`);
             }
         } catch (error) {
             console.error('Erreur détaillée:', error);
-            setError(`Erreur de connexion au serveur: ${error.message}`);
+            setError(`Erreur: ${error.message}`);
         }
     };
 
@@ -180,17 +293,22 @@ export default function AdminEntreprisesPage() {
     };
 
     const entreprisesFiltrees = entreprises.filter((e) =>
-        e.nom_entreprise.toLowerCase().includes(search.toLowerCase()) ||
-        e.adresse.toLowerCase().includes(search.toLowerCase())
+        (e.nom_entreprise?.toLowerCase() || '').includes(search.toLowerCase()) ||
+        (e.adresse?.toLowerCase() || '').includes(search.toLowerCase())
     );
 
     return (
         <div className="entreprises-container">
             <div className="entreprises-header">
                 <h1>Gestion des Entreprises</h1>
-                <button className="btn btn-primary" onClick={handleCreate}>
-                    <HiPlus /> Nouvelle Entreprise
-                </button>
+                <div className="actions-container">
+                    <button className="btn btn-primary" onClick={handleCreate}>
+                        <HiPlus /> Nouvelle Entreprise
+                    </button>
+                    <button className="btn btn-secondary" onClick={forceRefresh} title="Rafraîchir les données">
+                        <HiRefresh /> Actualiser
+                    </button>
+                </div>
                 <input
                     type="text"
                     placeholder="Rechercher une entreprise..."
@@ -199,6 +317,17 @@ export default function AdminEntreprisesPage() {
                     className="filter-input"
                 />
             </div>
+
+            {/* Informations sur le cache */}
+            {cacheInfo.used && (
+                <div className="alert alert-info">
+                    <p>
+                        <strong>Données en cache</strong> - Chargées le {cacheInfo.timestamp} 
+                        {cacheInfo.age && <span> (il y a {cacheInfo.age})</span>}
+                        {cacheInfo.fromError && <span> suite à une erreur API</span>}
+                    </p>
+                </div>
+            )}
 
             {error && (
                 <div className="alert alert-error">
@@ -212,22 +341,29 @@ export default function AdminEntreprisesPage() {
                 </div>
             )}
 
-            <div className="entreprises-grid">
-                {entreprises.length === 0 ? (
-                    <div className="no-data-message">
-                        Aucune entreprise trouvée
-                    </div>
-                ) : (
-                    entreprisesFiltrees.map((entreprise) => (
-                        <EntrepriseCard 
-                            key={entreprise.id_entreprise} 
-                            entreprise={entreprise}
-                            onModifier={handleModifier}
-                            onSupprimer={handleSupprimer}
-                        />
-                    ))
-                )}
-            </div>
+            {loading ? (
+                <div className="loading-container">
+                    <div className="loader"></div>
+                    <p>Chargement des entreprises...</p>
+                </div>
+            ) : (
+                <div className="entreprises-grid">
+                    {entreprises.length === 0 ? (
+                        <div className="no-data-message">
+                            Aucune entreprise trouvée
+                        </div>
+                    ) : (
+                        entreprisesFiltrees.map((entreprise) => (
+                            <EntrepriseCard 
+                                key={entreprise.id_entreprise} 
+                                entreprise={entreprise}
+                                onModifier={handleModifier}
+                                onSupprimer={handleSupprimer}
+                            />
+                        ))
+                    )}
+                </div>
+            )}
 
             {modalOpen && (
                 <EntrepriseModal
