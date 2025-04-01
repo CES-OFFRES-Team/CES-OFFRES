@@ -29,37 +29,41 @@ class EntrepriseController {
         switch($method) {
             case 'GET':
                 if ($id !== null) {
-                    $this->getEntreprise($id);
+                    return $this->getEntreprise($id);
                 } else {
-                    $this->getEntreprises();
+                    return $this->getEntreprises();
                 }
-                break;
             case 'POST':
-                $this->createEntreprise();
-                break;
+                return $this->createEntreprise();
             case 'PUT':
                 if ($id !== null) {
-                    $this->updateEntreprise($id);
+                    return $this->updateEntreprise($id);
                 } else {
                     http_response_code(400);
-                    echo json_encode(array("message" => "ID requis pour la mise à jour"));
+                    return json_encode([
+                        'status' => 'error',
+                        'message' => "ID requis pour la mise à jour"
+                    ]);
                 }
-                break;
             case 'DELETE':
                 if ($id !== null) {
-                    $this->deleteEntreprise($id);
+                    return $this->deleteEntreprise($id);
                 } else {
                     http_response_code(400);
-                    echo json_encode(array("message" => "ID requis pour la suppression"));
+                    return json_encode([
+                        'status' => 'error',
+                        'message' => "ID requis pour la suppression"
+                    ]);
                 }
-                break;
             case 'OPTIONS':
                 http_response_code(200);
-                break;
+                return json_encode(['status' => 'success']);
             default:
                 http_response_code(405);
-                echo json_encode(array("message" => "Méthode non autorisée"));
-                break;
+                return json_encode([
+                    'status' => 'error',
+                    'message' => "Méthode non autorisée"
+                ]);
         }
     }
 
@@ -72,7 +76,7 @@ class EntrepriseController {
 
             if($num > 0) {
                 $entreprises_arr = array();
-                $entreprises_arr["records"] = array();
+                $entreprises_arr["data"] = array();
 
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     extract($row);
@@ -85,20 +89,29 @@ class EntrepriseController {
                         "moyenne_eval" => $moyenne_eval,
                         "description" => $description
                     );
-                    array_push($entreprises_arr["records"], $entreprise_item);
+                    array_push($entreprises_arr["data"], $entreprise_item);
                 }
                 error_log("[DEBUG] Données des entreprises: " . json_encode($entreprises_arr));
                 http_response_code(200);
-                echo json_encode($entreprises_arr);
+                return json_encode([
+                    'status' => 'success',
+                    'data' => $entreprises_arr["data"]
+                ]);
             } else {
                 error_log("[DEBUG] Aucune entreprise trouvée");
                 http_response_code(404);
-                echo json_encode(array("message" => "Aucune entreprise trouvée."));
+                return json_encode([
+                    'status' => 'error',
+                    'message' => "Aucune entreprise trouvée."
+                ]);
             }
         } catch(Exception $e) {
             error_log("[ERROR] Exception dans getEntreprises: " . $e->getMessage());
             http_response_code(503);
-            echo json_encode(array("message" => "Impossible de récupérer les entreprises."));
+            return json_encode([
+                'status' => 'error',
+                'message' => "Impossible de récupérer les entreprises."
+            ]);
         }
     }
 
