@@ -126,10 +126,12 @@ export default function AdminEntreprisesPage() {
 
     const handleModalSubmit = async (formData) => {
         try {
+            console.log('Données du formulaire:', formData);
             const url = selectedEntreprise 
                 ? `${API_URL}/entreprises/${selectedEntreprise.id_entreprise}`
                 : `${API_URL}/entreprises`;
             
+            console.log('URL de la requête:', url);
             const method = selectedEntreprise ? 'PUT' : 'POST';
 
             const response = await fetch(url, {
@@ -140,7 +142,9 @@ export default function AdminEntreprisesPage() {
                 body: JSON.stringify(formData),
             });
 
+            console.log('Réponse reçue:', response.status, response.statusText);
             const data = await response.json();
+            console.log('Données reçues:', data);
 
             if (data.status === 'success') {
                 setSuccess(selectedEntreprise ? 'Entreprise modifiée avec succès' : 'Entreprise créée avec succès');
@@ -150,8 +154,8 @@ export default function AdminEntreprisesPage() {
                 setError(data.message || `Erreur lors de ${selectedEntreprise ? 'la modification' : 'la création'} de l'entreprise`);
             }
         } catch (error) {
-            setError('Erreur de connexion au serveur');
-            console.error('Erreur:', error);
+            console.error('Erreur détaillée:', error);
+            setError(`Erreur de connexion au serveur: ${error.message}`);
         }
     };
 
