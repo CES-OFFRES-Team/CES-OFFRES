@@ -41,17 +41,6 @@ switch ($path) {
         echo $controller->handleRequest($method);
         break;
 
-    case (preg_match('/^\/users\/\d+$/', $path) ? true : false):
-        $controller = new UserController();
-        $id = substr($path, 7); // Extrait l'ID de l'URL
-        if ($method === 'PUT') {
-            echo $controller->updateUser($id);
-        } else {
-            http_response_code(405);
-            echo json_encode(['error' => 'Méthode non autorisée']);
-        }
-        break;
-
     case '/login':
         $controller = new UserController();
         echo $controller->handleRequest($method);
