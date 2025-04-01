@@ -880,3 +880,78 @@ iframe {
 .login-btn:hover {
   background-color: #f5f5f5;
 }
+
+/* Styles pour les boutons de navigation */
+.connexion-button,
+.mon-compte-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: #333;
+}
+
+.connexion-button {
+  background-color: transparent;
+  border: 1px solid #2d79f3;
+  color: #2d79f3;
+}
+
+.connexion-button:hover {
+  background-color: #2d79f3;
+  color: white;
+}
+
+.mon-compte-button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+}
+
+.mon-compte-button:hover {
+  background-color: #45a049;
+  transform: translateY(-1px);
+}
+
+.connexion-button i,
+.mon-compte-button i {
+  font-size: 1.1em;
+}
+
+/* Styles pour le conteneur de navigation d'authentification */
+.auth-nav-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.deconnexion-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  background-color: #dc3545;
+  border: none;
+  color: white;
+  cursor: pointer;
+  width: 100%;
+  justify-content: center;
+}
+
+.deconnexion-button:hover {
+  background-color: #c82333;
+  transform: translateY(-1px);
+}
+
+.deconnexion-button i {
+  font-size: 1.1em;
+}

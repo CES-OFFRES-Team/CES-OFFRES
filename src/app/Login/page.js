@@ -103,9 +103,19 @@ export default function LoginPage() {
         // Afficher le message de succès
         setSuccessMessage(`Connexion réussie ! Bienvenue ${data.user.prenom} ${data.user.nom}`);
         
+        // Redirection en fonction du rôle
+        let redirectPath = '/dashboard';
+        if (data.user.role === 'Admin') {
+          redirectPath = '/admin/dashboard';
+        } else if (data.user.role === 'Pilote') {
+          redirectPath = '/pilote/dashboard';
+        } else if (data.user.role === 'Etudiant') {
+          redirectPath = '/dashboard';
+        }
+        
         // Attendre un peu pour que l'utilisateur puisse voir le message de succès
         setTimeout(() => {
-          window.location.href = '/dashboard';
+          window.location.href = redirectPath;
         }, 1500);
       } catch (error) {
         setErrorMessage(error.message);

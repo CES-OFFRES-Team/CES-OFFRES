@@ -11,7 +11,7 @@ export default function RegisterPage() {
     téléphone_personne: '',
     email_personne: '',
     password_personne: '',
-    role: 'user'
+    role: 'Etudiant'
   });
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -211,6 +211,24 @@ export default function RegisterPage() {
               placeholder="Entrez votre mot de passe" 
               required 
             />
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label>Rôle</label>
+          <div className="input-wrapper">
+            <i className="fas fa-user-tag"></i>
+            <select 
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              className="role-select"
+              required
+            >
+              <option value="Etudiant">Étudiant</option>
+              <option value="Pilote">Pilote</option>
+              <option value="Admin">Administrateur</option>
+            </select>
           </div>
         </div>
 

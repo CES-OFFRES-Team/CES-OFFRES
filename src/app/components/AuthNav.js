@@ -1,34 +1,81 @@
 'use client';
-import { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 
 export default function AuthNav() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userData, setUserData] = useState(null);
+  const router = useRouter();
+  const [showLogout, setShowLogout] = useState(false);
+  const userData = Cookies.get('userData');
+  let user = null;
 
-    useEffect(() => {
-        const token = Cookies.get('authToken');
-        const userDataStr = Cookies.get('userData');
-        
-        if (token && userDataStr) {
-            setIsLoggedIn(true);
-            setUserData(JSON.parse(userDataStr));
-        }
-    }, []);
+  if (userData) {
+    try {
+      user = JSON.parse(userData);
+    } catch (e) {
+      console.error('Erreur lors du parsing des données utilisateur:', e);
+    }
+  }
 
-    return (
-        <li className="nav-item">
-            {isLoggedIn ? (
-                <a href="/dashboard" className="nav-link account-btn">
-                    <span className="material-symbols-rounded">person</span>
-                    <span className="nav-label">Mon Compte</span>
-                </a>
-            ) : (
-                <a href="/Login" className="nav-link login-btn">
-                    <span className="material-symbols-rounded">login</span>
-                    <span className="nav-label">Connexion</span>
-                </a>
-            )}
-        </li>
-    );
+  const getDashboardPath = () => {
+    if (!user) return '/Login';
+    
+    switch (user.role) {
+      case 'Admin':
+        return '/admin/dashboard';
+      case 'Pilote':
+        return '/pilote/dashboard';
+      case 'Etudiant':
+        return '/dashboard';
+      default:
+        return '/Login';
+    }
+  };
+
+  const handleLogout = () => {
+    // Supprimer les cookies
+    Cookies.remove('authToken');
+    Cookies.remove('userData');
+    
+    // Rediriger vers la page de connexion
+    router.push('/Login');
+  };
+
+  return (
+    <div className="auth-nav-container">
+      {user ? (
+        <>
+          <Link 
+            href={getDashboardPath()} 
+            className="mon-compte-button"
+            onMouseEnter={() => setShowLogout(true)}
+            onMouseLeave={() => setShowLogout(false)}
+          >
+            <i className="fas fa-user-circle"></i>
+            Mon Compte
+          </Link>
+          {showLogout && (
+            <button 
+              className="deconnexion-button"
+              onClick={handleLogout}
+              onMouseEnter={() => setShowLogout(true)}
+              onMouseLeave={() => setShowLogout(false)}
+            >
+              <i className="fas fa-sign-out-alt"></i>
+              Déconnexion
+            </button>
+          )}
+        </>
+      ) : (
+        <Link 
+          href="/Login" 
+          className="connexion-button"
+        >
+          <i className="fas fa-sign-in-alt"></i>
+          Connexion
+        </Link>
+      )}
+    </div>
+  );
 } 
