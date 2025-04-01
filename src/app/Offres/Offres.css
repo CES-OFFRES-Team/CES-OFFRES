@@ -4,8 +4,10 @@
 @tailwind utilities;
 
 :root {
-    --background: #ffffff; /* Blanc */
-    --foreground: #000000; /* Noir */
+    --background: #ffffff;
+    /* Blanc */
+    --foreground: #000000;
+    /* Noir */
     --primary: #0070f3;
     --secondary: #1a1a1a;
 }
@@ -19,7 +21,8 @@
     }
 }
 
-html, body {
+html,
+body {
     height: 100%;
     margin: 0;
     padding: 0;
@@ -42,7 +45,8 @@ body {
 .header-content {
     display: flex;
     align-items: center;
-    justify-content: flex-start; /* Align items to the left */
+    justify-content: flex-start;
+    /* Align items to the left */
     width: 100%;
 }
 
@@ -50,7 +54,8 @@ body {
     font-size: 1.5rem;
     font-weight: bold;
     color: var(--primary);
-    margin-right: 2rem; /* Add some space between the logo and the nav */
+    margin-right: 2rem;
+    /* Add some space between the logo and the nav */
 }
 
 nav {
@@ -87,7 +92,8 @@ nav ul li a:hover {
     text-decoration: none;
     font-weight: 500;
     transition: background-color 0.3s ease;
-    margin-left: auto; /* Push the login button to the right */
+    margin-left: auto;
+    /* Push the login button to the right */
 }
 
 .login-button:hover {
@@ -133,7 +139,8 @@ nav ul li a:hover {
     color: var(--foreground);
     background-color: var(--background);
     transition: border-color 0.3s ease;
-    width: 100%; /* Make input fields take full width */
+    width: 100%;
+    /* Make input fields take full width */
 }
 
 .form-group input:focus {
@@ -167,9 +174,11 @@ footer {
 .center-container {
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Align items to the top */
+    align-items: flex-start;
+    /* Align items to the top */
     min-height: 100vh;
-    padding-top: 2rem; /* Add some padding to the top */
+    padding-top: 2rem;
+    /* Add some padding to the top */
 }
 
 /* Offres.css */
@@ -459,8 +468,13 @@ ul {
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .error-container {
@@ -533,4 +547,10 @@ ul {
     .offres-grid {
         grid-template-columns: 1fr;
     }
+}
+
+.trash-icon {
+    font-size: 1.25rem;
+    display: block;
+    margin: 0 auto;
 }

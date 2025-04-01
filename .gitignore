@@ -441,4 +441,7 @@ yarn-error.log*
 /api/vendor/
 /api/composer.lock
 *.log
-.env.php
+.env.php".next/" 
+".vs/" 
+"node_modules/" 
+"*.tar.gz" 
