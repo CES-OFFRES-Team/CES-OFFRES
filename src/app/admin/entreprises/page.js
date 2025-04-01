@@ -6,7 +6,6 @@ import EntrepriseModal from './EntrepriseModal';
 import './Entreprises.css';
 
 const API_URL = 'http://20.19.36.124:8000/api';
-const BACKUP_API_URL = 'https://ces-offres.000webhostapp.com/api';
 
 // Données fictives pour les entreprises
 const entreprisesDeTest = [
@@ -100,33 +99,11 @@ export default function AdminEntreprisesPage() {
                 setError('Erreur lors de la récupération des entreprises: ' + (data.message || 'Erreur inconnue'));
             }
         } catch (error) {
-            console.error('Erreur avec la première URL:', error);
-            try {
-                console.log('Tentative avec l\'URL de secours:', `${BACKUP_API_URL}/entreprises`);
-                const response = await fetch(`${BACKUP_API_URL}/entreprises`, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-                    mode: 'cors',
-                    credentials: 'omit'
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                
-                if (data.status === 'success') {
-                    setEntreprises(data.data);
-                } else {
-                    setError('Erreur lors de la récupération des entreprises: ' + (data.message || 'Erreur inconnue'));
-                }
-            } catch (backupError) {
-                console.error('Erreur avec l\'URL de secours:', backupError);
+            console.error('Erreur détaillée:', error);
+            if (error.message === 'Failed to fetch') {
                 setError('Impossible de se connecter au serveur. Vérifiez que le serveur est en cours d\'exécution et accessible.');
+            } else {
+                setError(`Erreur de connexion au serveur: ${error.message}`);
             }
         }
     };
