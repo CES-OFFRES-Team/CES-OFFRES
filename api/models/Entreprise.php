@@ -1,7 +1,7 @@
 <?php
 class Entreprise {
     private $conn;
-    private $table = 'entreprise';
+    private $table = 'Entreprises';
 
     public $id_entreprise;
     public $nom_entreprise;
