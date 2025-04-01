@@ -5,7 +5,7 @@ import { HiBuildingOffice, HiPhone, HiMail, HiTrash, HiPlus } from 'react-icons/
 import EntrepriseModal from './EntrepriseModal';
 import './Entreprises.css';
 
-const API_URL = 'https://ces-offres.000webhostapp.com/api';
+const API_URL = 'http://20.19.36.124:8000/api';
 
 // Données fictives pour les entreprises
 const entreprisesDeTest = [

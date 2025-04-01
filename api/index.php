@@ -62,31 +62,28 @@ switch ($path) {
         echo $controller->handleRequest($method);
         break;
 
+    case (preg_match('/^\/entreprises\/\d+$/', $path) ? true : false):
+        $controller = new EntrepriseController();
+        $id = explode('/', $path)[2];
+        switch ($method) {
+            case 'GET':
+                echo $controller->getEntreprise($id);
+                break;
+            case 'PUT':
+                echo $controller->updateEntreprise($id);
+                break;
+            case 'DELETE':
+                echo $controller->deleteEntreprise($id);
+                break;
+            default:
+                http_response_code(405);
+                echo json_encode(['error' => 'Méthode non autorisée']);
+                break;
+        }
+        break;
+
     default:
         http_response_code(404);
         echo json_encode(['error' => 'Route non trouvée']);
         break;
-}
-
-// Routes pour les entreprises
-if (strpos($request_uri, '/entreprises') === 0) {
-    $controller = new EntrepriseController();
-    
-    if ($method === 'GET') {
-        echo $controller->handleRequest('GET');
-    } elseif ($method === 'POST') {
-        echo $controller->handleRequest('POST');
-    } elseif ($method === 'PUT' && preg_match('/\/entreprises\/(\d+)/', $request_uri, $matches)) {
-        $id = $matches[1];
-        echo $controller->updateEntreprise($id);
-    } elseif ($method === 'DELETE' && preg_match('/\/entreprises\/(\d+)/', $request_uri, $matches)) {
-        $id = $matches[1];
-        echo $controller->deleteEntreprise($id);
-    } elseif ($method === 'OPTIONS') {
-        echo $controller->handleRequest('OPTIONS');
-    } else {
-        http_response_code(405);
-        echo json_encode(['error' => 'Méthode non autorisée']);
-    }
-    exit;
 }
