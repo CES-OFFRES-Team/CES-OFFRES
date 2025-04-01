@@ -3,62 +3,31 @@
 import React, { useState, useEffect } from 'react';
 import { HiPhone, HiMail, HiUser, HiTrash } from 'react-icons/hi';
 import '../../Offres/Offres.css';
+import Cookies from 'js-cookie';
 
-// Données fictives pour les étudiants
-const etudiantsDeTest = [
-    {
-        id: 1,
-        nom: 'Dupont',
-        prenom: 'Marie',
-        telephone: '0601020304',
-        mail: 'marie.dupont@example.com',
-    },
-    {
-        id: 2,
-        nom: 'Durand',
-        prenom: 'Paul',
-        telephone: '0604050607',
-        mail: 'paul.durand@example.com',
-    },
-    {
-        id: 3,
-        nom: 'Moreau',
-        prenom: 'Claire',
-        telephone: '0611121314',
-        mail: 'claire.moreau@example.com',
-    },
-];
-
-const EtudiantCard = ({ etudiant }) => {
-    const handleModifier = () => { };
-    const handleSupprimer = () => { };
-    const handlePostuler = () => { };
-
+const EtudiantCard = ({ etudiant, onModifier, onSupprimer }) => {
     return (
         <div className="offre-card">
             <div className="offre-header">
-                <h2 className="offre-title">{etudiant.prenom} {etudiant.nom}</h2>
-                <div className="offre-company">{etudiant.mail}</div>
+                <h2 className="offre-title">{etudiant.prenom_personne} {etudiant.nom_personne}</h2>
+                <div className="offre-company">{etudiant.email_personne}</div>
             </div>
             <div className="offre-content">
                 <div className="offre-details">
                     <div className="detail-item">
                         <HiPhone />
-                        <span>{etudiant.telephone}</span>
+                        <span>{etudiant.téléphone_personne}</span>
                     </div>
                     <div className="detail-item">
                         <HiMail />
-                        <span>{etudiant.mail}</span>
+                        <span>{etudiant.email_personne}</span>
                     </div>
                 </div>
             </div>
             <div className="offre-actions">
-                <button className="btn btn-outline" onClick={handleModifier}>Modifier</button>
-                <button className="btn btn-outline" onClick={handleSupprimer}>
+                <button className="btn btn-outline" onClick={() => onModifier(etudiant)}>Modifier</button>
+                <button className="btn btn-outline" onClick={() => onSupprimer(etudiant.id_personne)}>
                     <HiTrash className="trash-icon" />
-                </button>
-                <button className="btn btn-primary" onClick={handlePostuler}>
-                    Postuler
                 </button>
             </div>
         </div>
@@ -68,19 +37,97 @@ const EtudiantCard = ({ etudiant }) => {
 export default function AdminEtudiantsPage() {
     const [etudiants, setEtudiants] = useState([]);
     const [search, setSearch] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        setEtudiants(etudiantsDeTest);
+        fetchEtudiants();
     }, []);
+
+    const fetchEtudiants = async () => {
+        try {
+            const token = Cookies.get('authToken');
+            if (!token) {
+                throw new Error('Non authentifié');
+            }
+
+            const response = await fetch('http://20.19.36.142:8000/api/users/etudiants', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Erreur lors de la récupération des étudiants');
+            }
+
+            const data = await response.json();
+            setEtudiants(data);
+        } catch (error) {
+            console.error('Erreur:', error);
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleModifier = (etudiant) => {
+        // TODO: Implémenter la modification
+        console.log('Modifier:', etudiant);
+    };
+
+    const handleSupprimer = async (id) => {
+        if (!window.confirm('Êtes-vous sûr de vouloir supprimer cet étudiant ?')) {
+            return;
+        }
+
+        try {
+            const token = Cookies.get('authToken');
+            const response = await fetch(`http://20.19.36.142:8000/api/users/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Erreur lors de la suppression');
+            }
+
+            // Mettre à jour la liste des étudiants
+            setEtudiants(etudiants.filter(e => e.id_personne !== id));
+        } catch (error) {
+            console.error('Erreur:', error);
+            alert('Erreur lors de la suppression de l\'étudiant');
+        }
+    };
 
     const handleSearchChange = (e) => {
         setSearch(e.target.value);
     };
 
     const etudiantsFiltres = etudiants.filter((e) =>
-        `${e.prenom} ${e.nom}`.toLowerCase().includes(search.toLowerCase()) ||
-        e.mail.toLowerCase().includes(search.toLowerCase())
+        `${e.prenom_personne} ${e.nom_personne}`.toLowerCase().includes(search.toLowerCase()) ||
+        e.email_personne.toLowerCase().includes(search.toLowerCase())
     );
+
+    if (loading) {
+        return (
+            <div className="offres-container">
+                <div className="loading">Chargement des étudiants...</div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="offres-container">
+                <div className="error-message">
+                    {error}
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="offres-container">
@@ -99,7 +146,12 @@ export default function AdminEtudiantsPage() {
 
             <div className="offres-grid">
                 {etudiantsFiltres.map((etudiant) => (
-                    <EtudiantCard key={etudiant.id} etudiant={etudiant} />
+                    <EtudiantCard 
+                        key={etudiant.id_personne} 
+                        etudiant={etudiant}
+                        onModifier={handleModifier}
+                        onSupprimer={handleSupprimer}
+                    />
                 ))}
             </div>
         </div>

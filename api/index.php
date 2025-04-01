@@ -31,6 +31,11 @@ switch ($path) {
         echo $controller->handleRequest($method);
         break;
 
+    case '/users/etudiants':
+        $controller = new UserController();
+        echo $controller->handleRequest($method);
+        break;
+
     case '/login':
         $controller = new UserController();
         echo $controller->handleRequest($method);

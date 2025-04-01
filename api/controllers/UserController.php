@@ -18,8 +18,14 @@ class UserController {
         header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
         header('Access-Control-Allow-Headers: Content-Type');
 
+        // Vérifier si l'URL contient /etudiants
+        $isEtudiantsEndpoint = strpos($_SERVER['REQUEST_URI'], '/etudiants') !== false;
+
         switch ($method) {
             case 'GET':
+                if ($isEtudiantsEndpoint) {
+                    return $this->getEtudiants();
+                }
                 return $this->getUsers();
             case 'POST':
                 if ($_SERVER['REQUEST_URI'] === '/api/login') {
@@ -274,6 +280,61 @@ class UserController {
             return json_encode([
                 'status' => 'error',
                 'message' => 'Erreur lors de la vérification du token'
+            ]);
+        }
+    }
+
+    private function getEtudiants() {
+        try {
+            // Vérifier le token d'authentification
+            $headers = getallheaders();
+            $authHeader = $headers['Authorization'] ?? '';
+            
+            if (!preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
+                http_response_code(401);
+                return json_encode([
+                    'status' => 'error',
+                    'message' => 'Token non fourni ou format invalide'
+                ]);
+            }
+
+            $token = $matches[1];
+            $user = $this->user->findByToken($token);
+
+            if (!$user) {
+                http_response_code(401);
+                return json_encode([
+                    'status' => 'error',
+                    'message' => 'Token invalide'
+                ]);
+            }
+
+            // Vérifier si l'utilisateur est admin
+            if ($user['role'] !== 'Admin') {
+                http_response_code(403);
+                return json_encode([
+                    'status' => 'error',
+                    'message' => 'Accès non autorisé'
+                ]);
+            }
+
+            $stmt = $this->user->getEtudiants();
+            $etudiants = [];
+
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $etudiants[] = $row;
+            }
+
+            return json_encode([
+                'status' => 'success',
+                'data' => $etudiants
+            ]);
+        } catch (Exception $e) {
+            error_log("[ERROR] Erreur lors de la récupération des étudiants: " . $e->getMessage());
+            http_response_code(500);
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Erreur lors de la récupération des étudiants'
             ]);
         }
     }

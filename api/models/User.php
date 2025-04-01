@@ -22,6 +22,24 @@ class User {
         return $stmt;
     }
 
+    public function getEtudiants() {
+        try {
+            $query = "SELECT id_personne, nom_personne, prenom_personne, téléphone_personne, email_personne, role 
+                     FROM " . $this->table . " 
+                     WHERE role = 'Etudiant'";
+            
+            error_log("[DEBUG] Requête pour récupérer les étudiants: " . $query);
+            
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            
+            return $stmt;
+        } catch(PDOException $e) {
+            error_log("[ERROR] Exception lors de la récupération des étudiants: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function create() {
         try {
             $query = "INSERT INTO " . $this->table . "
