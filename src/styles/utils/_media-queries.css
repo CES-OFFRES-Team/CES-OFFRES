@@ -1,0 +1,125 @@
+/* Desktop first approach */
+
+/* Large screens and up (1200px and up) */
+@media (min-width: 1200px) {
+    .home-container {
+        max-width: 1140px;
+    }
+}
+
+/* Medium screens (between 768px and 1199px) */
+@media (max-width: 1199px) {
+    .home-container {
+        max-width: 960px;
+    }
+    
+    .features-section {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .stats-section {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Tablet (between 768px and 991px) */
+@media (max-width: 991px) {
+    .home-container {
+        max-width: 720px;
+        padding: 1rem;
+    }
+
+    .sidebar {
+        width: 0;
+        position: fixed;
+    }
+
+    .sidebar:hover,
+    .sidebar.active {
+        width: var(--sidebar-width-expanded);
+    }
+
+    main {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+}
+
+/* Mobile (less than 768px) */
+@media (max-width: 767px) {
+    .home-container {
+        max-width: 540px;
+        padding: 0.5rem;
+    }
+
+    .features-section,
+    .stats-section {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
+
+    .auth-form {
+        width: 90%;
+        margin: 0 auto;
+        padding: 1.5rem;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        padding: 0.5rem;
+    }
+}
+
+/* Small mobile (less than 576px) */
+@media (max-width: 575px) {
+    .header-content {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .nav-item {
+        padding: 0.5rem;
+    }
+
+    .button,
+    button[type="submit"],
+    .login-button,
+    .cta-button {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .auth-form {
+        padding: 1rem;
+    }
+
+    .hero-section {
+        padding: 2rem 0;
+    }
+}
+
+/* Pour gérer la hauteur sur les petits écrans */
+@media (max-height: 600px) {
+    .sidebar {
+        overflow-y: auto;
+    }
+
+    .auth-container {
+        min-height: auto;
+        padding: 1rem 0;
+    }
+}

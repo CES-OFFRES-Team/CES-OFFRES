@@ -1,0 +1,7 @@
+footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: var(--background);
+    box-shadow: var(--shadow-sm);
+    margin-top: auto;
+}
