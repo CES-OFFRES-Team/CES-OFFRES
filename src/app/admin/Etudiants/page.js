@@ -62,7 +62,7 @@ export default function AdminEtudiantsPage() {
             }
 
             const data = await response.json();
-            setEtudiants(data);
+            setEtudiants(data.data);
         } catch (error) {
             console.error('Erreur:', error);
             setError(error.message);
