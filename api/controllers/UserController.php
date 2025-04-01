@@ -18,9 +18,13 @@ class UserController {
         header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
         header('Access-Control-Allow-Headers: Content-Type');
 
+        // Récupérer l'URL complète
+        $requestUri = $_SERVER['REQUEST_URI'];
+        
         // Vérifier si l'URL contient /etudiants ou /pilotes
-        $isEtudiantsEndpoint = strpos($_SERVER['REQUEST_URI'], '/etudiants') !== false;
-        $isPilotesEndpoint = strpos($_SERVER['REQUEST_URI'], '/pilotes') !== false;
+        $isEtudiantsEndpoint = strpos($requestUri, '/etudiants') !== false;
+        $isPilotesEndpoint = strpos($requestUri, '/pilotes') !== false;
+        $isLoginEndpoint = strpos($requestUri, '/login') !== false;
 
         switch ($method) {
             case 'GET':
@@ -32,7 +36,7 @@ class UserController {
                 }
                 return $this->getUsers();
             case 'POST':
-                if ($_SERVER['REQUEST_URI'] === '/api/login') {
+                if ($isLoginEndpoint) {
                     return $this->login();
                 }
                 return $this->createUser();
