@@ -40,6 +40,20 @@ class User {
         }
     }
 
+    public function getPilotes() {
+        try {
+            $query = "SELECT id_personne, nom_personne, prenom_personne, téléphone_personne, email_personne, role 
+                     FROM " . $this->table . " 
+                     WHERE role = 'Pilote'";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt;
+        } catch (Exception $e) {
+            error_log("[ERROR] Erreur lors de la récupération des pilotes: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function create() {
         try {
             $query = "INSERT INTO " . $this->table . "
