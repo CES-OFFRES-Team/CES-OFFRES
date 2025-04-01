@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { HiBuildingOffice, HiPhone, HiMail, HiTrash } from 'react-icons/hi';
-import '../../Offres/Offres.css';
+import { HiBuildingOffice, HiPhone, HiMail, HiTrash, HiPlus } from 'react-icons/hi';
+import EntrepriseModal from './EntrepriseModal';
+import './Entreprises.css';
 
 // Données fictives pour les entreprises
 const entreprisesDeTest = [
@@ -22,19 +23,15 @@ const entreprisesDeTest = [
     },
 ];
 
-const EntrepriseCard = ({ entreprise }) => {
-    const handleModifier = () => { };
-    const handleSupprimer = () => { };
-    const handlePostuler = () => { };
-
+const EntrepriseCard = ({ entreprise, onModifier, onSupprimer }) => {
     return (
-        <div className="offre-card">
-            <div className="offre-header">
-                <h2 className="offre-title">{entreprise.nom}</h2>
-                <div className="offre-company">{entreprise.secteur}</div>
+        <div className="entreprise-card">
+            <div className="entreprise-header">
+                <h2 className="entreprise-title">{entreprise.nom}</h2>
+                <div className="entreprise-secteur">{entreprise.secteur}</div>
             </div>
-            <div className="offre-content">
-                <div className="offre-details">
+            <div className="entreprise-content">
+                <div className="entreprise-details">
                     <div className="detail-item">
                         <HiPhone />
                         <span>{entreprise.telephone}</span>
@@ -45,13 +42,12 @@ const EntrepriseCard = ({ entreprise }) => {
                     </div>
                 </div>
             </div>
-            <div className="offre-actions">
-                <button className="btn btn-outline" onClick={handleModifier}>Modifier</button>
-                <button className="btn btn-outline" onClick={handleSupprimer}>
-                    <HiTrash className="trash-icon" />
+            <div className="entreprise-actions">
+                <button className="btn btn-outline" onClick={() => onModifier(entreprise)}>
+                    Modifier
                 </button>
-                <button className="btn btn-primary" onClick={handlePostuler}>
-                    Postuler
+                <button className="btn btn-outline" onClick={() => onSupprimer(entreprise.id)}>
+                    <HiTrash className="trash-icon" />
                 </button>
             </div>
         </div>
@@ -61,10 +57,44 @@ const EntrepriseCard = ({ entreprise }) => {
 export default function AdminEntreprisesPage() {
     const [entreprises, setEntreprises] = useState([]);
     const [search, setSearch] = useState('');
+    const [modalOpen, setModalOpen] = useState(false);
+    const [selectedEntreprise, setSelectedEntreprise] = useState(null);
 
     useEffect(() => {
         setEntreprises(entreprisesDeTest);
     }, []);
+
+    const handleCreate = () => {
+        setSelectedEntreprise(null);
+        setModalOpen(true);
+    };
+
+    const handleModifier = (entreprise) => {
+        setSelectedEntreprise(entreprise);
+        setModalOpen(true);
+    };
+
+    const handleSupprimer = (id) => {
+        if (window.confirm('Êtes-vous sûr de vouloir supprimer cette entreprise ?')) {
+            setEntreprises(entreprises.filter(e => e.id !== id));
+        }
+    };
+
+    const handleModalSubmit = (formData) => {
+        if (selectedEntreprise) {
+            // Modification
+            setEntreprises(entreprises.map(e => 
+                e.id === selectedEntreprise.id ? { ...formData, id: e.id } : e
+            ));
+        } else {
+            // Création
+            setEntreprises([
+                ...entreprises,
+                { ...formData, id: Math.max(...entreprises.map(e => e.id)) + 1 }
+            ]);
+        }
+        setModalOpen(false);
+    };
 
     const handleSearchChange = (e) => {
         setSearch(e.target.value);
@@ -76,25 +106,39 @@ export default function AdminEntreprisesPage() {
     );
 
     return (
-        <div className="offres-container">
-            <div className="offres-header">
+        <div className="entreprises-container">
+            <div className="entreprises-header">
                 <h1>Gestion des Entreprises</h1>
-                <p>Consultez, modifiez ou supprimez les profils d'entreprise</p>
+                <button className="btn btn-primary" onClick={handleCreate}>
+                    <HiPlus /> Nouvelle Entreprise
+                </button>
                 <input
                     type="text"
                     placeholder="Rechercher une entreprise..."
                     value={search}
                     onChange={handleSearchChange}
                     className="filter-input"
-                    style={{ maxWidth: '400px', margin: '1rem auto', display: 'block' }}
                 />
             </div>
 
-            <div className="offres-grid">
+            <div className="entreprises-grid">
                 {entreprisesFiltrees.map((entreprise) => (
-                    <EntrepriseCard key={entreprise.id} entreprise={entreprise} />
+                    <EntrepriseCard 
+                        key={entreprise.id} 
+                        entreprise={entreprise}
+                        onModifier={handleModifier}
+                        onSupprimer={handleSupprimer}
+                    />
                 ))}
             </div>
+
+            {modalOpen && (
+                <EntrepriseModal
+                    entreprise={selectedEntreprise}
+                    onClose={() => setModalOpen(false)}
+                    onSubmit={handleModalSubmit}
+                />
+            )}
         </div>
     );
 }
