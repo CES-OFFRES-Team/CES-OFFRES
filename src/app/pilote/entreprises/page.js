@@ -3,9 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { HiBuildingOffice, HiPhone, HiMail, HiTrash } from 'react-icons/hi';
 import '../../Offres/Offres.css';
-import CreateEntrepriseButton from '../components/CreateEntrepriseButton';
-import StatsEntrepriseButton from '../components/StatsEntrepriseButton';
-
+import CreateEntrepriseButton from '../../components/CreateEntrepriseButton';
+import StatsEntrepriseButton from '../../components/StatsEntrepriseButton';
 
 const entreprisesDeTest = [
     {
@@ -99,6 +98,7 @@ export default function AdminEntreprisesPage() {
                     <EntrepriseCard key={entreprise.id} entreprise={entreprise} />
                 ))}
             </div>
+
             <CreateEntrepriseButton />
             <StatsEntrepriseButton />
         </div>

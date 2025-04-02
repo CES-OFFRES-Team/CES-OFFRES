@@ -1,0 +1,18 @@
+.statsBtn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #2d79f3;
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: background-color 0.3s ease;
+}
+
+.statsBtn:hover {
+    background-color: #1A237E;
+}

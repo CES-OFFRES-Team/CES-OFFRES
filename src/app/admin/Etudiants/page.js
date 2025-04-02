@@ -3,6 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import { HiPhone, HiMail, HiUser, HiTrash } from 'react-icons/hi';
 import '../../Offres/Offres.css';
+import CreateEtudiantButton from '../../components/CreateEtudiantButton';
+import StatsEtudiantsButton from '../../components/StatsEtudiantsButton';
+
+
 
 // Données fictives pour les étudiants
 const etudiantsDeTest = [
@@ -57,9 +61,7 @@ const EtudiantCard = ({ etudiant }) => {
                 <button className="btn btn-outline" onClick={handleSupprimer}>
                     <HiTrash className="trash-icon" />
                 </button>
-                <button className="btn btn-primary" onClick={handlePostuler}>
-                    Postuler
-                </button>
+
             </div>
         </div>
     );
@@ -102,6 +104,8 @@ export default function AdminEtudiantsPage() {
                     <EtudiantCard key={etudiant.id} etudiant={etudiant} />
                 ))}
             </div>
+            <CreateEtudiantButton />
+            <StatsEtudiantsButton />
         </div>
     );
 }

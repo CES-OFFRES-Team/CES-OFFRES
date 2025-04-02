@@ -1,30 +1,38 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { HiIdentification, HiPhone, HiMail, HiTrash } from 'react-icons/hi';
+import { HiPhone, HiMail, HiUser, HiTrash } from 'react-icons/hi';
 import '../../Offres/Offres.css';
-import CreatePiloteButton from '../components/CreatePiloteButton';
+import CreateEtudiantButton from '../../components/CreateEtudiantButton';
+import StatsEtudiantsButton from '../../components/StatsEtudiantsButton';
 
 
-// Données fictives pour les pilotes
-const pilotesDeTest = [
+// Données fictives pour les étudiants
+const etudiantsDeTest = [
     {
         id: 1,
-        nom: 'Martin',
-        prenom: 'Alice',
-        telephone: '0701020304',
-        mail: 'alice.martin@cesi.fr',
+        nom: 'Dupont',
+        prenom: 'Marie',
+        telephone: '0601020304',
+        mail: 'marie.dupont@example.com',
     },
     {
         id: 2,
-        nom: 'Lemoine',
-        prenom: 'Jean',
-        telephone: '0704050607',
-        mail: 'jean.lemoine@cesi.fr',
+        nom: 'Durand',
+        prenom: 'Paul',
+        telephone: '0604050607',
+        mail: 'paul.durand@example.com',
+    },
+    {
+        id: 3,
+        nom: 'Moreau',
+        prenom: 'Claire',
+        telephone: '0611121314',
+        mail: 'claire.moreau@example.com',
     },
 ];
 
-const PiloteCard = ({ pilote }) => {
+const EtudiantCard = ({ etudiant }) => {
     const handleModifier = () => { };
     const handleSupprimer = () => { };
     const handlePostuler = () => { };
@@ -32,18 +40,18 @@ const PiloteCard = ({ pilote }) => {
     return (
         <div className="offre-card">
             <div className="offre-header">
-                <h2 className="offre-title">{pilote.prenom} {pilote.nom}</h2>
-                <div className="offre-company">{pilote.mail}</div>
+                <h2 className="offre-title">{etudiant.prenom} {etudiant.nom}</h2>
+                <div className="offre-company">{etudiant.mail}</div>
             </div>
             <div className="offre-content">
                 <div className="offre-details">
                     <div className="detail-item">
                         <HiPhone />
-                        <span>{pilote.telephone}</span>
+                        <span>{etudiant.telephone}</span>
                     </div>
                     <div className="detail-item">
                         <HiMail />
-                        <span>{pilote.mail}</span>
+                        <span>{etudiant.mail}</span>
                     </div>
                 </div>
             </div>
@@ -52,24 +60,25 @@ const PiloteCard = ({ pilote }) => {
                 <button className="btn btn-outline" onClick={handleSupprimer}>
                     <HiTrash className="trash-icon" />
                 </button>
+
             </div>
         </div>
     );
 };
 
-export default function AdminPilotesPage() {
-    const [pilotes, setPilotes] = useState([]);
+export default function AdminEtudiantsPage() {
+    const [etudiants, setEtudiants] = useState([]);
     const [search, setSearch] = useState('');
 
     useEffect(() => {
-        setPilotes(pilotesDeTest);
+        setEtudiants(etudiantsDeTest);
     }, []);
 
     const handleSearchChange = (e) => {
         setSearch(e.target.value);
     };
 
-    const pilotesFiltres = pilotes.filter((e) =>
+    const etudiantsFiltres = etudiants.filter((e) =>
         `${e.prenom} ${e.nom}`.toLowerCase().includes(search.toLowerCase()) ||
         e.mail.toLowerCase().includes(search.toLowerCase())
     );
@@ -77,11 +86,11 @@ export default function AdminPilotesPage() {
     return (
         <div className="offres-container">
             <div className="offres-header">
-                <h1>Gestion des Pilotes</h1>
-                <p>Consultez, modifiez ou supprimez les profils pilotes</p>
+                <h1>Gestion des Étudiants</h1>
+                <p>Consultez, modifiez ou supprimez les profils étudiants</p>
                 <input
                     type="text"
-                    placeholder="Rechercher un pilote..."
+                    placeholder="Rechercher un étudiant..."
                     value={search}
                     onChange={handleSearchChange}
                     className="filter-input"
@@ -90,11 +99,12 @@ export default function AdminPilotesPage() {
             </div>
 
             <div className="offres-grid">
-                {pilotesFiltres.map((pilote) => (
-                    <PiloteCard key={pilote.id} pilote={pilote} />
+                {etudiantsFiltres.map((etudiant) => (
+                    <EtudiantCard key={etudiant.id} etudiant={etudiant} />
                 ))}
             </div>
-            <CreatePiloteButton />
+            <CreateEtudiantButton />
+            <StatsEtudiantsButton />
         </div>
     );
 }
