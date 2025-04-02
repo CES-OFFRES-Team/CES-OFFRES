@@ -1,42 +1,119 @@
 'use client';
-import React from 'react';
-import AuthNav from './AuthNav';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Navigation() {
+    const [isOpen, setIsOpen] = useState(false);
+    const [isMaximized, setIsMaximized] = useState(false);
+
+    useEffect(() => {
+        const checkWindowState = () => {
+            // Méthode 1: Vérifier si la fenêtre occupe tout l'écran disponible
+            const method1 = window.outerWidth >= window.screen.availWidth && 
+                          window.outerHeight >= window.screen.availHeight;
+
+            // Méthode 2: Vérifier le ratio d'occupation
+            const heightRatio = window.innerHeight / window.screen.availHeight;
+            const widthRatio = window.innerWidth / window.screen.availWidth;
+            const method2 = heightRatio > 0.95 && widthRatio > 0.95;
+
+            // Méthode 3: Vérifier si la fenêtre est à 0,0 et occupe presque tout l'écran
+            const method3 = window.screenX <= 0 && 
+                          window.screenY <= 0 && 
+                          Math.abs(window.outerWidth - window.screen.availWidth) < 10 && 
+                          Math.abs(window.outerHeight - window.screen.availHeight) < 10;
+
+            // On considère la fenêtre maximisée si au moins deux méthodes le confirment
+            const isMax = [method1, method2, method3].filter(Boolean).length >= 2;
+            
+            setIsMaximized(isMax);
+        };
+
+        // Vérifier l'état initial
+        checkWindowState();
+
+        // Vérifier à chaque changement de taille
+        window.addEventListener('resize', checkWindowState);
+
+        // Vérifier périodiquement (au cas où)
+        const interval = setInterval(checkWindowState, 1000);
+
+        return () => {
+            window.removeEventListener('resize', checkWindowState);
+            clearInterval(interval);
+        };
+    }, []);
+
     return (
-        <aside className="sidebar">
-            <nav className="sidebar-nav">
+        <>
+            {/* Le menu burger est toujours dans le DOM mais caché en CSS si maximisé */}
+            <button 
+                className={`menu-toggle ${isOpen ? 'active' : ''} ${isMaximized ? 'hidden' : ''}`}
+                onClick={() => setIsOpen(!isOpen)}
+                aria-label="Toggle navigation"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <aside 
+                className={`sidebar ${isOpen ? 'expanded' : ''} ${isMaximized ? 'maximized' : ''}`}
+                onMouseEnter={() => isMaximized && setIsOpen(true)}
+                onMouseLeave={() => isMaximized && setIsOpen(false)}
+            >
+                {!isMaximized && (
+                    <div className="mobile-header">
+                        <button 
+                            className="back-button"
+                            onClick={() => setIsOpen(false)}
+                            aria-label="Close menu"
+                        >
+                            <i className="fa-solid fa-chevron-left"></i>
+                            <span>Retour</span>
+                        </button>
+                    </div>
+                )}
                 <div className="logo-container">
-                    <img
-                        src="/images/logo.svg"
-                        alt="Logo"
+                    <Image 
+                        src="/images/logo.svg" 
+                        alt="CES'Offres Logo" 
+                        width={isOpen ? 130 : 45} 
+                        height={45} 
                         className="nav-logo"
                     />
                 </div>
-                <ul className="nav-list primary-nav">
-                    <li className="nav-item">
-                        <a href="/" className="nav-link">
-                            <span className="material-symbols-rounded">home</span>
-                            <span className="nav-label">Accueil</span>
-                        </a>
-                    </li>
-                    <li className="nav-item">
-                        <a href="/Offres" className="nav-link">
-                            <span className="material-symbols-rounded">work</span>
-                            <span className="nav-label">Offres</span>
-                        </a>
-                    </li>
-                    <li className="nav-item">
-                        <a href="/Contact" className="nav-link">
-                            <span className="material-symbols-rounded">contact_support</span>
-                            <span className="nav-label">Contact</span>
-                        </a>
-                    </li>
-                </ul>
-                <ul className="nav-list secondary-nav">
-                    <AuthNav />
-                </ul>
-            </nav>
-        </aside>
+                <nav className="sidebar-nav">
+                    <ul className="primary-nav">
+                        <li className="nav-item">
+                            <Link href="/" className="nav-link">
+                                <i className="fa-solid fa-house"></i>
+                                <span className="nav-label">Accueil</span>
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link href="/Offres" className="nav-link">
+                                <i className="fa-solid fa-briefcase"></i>
+                                <span className="nav-label">Offres</span>
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link href="/Contact" className="nav-link">
+                                <i className="fa-solid fa-envelope"></i>
+                                <span className="nav-label">Contact</span>
+                            </Link>
+                        </li>
+                    </ul>
+                    <ul className="secondary-nav">
+                        <li className="nav-item">
+                            <Link href="/Login" className="nav-link">
+                                <i className="fa-solid fa-right-to-bracket"></i>
+                                <span className="nav-label">Connexion</span>
+                            </Link>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+        </>
     );
-} 
+}

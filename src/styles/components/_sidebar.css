@@ -1,0 +1,224 @@
+/* Base styles */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: var(--sidebar-width-expanded);
+    background: var(--sidebar-bg);
+    transition: all var(--transition-speed) ease;
+    overflow-x: hidden;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(-100%);
+}
+
+/* Menu Burger */
+.menu-toggle {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1001;
+    background: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 10px;
+    box-shadow: var(--shadow-sm);
+    display: block !important; /* Force l'affichage */
+    opacity: 1 !important; /* Force l'opacité */
+    visibility: visible !important; /* Force la visibilité */
+}
+
+.menu-toggle.hidden {
+    display: none !important; /* Force le masquage */
+}
+
+.menu-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background-color: var(--sidebar-bg);
+    margin: 4px 0;
+    transition: 0.3s;
+}
+
+.menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Mode maximisé */
+.sidebar.maximized {
+    transform: translateX(0);
+    width: var(--sidebar-width);
+}
+
+.sidebar.maximized.expanded {
+    width: var(--sidebar-width-expanded);
+}
+
+/* Ajustement des marges du contenu principal */
+main {
+    transition: margin-left var(--transition-speed) ease;
+    margin-left: 0;
+}
+
+/* En mode maximisé - uniquement décalé quand la sidebar est étendue */
+.sidebar.maximized.expanded ~ main {
+    margin-left: var(--sidebar-width-expanded);
+}
+
+/* Mode non-maximisé */
+.sidebar:not(.maximized) {
+    transform: translateX(-100%);
+    width: var(--sidebar-width-expanded);
+}
+
+.sidebar:not(.maximized).expanded {
+    transform: translateX(0);
+}
+
+/* Décalage du contenu en mode burger quand le menu est ouvert */
+.sidebar:not(.maximized).expanded ~ main {
+    margin-left: var(--sidebar-width-expanded);
+}
+
+/* Mobile header */
+.mobile-header {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: var(--sidebar-bg);
+}
+
+.back-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 0.5rem;
+    font-size: 1rem;
+    transition: transform 0.2s ease;
+}
+
+.back-button i {
+    font-size: 1.2rem;
+}
+
+.back-button span {
+    font-weight: 500;
+}
+
+.back-button:hover {
+    transform: translateX(-3px);
+}
+
+/* Navigation styles */
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.primary-nav, .secondary-nav {
+    list-style: none;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.primary-nav {
+    flex-grow: 1;
+}
+
+.secondary-nav {
+    margin-top: auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 20px;
+}
+
+.logo-container {
+    width: 100%;
+    padding: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.nav-logo {
+    width: 45px;
+    height: auto;
+    transition: width var(--transition-speed) ease;
+    object-fit: contain;
+}
+
+.nav-item {
+    width: 100%;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    text-decoration: none;
+    color: white;
+    transition: all var(--transition-speed) ease;
+    border-radius: 8px;
+}
+
+.nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link i {
+    min-width: 24px;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.nav-label {
+    margin-left: 15px;
+    opacity: 0;
+    white-space: nowrap;
+    transition: opacity var(--transition-speed) ease;
+}
+
+.sidebar.expanded .nav-label {
+    opacity: 1;
+}
+
+.sidebar.expanded .nav-logo {
+    width: 130px;
+}
+
+/* Cacher le menu burger en mode maximisé */
+.sidebar.maximized ~ .menu-toggle {
+    display: none;
+}
+
+.fullscreen-toggle {
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    color: white;
+}
+
+.fullscreen-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+}

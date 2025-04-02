@@ -1,4 +1,4 @@
-import "./globals.css";
+import "../styles/main.css";  // Remplacer l'ancien import
 import { Inter } from 'next/font/google'
 import Navigation from './components/Navigation'
 

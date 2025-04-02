@@ -1,0 +1,50 @@
+.button,
+button[type="submit"],
+.login-button,
+.cta-button,
+.postuler-btn {
+    background-color: var(--primary);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius-sm);
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+}
+
+.button:hover,
+button[type="submit"]:hover,
+.login-button:hover,
+.cta-button:hover,
+.postuler-btn:hover {
+    background-color: #005bb5;
+}
+
+.connexion-button,
+.mon-compte-button,
+.deconnexion-button {
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.connexion-button {
+    background-color: var(--primary);
+    color: white;
+}
+
+.mon-compte-button {
+    background-color: var(--secondary);
+    color: white;
+}
+
+.deconnexion-button {
+    background-color: #dc2626;
+    color: white;
+}
