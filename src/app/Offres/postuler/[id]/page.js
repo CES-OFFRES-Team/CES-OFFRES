@@ -154,43 +154,72 @@ export default function PostulerForm({ params }) {
             const url = `${API_URL}/candidatures.php`;
             addDebugLog('Envoi de la requête à: ' + url);
             
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                },
-                mode: 'cors',
-                credentials: 'include',
-                body: formDataToSend,
-            });
-
-            addDebugLog('Statut de la réponse: ' + response.status);
-            addDebugLog('En-têtes de la réponse: ' + JSON.stringify(Object.fromEntries(response.headers.entries())));
-
-            // Log de la réponse brute
-            const responseText = await response.text();
-            addDebugLog('Réponse brute du serveur: ' + responseText);
-
-            let data;
             try {
-                data = JSON.parse(responseText);
-                addDebugLog('Réponse parsée: ' + JSON.stringify(data));
-            } catch (e) {
-                addDebugLog('Erreur de parsing JSON: ' + e.message);
-                addDebugLog('Réponse brute reçue: ' + responseText);
-                throw new Error('Réponse invalide du serveur');
-            }
+                addDebugLog('Configuration de la requête:');
+                addDebugLog('- Mode: CORS');
+                addDebugLog('- Credentials: include');
+                addDebugLog('- Headers: Accept: application/json');
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Origin': window.location.origin
+                    },
+                    mode: 'cors',
+                    credentials: 'include',
+                    body: formDataToSend,
+                });
 
-            // Afficher les logs du serveur
-            if (data.logs) {
-                addDebugLog('Logs du serveur:');
-                data.logs.forEach(log => addDebugLog(log));
-            }
+                addDebugLog('Statut de la réponse: ' + response.status);
+                addDebugLog('En-têtes de la réponse: ' + JSON.stringify(Object.fromEntries(response.headers.entries())));
 
-            if (data.status === 'success') {
-                router.push('/Offres/confirmation');
-            } else {
-                throw new Error(data.message || 'Erreur lors de l\'envoi de la candidature');
+                // Log de la réponse brute
+                const responseText = await response.text();
+                addDebugLog('Réponse brute du serveur: ' + responseText);
+
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                    addDebugLog('Réponse parsée: ' + JSON.stringify(data));
+                } catch (e) {
+                    addDebugLog('Erreur de parsing JSON: ' + e.message);
+                    addDebugLog('Réponse brute reçue: ' + responseText);
+                    throw new Error('Réponse invalide du serveur');
+                }
+
+                // Afficher les logs du serveur
+                if (data.logs) {
+                    addDebugLog('Logs du serveur:');
+                    data.logs.forEach(log => addDebugLog(log));
+                }
+
+                if (data.status === 'success') {
+                    router.push('/Offres/confirmation');
+                } else {
+                    throw new Error(data.message || 'Erreur lors de l\'envoi de la candidature');
+                }
+            } catch (error) {
+                addDebugLog('Erreur complète: ' + error.message);
+                addDebugLog('Type d\'erreur: ' + error.name);
+                addDebugLog('Stack trace: ' + error.stack);
+                
+                if (error.message === 'Failed to fetch') {
+                    setError(`Erreur de connexion au serveur. Veuillez vérifier que:
+                        1. Le serveur est accessible à l'adresse ${API_URL}
+                        2. Votre connexion internet est active
+                        3. Le serveur autorise les requêtes CORS depuis ${window.location.origin}
+                        
+                        Détails techniques:
+                        - URL: ${url}
+                        - Origin: ${window.location.origin}
+                        - Mode: CORS
+                        - Credentials: include`);
+                } else {
+                    setError(error.message);
+                }
+            } finally {
+                setLoading(false);
             }
         } catch (error) {
             addDebugLog('Erreur complète: ' + error.message);
@@ -199,8 +228,6 @@ export default function PostulerForm({ params }) {
             } else {
                 setError(error.message);
             }
-        } finally {
-            setLoading(false);
         }
     };
 
