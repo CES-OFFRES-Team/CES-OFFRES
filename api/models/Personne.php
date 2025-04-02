@@ -55,9 +55,10 @@ class Personne {
 
     public function getById($id) {
         try {
-            $query = "SELECT * FROM " . $this->table_name . " WHERE id_personne = ?";
+            $query = "SELECT * FROM " . $this->table_name . " WHERE id_personne = :id";
             $stmt = $this->db->prepare($query);
-            $stmt->execute([$id]);
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             error_log("[ERROR] Exception dans Personne::getById(): " . $e->getMessage());
