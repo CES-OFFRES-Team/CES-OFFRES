@@ -69,6 +69,12 @@ const loginUser = async (email, password) => {
             throw new Error(data.error || data.message || 'Erreur lors de la connexion');
         }
 
+        // Vérifier que l'id_personne est présent
+        if (!data.user || !data.user.id_personne) {
+            console.error('Données utilisateur incomplètes:', data.user);
+            throw new Error('Données utilisateur incomplètes');
+        }
+
         return data;
     } catch (error) {
         console.error('Erreur complète:', error);
@@ -96,9 +102,9 @@ export default function LoginPage() {
       try {
         const data = await loginUser(email, password);
         
-        // Sauvegarder le token et les données utilisateur
-        Cookies.set('authToken', data.token, { expires: 7 });
-        Cookies.set('userData', JSON.stringify(data.user), { expires: 7 });
+        // Sauvegarder le token et les données utilisateur avec les fonctions de auth.js
+        setAuthToken(data.token);
+        setUserData(data.user);
         
         // Afficher le message de succès
         setSuccessMessage(`Connexion réussie ! Bienvenue ${data.user.prenom} ${data.user.nom}`);

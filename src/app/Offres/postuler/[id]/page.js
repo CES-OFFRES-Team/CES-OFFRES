@@ -31,8 +31,14 @@ export default function PostulerForm({ params }) {
     useEffect(() => {
         // Récupérer les informations de l'utilisateur
         const userData = getUserData();
+        console.log('Données utilisateur récupérées:', userData);
+        
         if (!userData) {
             setError("Vous devez être connecté pour postuler");
+            return;
+        }
+        if (!userData.id_personne) {
+            setError("Erreur: ID utilisateur non trouvé");
             return;
         }
         setUser(userData);
@@ -74,6 +80,12 @@ export default function PostulerForm({ params }) {
             return;
         }
 
+        if (!user.id_personne) {
+            setError("Erreur: ID utilisateur non trouvé");
+            setLoading(false);
+            return;
+        }
+
         try {
             const formDataToSend = new FormData();
             
@@ -85,10 +97,11 @@ export default function PostulerForm({ params }) {
                 formDataToSend.append('cv', formData.cv);
             }
 
-            console.log('Envoi de la candidature:', {
+            console.log('Données de la candidature:', {
                 id_stage: params.id,
                 id_personne: user.id_personne,
-                cv: formData.cv ? formData.cv.name : null
+                cv: formData.cv ? formData.cv.name : null,
+                user: user
             });
 
             const response = await fetch(`${API_URL}/candidatures.php`, {
@@ -97,6 +110,7 @@ export default function PostulerForm({ params }) {
             });
 
             const data = await response.json();
+            console.log('Réponse du serveur:', data);
 
             if (data.status === 'success') {
                 router.push('/Offres/confirmation');
