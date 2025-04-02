@@ -32,15 +32,32 @@ export default function OffreModal({ offre, onClose, onSubmit }) {
         // Charger la liste des entreprises
         const fetchEntreprises = async () => {
             try {
+                console.log('Début de la requête API entreprises');
                 const response = await fetch(`${API_URL}/entreprises`);
+                console.log('Réponse reçue:', response);
+                
                 if (!response.ok) {
                     throw new Error('Erreur lors de la récupération des entreprises');
                 }
+                
                 const data = await response.json();
-                setEntreprises(data);
+                console.log('Données reçues:', data);
+                console.log('Type de data:', typeof data);
+                console.log('Est-ce un tableau?', Array.isArray(data));
+                
+                // Vérifier si data est un tableau ou si les données sont dans data.data
+                const entreprisesData = Array.isArray(data) ? data : (data.data || []);
+                console.log('Données traitées:', entreprisesData);
+                
+                if (!Array.isArray(entreprisesData)) {
+                    throw new Error('Format de données invalide');
+                }
+                
+                setEntreprises(entreprisesData);
             } catch (err) {
+                console.error('Erreur détaillée:', err);
                 setError('Impossible de charger la liste des entreprises');
-                console.error('Erreur:', err);
+                setEntreprises([]); // S'assurer que entreprises est toujours un tableau
             }
         };
 
@@ -111,7 +128,7 @@ export default function OffreModal({ offre, onClose, onSubmit }) {
                             required
                         >
                             <option value="">Sélectionnez une entreprise</option>
-                            {entreprises.map(entreprise => (
+                            {Array.isArray(entreprises) && entreprises.map(entreprise => (
                                 <option key={entreprise.id_entreprise} value={entreprise.id_entreprise}>
                                     {entreprise.nom_entreprise}
                                 </option>
