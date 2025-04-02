@@ -70,22 +70,8 @@ class CandidatureController {
                 'id_stage' => $_POST['id_stage'] ?? null
             ];
 
-            error_log("[DEBUG] Données reçues - id_personne: " . var_export($data['id_personne'], true) . ", type: " . gettype($data['id_personne']));
-
             if (!$data['id_personne'] || !$data['id_stage']) {
                 throw new Exception("ID personne et ID stage requis");
-            }
-
-            // Convertir explicitement en entier
-            $data['id_personne'] = intval($data['id_personne']);
-            error_log("[DEBUG] ID personne après conversion: " . var_export($data['id_personne'], true));
-
-            // Vérifier si la personne existe
-            $personne = $this->personne->getById($data['id_personne']);
-            error_log("[DEBUG] Résultat getById: " . var_export($personne, true));
-            
-            if (!$personne) {
-                throw new Exception("Personne non trouvée");
             }
 
             // Vérifier si une candidature existe déjà
