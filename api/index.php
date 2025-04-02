@@ -36,57 +36,42 @@ if (preg_match('/\/(\d+)$/', $path, $matches)) {
 // Routage
 try {
     error_log("[DEBUG] Tentative de routage pour le chemin: " . $path . " avec la méthode: " . $method . " et l'ID: " . ($id ?? 'null'));
-    
-    // Standardisation des routes
-    $routes = [
-        '/users' => ['controller' => 'UserController', 'methods' => ['GET', 'POST']],
-        '/users/etudiants' => ['controller' => 'UserController', 'methods' => ['GET']],
-        '/users/pilotes' => ['controller' => 'UserController', 'methods' => ['GET']],
-        '/login' => ['controller' => 'UserController', 'methods' => ['POST']],
-        '/candidatures' => ['controller' => 'CandidatureController', 'methods' => ['GET', 'POST']],
-        '/candidatures/\d+' => ['controller' => 'CandidatureController', 'methods' => ['GET', 'PUT', 'DELETE']],
-        '/entreprises' => ['controller' => 'EntrepriseController', 'methods' => ['GET', 'POST']],
-        '/entreprises/\d+' => ['controller' => 'EntrepriseController', 'methods' => ['GET', 'PUT', 'DELETE']],
-        '/offres' => ['controller' => 'OffreController', 'methods' => ['GET', 'POST']],
-        '/offres/\d+' => ['controller' => 'OffreController', 'methods' => ['GET', 'PUT', 'DELETE']]
-    ];
-
-    // Recherche de la route correspondante
-    $matched_route = null;
-    foreach ($routes as $route_pattern => $route_config) {
-        if (preg_match('#^' . $route_pattern . '$#', $path)) {
-            $matched_route = $route_config;
+    switch ($path) {
+        case '/users':
+        case '/users/etudiants':
+        case '/users/pilotes':
+        case '/login':
+            $controller = new UserController();
+            echo $controller->handleRequest($method);
             break;
-        }
-    }
 
-    if ($matched_route) {
-        error_log("[DEBUG] Route trouvée: " . $path);
-        error_log("[DEBUG] Méthodes autorisées: " . implode(', ', $matched_route['methods']));
+        case '/candidatures':
+            error_log("[DEBUG] Route /candidatures détectée");
+            error_log("[DEBUG] Méthode: " . $method);
+            error_log("[DEBUG] ID: " . ($id ?? 'null'));
+            $controller = new CandidatureController();
+            echo $controller->handleRequest($method, $id);
+            break;
         
-        if (!in_array($method, $matched_route['methods'])) {
-            error_log("[ERROR] Méthode non autorisée: " . $method);
-            http_response_code(405);
+        case '/entreprises':
+            $controller = new EntrepriseController();
+            echo $controller->handleRequest($method, $id);
+            break;
+
+        case '/offres':
+        case (preg_match('/^\/offres\/\d+$/', $path) ? $path : !$path):
+            $controller = new OffreController();
+            echo $controller->handleRequest($method, $id);
+            break;
+
+        default:
+            error_log("[ERROR] Route non trouvée: " . $path);
+            http_response_code(404);
             echo json_encode([
                 'status' => 'error',
-                'message' => 'Méthode non autorisée',
-                'allowed_methods' => $matched_route['methods']
+                'message' => 'Route non trouvée'
             ]);
-            exit();
-        }
-
-        $controller_name = $matched_route['controller'];
-        $controller = new $controller_name();
-        echo $controller->handleRequest($method, $id);
-    } else {
-        error_log("[ERROR] Route non trouvée: " . $path);
-        http_response_code(404);
-        echo json_encode([
-            'status' => 'error',
-            'message' => 'Route non trouvée',
-            'path' => $path,
-            'method' => $method
-        ]);
+            break;
     }
 } catch (Exception $e) {
     error_log("[ERROR] Exception dans le routage: " . $e->getMessage());
