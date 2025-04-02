@@ -163,6 +163,12 @@ export default function PostulerForm({ params }) {
 
             console.log('Réponse parsée du serveur:', data);
 
+            // Afficher les logs du serveur
+            if (data.logs) {
+                console.log('Logs du serveur:');
+                data.logs.forEach(log => console.log(log));
+            }
+
             if (data.status === 'success') {
                 router.push('/Offres/confirmation');
             } else {
