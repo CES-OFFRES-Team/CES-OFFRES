@@ -1,17 +1,8 @@
 <?php
 error_log("[DEBUG] Début du traitement de la requête dans index.php");
 
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
-header('Content-Type: application/json');
-
-// Gestion des requêtes OPTIONS pour CORS
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    error_log("[DEBUG] Requête OPTIONS détectée");
-    http_response_code(200);
-    exit();
-}
+// Chargement de la configuration CORS
+require_once 'config/cors.php';
 
 // Chargement des classes
 require_once 'config/database.php';
@@ -55,8 +46,11 @@ try {
             break;
 
         case '/candidatures':
+            error_log("[DEBUG] Route /candidatures détectée");
+            error_log("[DEBUG] Méthode: " . $method);
+            error_log("[DEBUG] ID: " . ($id ?? 'null'));
             $controller = new CandidatureController();
-            echo $controller->handleRequest($method);
+            echo $controller->handleRequest($method, $id);
             break;
         
         case '/entreprises':
@@ -81,9 +75,16 @@ try {
     }
 } catch (Exception $e) {
     error_log("[ERROR] Exception dans le routage: " . $e->getMessage());
+    error_log("[ERROR] Trace: " . $e->getTraceAsString());
     http_response_code(500);
     echo json_encode([
         'status' => 'error',
-        'message' => 'Erreur serveur interne'
+        'message' => 'Erreur serveur interne',
+        'debug_info' => [
+            'error' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString()
+        ]
     ]);
 }

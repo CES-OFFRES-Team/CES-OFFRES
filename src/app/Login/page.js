@@ -69,6 +69,35 @@ const loginUser = async (email, password) => {
             throw new Error(data.error || data.message || 'Erreur lors de la connexion');
         }
 
+        // Vérifier la structure de la réponse
+        if (!data.user) {
+            console.error('Structure de la réponse incorrecte:', data);
+            throw new Error('Format de réponse incorrect');
+        }
+
+        // Afficher la structure complète des données utilisateur
+        console.log('Structure complète des données utilisateur:', data.user);
+
+        // Vérifier si l'utilisateur a un ID
+        if (!data.user.id_personne && !data.user.id) {
+            console.error('Aucun ID trouvé dans les données utilisateur:', data.user);
+            throw new Error('ID utilisateur non trouvé dans la réponse');
+        }
+
+        // S'assurer que les champs essentiels sont présents
+        const userData = {
+            id_personne: data.user.id_personne || data.user.id, // Essayer les deux formats possibles
+            nom: data.user.nom || '',
+            prenom: data.user.prenom || '',
+            email: data.user.email || email,
+            role: data.user.role || 'Etudiant'
+        };
+
+        console.log('Données utilisateur finales:', userData);
+
+        // Mettre à jour les données avec les valeurs par défaut si nécessaire
+        data.user = userData;
+
         return data;
     } catch (error) {
         console.error('Erreur complète:', error);
@@ -96,9 +125,9 @@ export default function LoginPage() {
       try {
         const data = await loginUser(email, password);
         
-        // Sauvegarder le token et les données utilisateur
-        Cookies.set('authToken', data.token, { expires: 7 });
-        Cookies.set('userData', JSON.stringify(data.user), { expires: 7 });
+        // Sauvegarder le token et les données utilisateur avec les fonctions de auth.js
+        setAuthToken(data.token);
+        setUserData(data.user);
         
         // Afficher le message de succès
         setSuccessMessage(`Connexion réussie ! Bienvenue ${data.user.prenom} ${data.user.nom}`);
