@@ -5,6 +5,16 @@ import { HiX } from 'react-icons/hi';
 
 const API_URL = 'http://20.19.36.142:8000/api';
 
+const formatDateForInput = (dateString) => {
+    if (!dateString) return '';
+    // Si la date contient déjà un T, on prend juste la partie avant
+    if (dateString.includes('T')) {
+        return dateString.split('T')[0];
+    }
+    // Sinon, on suppose que c'est une date simple
+    return dateString;
+};
+
 export default function OffreModal({ offre, onClose, onSubmit }) {
     const [formData, setFormData] = useState({
         titre: '',
@@ -16,48 +26,44 @@ export default function OffreModal({ offre, onClose, onSubmit }) {
     });
     const [entreprises, setEntreprises] = useState([]);
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (offre) {
             setFormData({
-                titre: offre.titre,
-                id_entreprise: offre.id_entreprise,
-                description: offre.description,
-                remuneration: offre.remuneration,
-                date_debut: offre.date_début.split('T')[0],
-                date_fin: offre.date_fin.split('T')[0],
+                titre: offre.titre || '',
+                id_entreprise: offre.id_entreprise || '',
+                description: offre.description || '',
+                remuneration: offre.remuneration || '',
+                date_debut: formatDateForInput(offre.date_debut || offre.date_début),
+                date_fin: formatDateForInput(offre.date_fin),
             });
         }
 
-        // Charger la liste des entreprises
         const fetchEntreprises = async () => {
+            setIsLoading(true);
             try {
                 console.log('Début de la requête API entreprises');
                 const response = await fetch(`${API_URL}/entreprises`);
-                console.log('Réponse reçue:', response);
                 
                 if (!response.ok) {
                     throw new Error('Erreur lors de la récupération des entreprises');
                 }
                 
-                const data = await response.json();
-                console.log('Données reçues:', data);
-                console.log('Type de data:', typeof data);
-                console.log('Est-ce un tableau?', Array.isArray(data));
+                const result = await response.json();
+                console.log('Données reçues:', result);
                 
-                // Vérifier si data est un tableau ou si les données sont dans data.data
-                const entreprisesData = Array.isArray(data) ? data : (data.data || []);
-                console.log('Données traitées:', entreprisesData);
-                
-                if (!Array.isArray(entreprisesData)) {
+                if (result.status === 'success' && Array.isArray(result.data)) {
+                    setEntreprises(result.data);
+                } else {
                     throw new Error('Format de données invalide');
                 }
-                
-                setEntreprises(entreprisesData);
             } catch (err) {
                 console.error('Erreur détaillée:', err);
                 setError('Impossible de charger la liste des entreprises');
-                setEntreprises([]); // S'assurer que entreprises est toujours un tableau
+                setEntreprises([]);
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -70,27 +76,63 @@ export default function OffreModal({ offre, onClose, onSubmit }) {
             ...prev,
             [name]: value
         }));
+        // Réinitialiser l'erreur quand l'utilisateur modifie un champ
+        setError('');
+    };
+
+    const validateForm = () => {
+        if (!formData.titre.trim()) {
+            setError('Le titre est requis');
+            return false;
+        }
+
+        if (!formData.id_entreprise) {
+            setError('Veuillez sélectionner une entreprise');
+            return false;
+        }
+
+        if (!formData.description.trim()) {
+            setError('La description est requise');
+            return false;
+        }
+
+        const remuneration = parseFloat(formData.remuneration);
+        if (isNaN(remuneration) || remuneration < 0) {
+            setError('La rémunération doit être un nombre positif');
+            return false;
+        }
+
+        const dateDebut = new Date(formData.date_debut);
+        const dateFin = new Date(formData.date_fin);
+        
+        if (isNaN(dateDebut.getTime()) || isNaN(dateFin.getTime())) {
+            setError('Les dates sont invalides');
+            return false;
+        }
+
+        if (dateDebut > dateFin) {
+            setError('La date de début doit être antérieure à la date de fin');
+            return false;
+        }
+
+        return true;
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         
-        // Validation des dates
-        const dateDebut = new Date(formData.date_debut);
-        const dateFin = new Date(formData.date_fin);
-        
-        if (dateDebut > dateFin) {
-            setError('La date de début doit être antérieure à la date de fin');
+        if (!validateForm()) {
             return;
         }
 
-        // Validation de la rémunération
-        if (isNaN(formData.remuneration) || formData.remuneration < 0) {
-            setError('La rémunération doit être un nombre positif');
-            return;
-        }
+        // Convertir la rémunération en nombre
+        const dataToSubmit = {
+            ...formData,
+            remuneration: parseFloat(formData.remuneration),
+            id_entreprise: parseInt(formData.id_entreprise, 10)
+        };
 
-        onSubmit(formData);
+        onSubmit(dataToSubmit);
     };
 
     return (
@@ -105,9 +147,9 @@ export default function OffreModal({ offre, onClose, onSubmit }) {
 
                 {error && <div className="alert alert-error">{error}</div>}
 
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} className="offre-form">
                     <div className="form-group">
-                        <label htmlFor="titre">Titre de l'offre</label>
+                        <label htmlFor="titre">Titre de l'offre *</label>
                         <input
                             type="text"
                             id="titre"
@@ -115,53 +157,60 @@ export default function OffreModal({ offre, onClose, onSubmit }) {
                             value={formData.titre}
                             onChange={handleChange}
                             required
+                            placeholder="Ex: Développeur Full Stack"
                         />
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="id_entreprise">Entreprise</label>
-                        <select
-                            id="id_entreprise"
-                            name="id_entreprise"
-                            value={formData.id_entreprise}
-                            onChange={handleChange}
-                            required
-                        >
-                            <option value="">Sélectionnez une entreprise</option>
-                            {Array.isArray(entreprises) && entreprises.map(entreprise => (
-                                <option key={entreprise.id_entreprise} value={entreprise.id_entreprise}>
-                                    {entreprise.nom_entreprise}
-                                </option>
-                            ))}
-                        </select>
+                        <label htmlFor="id_entreprise">Entreprise *</label>
+                        {isLoading ? (
+                            <div>Chargement des entreprises...</div>
+                        ) : (
+                            <select
+                                id="id_entreprise"
+                                name="id_entreprise"
+                                value={formData.id_entreprise}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">Sélectionnez une entreprise</option>
+                                {entreprises.map(entreprise => (
+                                    <option key={entreprise.id_entreprise} value={entreprise.id_entreprise}>
+                                        {entreprise.nom_entreprise}
+                                    </option>
+                                ))}
+                            </select>
+                        )}
+                    </div>
+
+                    <div className="form-row">
+                        <div className="form-group">
+                            <label htmlFor="date_debut">Date de début *</label>
+                            <input
+                                type="date"
+                                id="date_debut"
+                                name="date_debut"
+                                value={formData.date_debut}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="date_fin">Date de fin *</label>
+                            <input
+                                type="date"
+                                id="date_fin"
+                                name="date_fin"
+                                value={formData.date_fin}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="date_debut">Date de début</label>
-                        <input
-                            type="date"
-                            id="date_debut"
-                            name="date_debut"
-                            value={formData.date_debut}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="date_fin">Date de fin</label>
-                        <input
-                            type="date"
-                            id="date_fin"
-                            name="date_fin"
-                            value={formData.date_fin}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="remuneration">Rémunération (€)</label>
+                        <label htmlFor="remuneration">Rémunération (€) *</label>
                         <input
                             type="number"
                             id="remuneration"
@@ -171,11 +220,12 @@ export default function OffreModal({ offre, onClose, onSubmit }) {
                             min="0"
                             step="0.01"
                             required
+                            placeholder="Ex: 800"
                         />
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="description">Description</label>
+                        <label htmlFor="description">Description *</label>
                         <textarea
                             id="description"
                             name="description"
@@ -183,6 +233,7 @@ export default function OffreModal({ offre, onClose, onSubmit }) {
                             onChange={handleChange}
                             rows="4"
                             required
+                            placeholder="Décrivez le poste, les missions, les compétences requises..."
                         />
                     </div>
 
