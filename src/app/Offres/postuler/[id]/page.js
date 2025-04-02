@@ -45,7 +45,7 @@ export default function PostulerForm({ params }) {
         // Récupérer les détails de l'offre
         const fetchOffre = async () => {
             try {
-                const response = await fetch(`${API_URL}/offres.php?id=${params.id}`);
+                const response = await fetch(`${API_URL}/offres?id=${params.id}`);
                 if (!response.ok) {
                     console.error('Erreur HTTP:', response.status);
                     throw new Error('Erreur lors de la récupération des détails de l\'offre');
