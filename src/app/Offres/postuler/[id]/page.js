@@ -76,7 +76,7 @@ export default function PostulerForm({ params }) {
 
         // Log les données utilisateur au début
         console.log('Données utilisateur complètes:', user);
-        console.log('ID personne:', user?.id_personne);
+        console.log('ID personne:', user?.id_personne, 'Type:', typeof user?.id_personne);
 
         if (!user) {
             setError("Vous devez être connecté pour postuler");
@@ -90,11 +90,19 @@ export default function PostulerForm({ params }) {
             return;
         }
 
+        // Conversion explicite en nombre
+        const personneId = parseInt(user.id_personne, 10);
+        if (isNaN(personneId)) {
+            setError("Erreur: ID utilisateur invalide");
+            setLoading(false);
+            return;
+        }
+
         try {
             const formDataToSend = new FormData();
             
             formDataToSend.append('id_stage', params.id);
-            formDataToSend.append('id_personne', user.id_personne);
+            formDataToSend.append('id_personne', personneId);
             formDataToSend.append('lettre_motivation', formData.lettreMotivation);
             
             if (formData.cv) {
