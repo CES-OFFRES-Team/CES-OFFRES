@@ -14,7 +14,9 @@ class CandidatureController {
         $this->db = $database->getConnection();
         $this->candidature = new Candidature($this->db);
         $this->personne = new Personne($this->db);
-        $this->upload_directory = __DIR__ . '/../uploads/';
+        // Utiliser le chemin absolu pour le dossier d'upload
+        $this->upload_directory = dirname(__DIR__) . '/uploads/';
+        error_log("[DEBUG] Chemin du dossier d'upload: " . $this->upload_directory);
         
         // Créer les dossiers nécessaires s'ils n'existent pas
         $this->createUploadDirectories();
@@ -28,13 +30,29 @@ class CandidatureController {
         ];
 
         foreach ($directories as $dir) {
+            error_log("[DEBUG] Vérification du dossier: " . $dir);
             if (!file_exists($dir)) {
+                error_log("[DEBUG] Création du dossier: " . $dir);
                 if (!mkdir($dir, 0777, true)) {
                     error_log("[ERROR] Impossible de créer le dossier: " . $dir);
+                    error_log("[ERROR] Dernière erreur PHP: " . error_get_last()['message']);
                 }
             }
-            // S'assurer que les permissions sont correctes
-            chmod($dir, 0777);
+            
+            // Vérifier et corriger les permissions
+            if (!is_writable($dir)) {
+                error_log("[DEBUG] Tentative de correction des permissions pour: " . $dir);
+                if (!chmod($dir, 0777)) {
+                    error_log("[ERROR] Impossible de modifier les permissions du dossier: " . $dir);
+                    error_log("[ERROR] Dernière erreur PHP: " . error_get_last()['message']);
+                }
+            }
+            
+            error_log("[DEBUG] État final du dossier " . $dir . ":");
+            error_log("[DEBUG] - Existe: " . (file_exists($dir) ? 'Oui' : 'Non'));
+            error_log("[DEBUG] - Est un dossier: " . (is_dir($dir) ? 'Oui' : 'Non'));
+            error_log("[DEBUG] - Permissions: " . substr(sprintf('%o', fileperms($dir)), -4));
+            error_log("[DEBUG] - Accessible en écriture: " . (is_writable($dir) ? 'Oui' : 'Non'));
         }
     }
 
@@ -75,6 +93,7 @@ class CandidatureController {
         try {
             error_log("[DEBUG] Début de la création d'une candidature");
             error_log("[DEBUG] Contenu de \$_FILES: " . print_r($_FILES, true));
+            error_log("[DEBUG] Contenu de \$_POST: " . print_r($_POST, true));
             
             // Vérifier si des fichiers ont été envoyés
             if (!isset($_FILES['cv'])) {
@@ -112,21 +131,28 @@ class CandidatureController {
             error_log("[DEBUG] Chemin complet du fichier: " . $cv_path);
             error_log("[DEBUG] Le dossier existe: " . (file_exists($this->upload_directory . 'cv/') ? 'Oui' : 'Non'));
             error_log("[DEBUG] Le dossier est accessible en écriture: " . (is_writable($this->upload_directory . 'cv/') ? 'Oui' : 'Non'));
+            error_log("[DEBUG] Le fichier temporaire existe: " . (file_exists($_FILES['cv']['tmp_name']) ? 'Oui' : 'Non'));
+            error_log("[DEBUG] Taille du fichier temporaire: " . filesize($_FILES['cv']['tmp_name']));
 
             if (!move_uploaded_file($_FILES['cv']['tmp_name'], $cv_path)) {
                 error_log("[ERROR] Échec de l'upload du fichier");
                 error_log("[ERROR] Erreur de upload: " . error_get_last()['message']);
+                error_log("[ERROR] Dernière erreur PHP: " . print_r(error_get_last(), true));
                 throw new Exception("Erreur lors de l'upload du CV");
             }
 
             error_log("[DEBUG] CV uploadé avec succès à: " . $cv_path);
+            error_log("[DEBUG] Taille du fichier uploadé: " . filesize($cv_path));
 
             // Gérer la lettre de motivation
             $lettre_path = null;
             if (isset($_POST['lettre_motivation']) && !empty($_POST['lettre_motivation'])) {
                 $lettre_filename = uniqid('lettre_') . '.txt';
                 $lettre_path = $this->upload_directory . 'lettres/' . $lettre_filename;
-                file_put_contents($lettre_path, $_POST['lettre_motivation']);
+                if (!file_put_contents($lettre_path, $_POST['lettre_motivation'])) {
+                    error_log("[ERROR] Échec de l'écriture de la lettre de motivation");
+                    error_log("[ERROR] Dernière erreur PHP: " . error_get_last()['message']);
+                }
             }
 
             // Préparer les données pour la création de la candidature
@@ -137,6 +163,8 @@ class CandidatureController {
                 'lettre_path' => $lettre_path,
                 'statut' => 'En attente'
             ];
+
+            error_log("[DEBUG] Données de la candidature: " . print_r($candidatureData, true));
 
             // Créer la candidature
             $id = $this->candidature->create($candidatureData);
@@ -154,6 +182,7 @@ class CandidatureController {
 
         } catch (Exception $e) {
             error_log("[ERROR] Exception dans createCandidature: " . $e->getMessage());
+            error_log("[ERROR] Trace complète: " . $e->getTraceAsString());
             http_response_code(400);
             return json_encode([
                 'status' => 'error',
