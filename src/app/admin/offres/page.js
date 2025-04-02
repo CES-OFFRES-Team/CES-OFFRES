@@ -152,6 +152,12 @@ export default function AdminOffresPage() {
             
             const method = selectedOffre ? 'PUT' : 'POST';
 
+            console.log('Envoi de la requête:', {
+                url,
+                method,
+                formData
+            });
+
             const response = await fetch(url, {
                 method,
                 headers: {
@@ -160,16 +166,17 @@ export default function AdminOffresPage() {
                 body: JSON.stringify(formData),
             });
 
-            if (!response.ok) {
-                throw new Error('Erreur lors de l\'enregistrement de l\'offre');
-            }
-
             const result = await response.json();
+            console.log('Réponse reçue:', result);
+
+            if (!response.ok || result.status === 'error') {
+                throw new Error(result.message || 'Erreur lors de l\'enregistrement de l\'offre');
+            }
             
             if (result.status === 'success') {
                 if (selectedOffre) {
                     setOffres(offres.map(offre => 
-                        offre.id_stage === selectedOffre.id_stage ? result.data : offre
+                        offre.id_stage === selectedOffre.id_stage ? { ...offre, ...result.data } : offre
                     ));
                 } else {
                     setOffres([...offres, result.data]);

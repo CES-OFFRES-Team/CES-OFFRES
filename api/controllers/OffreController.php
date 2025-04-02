@@ -218,6 +218,7 @@ class OffreController {
 
     private function updateOffre($id) {
         try {
+            error_log("[DEBUG] Début de la mise à jour de l'offre ID: " . $id);
             $data = json_decode(file_get_contents('php://input'), true);
             
             if (!$data) {
@@ -269,28 +270,37 @@ class OffreController {
                 ]);
             }
 
+            // Mise à jour de l'offre
             $success = $this->offre->update($id, $data);
+            
             if ($success) {
-                error_log("[SUCCESS] Offre ID: " . $id . " mise à jour avec succès");
-                http_response_code(200);
-                return json_encode([
-                    'status' => 'success',
-                    'message' => 'Offre mise à jour avec succès'
-                ]);
+                // Récupérer l'offre mise à jour
+                $updatedOffre = $this->offre->getById($id);
+                
+                if ($updatedOffre) {
+                    error_log("[SUCCESS] Offre mise à jour avec succès: " . json_encode($updatedOffre));
+                    http_response_code(200);
+                    return json_encode([
+                        'status' => 'success',
+                        'message' => 'Offre mise à jour avec succès',
+                        'data' => $updatedOffre
+                    ]);
+                }
             }
             
-            error_log("[ERROR] Offre ID: " . $id . " non trouvée");
-            http_response_code(404);
+            error_log("[ERROR] Échec de la mise à jour de l'offre");
+            http_response_code(500);
             return json_encode([
                 'status' => 'error',
-                'message' => 'Offre non trouvée'
+                'message' => 'Erreur lors de la mise à jour de l\'offre'
             ]);
+            
         } catch (Exception $e) {
             error_log("[ERROR] Exception dans updateOffre: " . $e->getMessage());
             http_response_code(500);
             return json_encode([
                 'status' => 'error',
-                'message' => 'Erreur lors de la mise à jour de l\'offre'
+                'message' => $e->getMessage()
             ]);
         }
     }

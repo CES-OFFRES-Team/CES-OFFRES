@@ -89,7 +89,7 @@ class Offre {
 
     public function update($id, $data) {
         try {
-            error_log("[DEBUG] Début de la mise à jour de l'offre ID: " . $id);
+            error_log("[DEBUG] Début de la mise à jour de l'offre ID: " . $id . " avec les données: " . json_encode($data));
             if (!is_numeric($id)) {
                 throw new Exception("ID invalide");
             }
@@ -106,20 +106,30 @@ class Offre {
             
             $stmt = $this->db->prepare($query);
             
+            // Conversion des dates au format MySQL
+            $dateDebut = date('Y-m-d', strtotime($data['date_debut']));
+            $dateFin = date('Y-m-d', strtotime($data['date_fin']));
+            
             $stmt->bindParam(':id', $id);
             $stmt->bindParam(':titre', $data['titre']);
             $stmt->bindParam(':description', $data['description']);
             $stmt->bindParam(':remuneration', $data['remuneration']);
-            $stmt->bindParam(':date_debut', $data['date_debut']);
-            $stmt->bindParam(':date_fin', $data['date_fin']);
+            $stmt->bindParam(':date_debut', $dateDebut);
+            $stmt->bindParam(':date_fin', $dateFin);
             $stmt->bindParam(':id_entreprise', $data['id_entreprise']);
             
             $result = $stmt->execute();
+            
+            if ($stmt->errorInfo()[0] !== '00000') {
+                error_log("[ERROR] Erreur SQL: " . implode(', ', $stmt->errorInfo()));
+                throw new Exception("Erreur SQL lors de la mise à jour de l'offre");
+            }
+            
             error_log("[DEBUG] Résultat de la mise à jour: " . ($result ? "succès" : "échec"));
             return $result;
         } catch (PDOException $e) {
             error_log("[ERROR] Erreur dans update(): " . $e->getMessage());
-            throw new Exception("Erreur lors de la mise à jour de l'offre");
+            throw new Exception("Erreur lors de la mise à jour de l'offre: " . $e->getMessage());
         }
     }
 
