@@ -1,8 +1,10 @@
-import "../styles/main.css";  // Remplacer l'ancien import
+import "../styles/main.css";
+import "../styles/pages/_home.css";
 import { Inter } from 'next/font/google'
 import Navigation from './components/Navigation'
+import Footer from './components/Footer'
+import ScrollToTop from './components/ScrollToTop';
 
-// If you want to use this font, add these lines at the top of your layout.js
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
@@ -10,7 +12,6 @@ export const metadata = {
   description: "Platforme Pour trouver un stage",
 };
 
-// Le layout principal reste un composant serveur
 export default function RootLayout({ children }) {
   return (
     <html lang="fr" className={inter.className}>
@@ -20,9 +21,9 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <Navigation />
-        <main>
-          {children}
-        </main>
+        <main>{children}</main>
+        <ScrollToTop />
+        <Footer />
       </body>
     </html>
   );

@@ -194,7 +194,7 @@ ul {
 /* Style principal du conteneur */
 .offres-container {
     min-height: 100vh;
-    background-color: #f8fafc;
+    background: linear-gradient(135deg, #f6f8fd 0%, #ffffff 100%);
     padding: 2rem;
 }
 
@@ -206,14 +206,14 @@ ul {
 }
 
 .offres-header h1 {
-    color: #1a237e;
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
+    color: #151A2D;
+    font-size: 2.8rem;
+    margin-bottom: 1rem;
     font-weight: 700;
 }
 
 .offres-header p {
-    color: #64748b;
+    color: #151A2D;
     font-size: 1.2rem;
 }
 
@@ -325,22 +325,23 @@ ul {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 2rem;
+    padding: 0 1rem;
 }
 
 /* Ajuster le style des cartes d'offres */
 .offre-card {
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-    transition: all 0.2s ease;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(21, 26, 45, 0.1);
+    transition: all 0.3s ease;
     border: 1px solid #e2e8f0;
     overflow: hidden;
+    position: relative;
 }
 
 .offre-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
-    border-color: #1a237e;
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(21, 26, 45, 0.15);
 }
 
 /* En-tête de l'offre */
@@ -351,15 +352,16 @@ ul {
 }
 
 .offre-title {
-    color: #1a237e;
+    color: #151A2D;
     font-size: 1.3rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
 }
 
 .offre-company {
-    color: #64748b;
+    color: #1E40AF;
     font-size: 1rem;
+    font-weight: 500;
 }
 
 /* Contenu de l'offre */
@@ -371,18 +373,18 @@ ul {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    margin-bottom: 1.5rem;
 }
 
 .detail-item {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: #64748b;
+    color: #151A2D;
 }
 
 .detail-item svg {
-    color: #1a237e;
+    color: #1E40AF;
+    font-size: 1.2rem;
 }
 
 /* Actions de l'offre */
@@ -390,39 +392,43 @@ ul {
     display: flex;
     gap: 1rem;
     padding: 1.5rem;
+    justify-content: flex-end;
     border-top: 1px solid #e2e8f0;
 }
 
 .btn {
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
     font-weight: 500;
+    transition: all 0.3s ease;
     cursor: pointer;
-    transition: all 0.2s ease;
-    flex: 1;
-    text-align: center;
 }
 
 .btn-primary {
-    background-color: #1a237e;
+    background: #1E40AF;
     color: white;
     border: none;
 }
 
 .btn-primary:hover {
-    background-color: #283593;
-    transform: translateY(-1px);
+    background: #152b67;
+    transform: translateY(-2px);
 }
 
 .btn-outline {
-    background-color: transparent;
-    border: 1px solid #1a237e;
-    color: #1a237e;
+    background: transparent;
+    border: 2px solid #1E40AF;
+    color: #1E40AF;
 }
 
 .btn-outline:hover {
-    background-color: #f8fafc;
-    transform: translateY(-1px);
+    background: #1E40AF;
+    color: white;
+}
+
+.btn-outline.favorite {
+    background: #1E40AF;
+    color: white;
 }
 
 @media (max-width: 768px) {
@@ -439,23 +445,22 @@ ul {
     }
 }
 
-.loading-container {
+.loading-container, .error-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 200px;
-    padding: 2rem;
+    min-height: 50vh;
+    gap: 1rem;
 }
 
-.loading-spinner {
-    width: 50px;
-    height: 50px;
-    border: 5px solid #f3f3f3;
-    border-top: 5px solid var(--primary);
+.loader {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #1E40AF;
     border-radius: 50%;
     animation: spin 1s linear infinite;
-    margin-bottom: 1rem;
 }
 
 @keyframes spin {

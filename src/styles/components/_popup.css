@@ -1,0 +1,144 @@
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.popup-content {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 15px;
+    position: relative;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.3s ease;
+}
+
+.popup-content h2 {
+    color: #151A2D;
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.registration-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.option {
+    padding: 1.5rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.option i {
+    font-size: 2rem;
+    color: #151A2D;
+    margin-bottom: 1rem;
+}
+
+.option h3 {
+    color: #151A2D;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.option p {
+    color: #64748B;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #64748B;
+}
+
+.separator::before,
+.separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #CBD5E1;
+}
+
+.separator span {
+    padding: 0 1rem;
+    font-weight: 500;
+}
+
+.contact-btn {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    background: #151A2D;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+}
+
+.contact-btn:hover {
+    background: #1E293B;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(21, 26, 45, 0.15);
+}
+
+.popup-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #64748B;
+    transition: color 0.3s ease;
+}
+
+.popup-close:hover {
+    color: #151A2D;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 640px) {
+    .popup-content {
+        padding: 2rem 1.5rem;
+    }
+
+    .popup-content h2 {
+        font-size: 1.5rem;
+    }
+}

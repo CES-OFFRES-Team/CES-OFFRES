@@ -1,3 +1,4 @@
+/* Styles des boutons */
 .button,
 button[type="submit"],
 .login-button,
@@ -22,6 +23,40 @@ button[type="submit"]:hover,
 .cta-button:hover,
 .postuler-btn:hover {
     background-color: #005bb5;
+}
+
+.cta-button {
+    padding: 1rem 2rem;
+    border-radius: var(--border-radius-md);
+    font-weight: 600;
+    text-decoration: none;
+    transform: translateZ(0);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+}
+
+.cta-button:hover {
+    transform: scale(1.05);
+}
+
+.cta-button.primary {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 2px 4px rgba(30, 64, 175, 0.1);
+}
+
+.cta-button.secondary {
+    background: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    font-weight: bold;
+}
+
+.cta-button.secondary:hover {
+    background-color: var(--primary);
+    color: white;
 }
 
 .connexion-button,
