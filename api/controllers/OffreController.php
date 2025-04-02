@@ -84,7 +84,7 @@ class OffreController {
                         "titre" => $titre,
                         "description" => $description,
                         "remuneration" => $remuneration,
-                        "date_debut" => $date_début,
+                        "date_debut" => $date_debut,
                         "date_fin" => $date_fin,
                         "id_entreprise" => $id_entreprise,
                         "nom_entreprise" => $nom_entreprise
