@@ -31,9 +31,6 @@ class CandidatureController {
 
         switch ($method) {
             case 'GET':
-                if (isset($_GET['id_personne'])) {
-                    return $this->getCandidaturesByPersonne($_GET['id_personne']);
-                }
                 if ($id) {
                     return $this->getCandidature($id);
                 }
@@ -69,16 +66,34 @@ class CandidatureController {
 
             // Valider les données du formulaire
             $data = [
-                'id_personne' => $_POST['id_personne'] ?? null,
+                'nom' => $_POST['nom'] ?? null,
+                'prenom' => $_POST['prenom'] ?? null,
+                'email' => $_POST['email'] ?? null,
+                'telephone' => $_POST['telephone'] ?? null,
                 'id_stage' => $_POST['id_stage'] ?? null
             ];
 
-            if (!$data['id_personne'] || !$data['id_stage']) {
+            if (!$data['nom'] || !$data['prenom'] || !$data['email'] || !$data['telephone'] || !$data['id_stage']) {
                 throw new Exception("Données manquantes");
             }
 
+            // Créer une nouvelle personne
+            $personneData = [
+                'nom' => $data['nom'],
+                'prenom' => $data['prenom'],
+                'email' => $data['email'],
+                'telephone' => $data['telephone']
+            ];
+
+            // Créer la personne et récupérer son ID
+            $id_personne = $this->personne->create($personneData);
+
+            if (!$id_personne) {
+                throw new Exception("Erreur lors de la création de la personne");
+            }
+
             // Vérifier si une candidature existe déjà
-            if ($this->candidature->candidatureExists($data['id_personne'], $data['id_stage'])) {
+            if ($this->candidature->candidatureExists($id_personne, $data['id_stage'])) {
                 throw new Exception("Vous avez déjà postulé à cette offre");
             }
 
@@ -104,12 +119,16 @@ class CandidatureController {
                 file_put_contents($lettre_path, $_POST['lettre_motivation']);
             }
 
-            // Préparer les données pour la création
-            $data['cv_path'] = $cv_path;
-            $data['lettre_path'] = $lettre_path;
+            // Préparer les données pour la création de la candidature
+            $candidatureData = [
+                'id_personne' => $id_personne,
+                'id_stage' => $data['id_stage'],
+                'cv_path' => $cv_path,
+                'lettre_path' => $lettre_path
+            ];
 
             // Créer la candidature
-            $id = $this->candidature->create($data);
+            $id = $this->candidature->create($candidatureData);
 
             if ($id) {
                 http_response_code(201);
@@ -228,37 +247,6 @@ class CandidatureController {
             throw new Exception("Erreur lors de la suppression de la candidature");
         } catch (Exception $e) {
             error_log("[ERROR] Exception dans deleteCandidature: " . $e->getMessage());
-            http_response_code(500);
-            return json_encode([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ]);
-        }
-    }
-
-    private function getCandidaturesByPersonne($id_personne) {
-        try {
-            $stmt = $this->candidature->getByPersonne($id_personne);
-            $num = $stmt->rowCount();
-            
-            if ($num > 0) {
-                $candidatures_arr = [];
-                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    array_push($candidatures_arr, $row);
-                }
-                
-                return json_encode([
-                    'status' => 'success',
-                    'data' => $candidatures_arr
-                ]);
-            }
-            
-            return json_encode([
-                'status' => 'success',
-                'data' => []
-            ]);
-        } catch (Exception $e) {
-            error_log("[ERROR] Exception dans getCandidaturesByPersonne: " . $e->getMessage());
             http_response_code(500);
             return json_encode([
                 'status' => 'error',

@@ -89,7 +89,10 @@ export default function PostulerForm({ params }) {
             const formDataToSend = new FormData();
             
             formDataToSend.append('id_stage', params.id);
-            formDataToSend.append('id_personne', user.id_personne);
+            formDataToSend.append('nom', formData.nom);
+            formDataToSend.append('prenom', formData.prenom);
+            formDataToSend.append('email', formData.email);
+            formDataToSend.append('telephone', formData.telephone);
             formDataToSend.append('lettre_motivation', formData.lettreMotivation);
             
             if (formData.cv) {
@@ -98,7 +101,10 @@ export default function PostulerForm({ params }) {
 
             console.log('Envoi de la candidature:', {
                 id_stage: params.id,
-                id_personne: user.id_personne,
+                nom: formData.nom,
+                prenom: formData.prenom,
+                email: formData.email,
+                telephone: formData.telephone,
                 cv: formData.cv ? formData.cv.name : null
             });
 
