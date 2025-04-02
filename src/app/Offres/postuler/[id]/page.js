@@ -73,53 +73,68 @@ export default function PostulerForm({ params }) {
         setLoading(true);
         setError(null);
 
-        if (!user || !user.id_personne) {
-            setError("Vous devez être connecté pour postuler");
-            setLoading(false);
-            return;
-        }
-
-        // Vérifications du CV
-        if (!formData.cv) {
-            setError("Le CV est requis");
-            setLoading(false);
-            return;
-        }
-        if (formData.cv.type !== 'application/pdf') {
-            setError("Le CV doit être au format PDF");
-            setLoading(false);
-            return;
-        }
-        if (formData.cv.size > 5 * 1024 * 1024) {
-            setError("Le CV ne doit pas dépasser 5MB");
-            setLoading(false);
-            return;
-        }
-
         try {
-            const formDataToSend = new FormData();
-            formDataToSend.append('id_stage', params.id);
-            formDataToSend.append('id_personne', user.id_personne);
-            formDataToSend.append('lettre_motivation', formData.lettreMotivation);
-            formDataToSend.append('cv', formData.cv);
+            // Vérifier si l'utilisateur est connecté
+            if (!userData) {
+                throw new Error("Vous devez être connecté pour postuler");
+            }
 
-            const response = await fetch(`${API_URL}/candidatures.php`, {
-                method: 'POST',
-                mode: 'cors',
-                credentials: 'include',
-                body: formDataToSend,
+            // Vérifier le CV
+            const cvFile = formData.cv;
+            if (!cvFile) {
+                throw new Error("Le CV est requis");
+            }
+
+            // Vérifier le type de fichier
+            if (cvFile.type !== 'application/pdf') {
+                throw new Error("Le CV doit être au format PDF");
+            }
+
+            // Vérifier la taille du fichier (max 5MB)
+            if (cvFile.size > 5 * 1024 * 1024) {
+                throw new Error("Le CV ne doit pas dépasser 5MB");
+            }
+
+            // Créer un FormData pour l'envoi des fichiers
+            const submitData = new FormData();
+            submitData.append('cv', cvFile);
+            submitData.append('id_personne', userData.id);
+            submitData.append('id_stage', params.id);
+            
+            if (formData.lettre_motivation) {
+                submitData.append('lettre_motivation', formData.lettre_motivation);
+            }
+
+            // Afficher les données envoyées pour le debug
+            console.log('Données envoyées:', {
+                id_personne: userData.id,
+                id_stage: params.id,
+                cv: cvFile.name,
+                cv_size: cvFile.size,
+                lettre_motivation: formData.lettre_motivation ? 'présente' : 'absente'
             });
 
-            const data = await response.json();
+            // Envoyer la candidature
+            const response = await fetch(`${API_URL}/candidatures.php`, {
+                method: 'POST',
+                body: submitData
+            });
 
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Erreur lors de l'envoi de la candidature");
+            }
+
+            const data = await response.json();
+            
             if (data.status === 'success') {
-                router.push('/Offres/confirmation');
+                router.push('/candidatures/confirmation');
             } else {
-                throw new Error(data.message || 'Erreur lors de l\'envoi de la candidature');
+                throw new Error(data.message || "Erreur lors de l'envoi de la candidature");
             }
         } catch (error) {
-            console.error('Erreur:', error);
-            setError(error.message || "Une erreur est survenue lors de l'envoi de la candidature");
+            console.error('Erreur lors de la soumission:', error);
+            setError(error.message);
         } finally {
             setLoading(false);
         }
