@@ -163,11 +163,7 @@ export default function PostulerForm({ params }) {
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: {
-                        'Accept': 'application/json',
-                        'Origin': window.location.origin,
-                        'Access-Control-Allow-Origin': '*',
-                        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-                        'Access-Control-Allow-Headers': 'Content-Type, Accept'
+                        'Accept': 'application/json'
                     },
                     mode: 'cors',
                     credentials: 'include',

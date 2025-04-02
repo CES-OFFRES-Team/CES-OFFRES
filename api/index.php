@@ -20,10 +20,11 @@ if (in_array($origin, $allowed_origins)) {
     error_log("[DEBUG] Origine non autorisée: $origin");
 }
 
+// En-têtes CORS pour les requêtes préliminaires (OPTIONS)
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Accept, Origin');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Accept');
 header('Access-Control-Allow-Credentials: true');
-header('Content-Type: application/json');
+header('Access-Control-Max-Age: 86400'); // 24 heures
 
 // Gestion des requêtes OPTIONS pour CORS
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
