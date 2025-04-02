@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { HiX } from 'react-icons/hi';
 
-const API_URL = 'http://20.19.36.124:8000/api';
+const API_URL = 'http://20.19.36.142:8000/api';
 
 export default function OffreModal({ offre, onClose, onSubmit }) {
     const [formData, setFormData] = useState({
