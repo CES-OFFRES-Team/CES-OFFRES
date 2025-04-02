@@ -29,29 +29,30 @@ try {
         throw new Exception("Impossible de se connecter à la base de données");
     }
 
-    // Vérification de la table Offres_de_stage
-    $query = "SHOW COLUMNS FROM Offres_de_stage";
+    // Récupération de la structure de la table Offres_de_stage
+    $query = "DESCRIBE Offres_de_stage";
     $stmt = $db->query($query);
-    $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
-    error_log("[DEBUG] Colonnes de Offres_de_stage: " . implode(', ', $columns));
-
-    // Vérification de la table entreprises
-    $query = "SHOW COLUMNS FROM entreprises";
+    $structure_offres = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Récupération de la structure de la table entreprises
+    $query = "DESCRIBE entreprises";
     $stmt = $db->query($query);
-    $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
-    error_log("[DEBUG] Colonnes de entreprises: " . implode(', ', $columns));
-
-    // Test de la requête principale
+    $structure_entreprises = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Test de la requête de jointure
     $query = "SELECT o.*, e.nom_entreprise 
               FROM Offres_de_stage o 
               LEFT JOIN entreprises e ON o.id_entreprise = e.id_entreprise 
-              ORDER BY o.date_début DESC";
+              LIMIT 1";
     $stmt = $db->query($query);
-    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    error_log("[DEBUG] Nombre d'offres trouvées: " . count($result));
+    $sample_data = $stmt->fetch(PDO::FETCH_ASSOC);
 
     $tests['database'] = true;
+} catch(PDOException $e) {
+    error_log("[ERROR] PDOException: " . $e->getMessage());
+    $tests['database'] = false;
 } catch(Exception $e) {
+    error_log("[ERROR] Exception: " . $e->getMessage());
     $tests['database'] = false;
 }
 
@@ -61,13 +62,18 @@ $tests['json'] = function_exists('json_encode') && function_exists('json_decode'
 // Résultats
 $results = [
     'status' => 'success',
-    'message' => 'Tests système',
+    'message' => 'Test système réussi',
     'tests' => $tests,
     'details' => [
         'php_version' => PHP_VERSION,
         'server_software' => $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown',
         'server_protocol' => $_SERVER['SERVER_PROTOCOL'] ?? 'Unknown'
-    ]
+    ],
+    'structure' => [
+        'Offres_de_stage' => $structure_offres,
+        'entreprises' => $structure_entreprises
+    ],
+    'sample_data' => $sample_data
 ];
 
-echo json_encode($results); 
+echo json_encode($results, JSON_PRETTY_PRINT); 
