@@ -15,10 +15,26 @@ class CandidatureController {
         $this->candidature = new Candidature($this->db);
         $this->personne = new Personne($this->db);
         $this->upload_directory = __DIR__ . '/../uploads/';
+        
+        // Créer les dossiers nécessaires s'ils n'existent pas
+        $this->createUploadDirectories();
+    }
 
-        // Créer le dossier uploads s'il n'existe pas
-        if (!file_exists($this->upload_directory)) {
-            mkdir($this->upload_directory, 0777, true);
+    private function createUploadDirectories() {
+        $directories = [
+            $this->upload_directory,
+            $this->upload_directory . 'cv/',
+            $this->upload_directory . 'lettres/'
+        ];
+
+        foreach ($directories as $dir) {
+            if (!file_exists($dir)) {
+                if (!mkdir($dir, 0777, true)) {
+                    error_log("[ERROR] Impossible de créer le dossier: " . $dir);
+                }
+            }
+            // S'assurer que les permissions sont correctes
+            chmod($dir, 0777);
         }
     }
 
@@ -90,12 +106,12 @@ class CandidatureController {
             }
 
             $cv_filename = uniqid('cv_') . '.pdf';
-            $cv_path = $this->upload_directory . $cv_filename;
+            $cv_path = $this->upload_directory . 'cv/' . $cv_filename;
             
-            error_log("[DEBUG] Chemin du dossier d'upload: " . $this->upload_directory);
+            error_log("[DEBUG] Chemin du dossier d'upload CV: " . $this->upload_directory . 'cv/');
             error_log("[DEBUG] Chemin complet du fichier: " . $cv_path);
-            error_log("[DEBUG] Le dossier existe: " . (file_exists($this->upload_directory) ? 'Oui' : 'Non'));
-            error_log("[DEBUG] Le dossier est accessible en écriture: " . (is_writable($this->upload_directory) ? 'Oui' : 'Non'));
+            error_log("[DEBUG] Le dossier existe: " . (file_exists($this->upload_directory . 'cv/') ? 'Oui' : 'Non'));
+            error_log("[DEBUG] Le dossier est accessible en écriture: " . (is_writable($this->upload_directory . 'cv/') ? 'Oui' : 'Non'));
 
             if (!move_uploaded_file($_FILES['cv']['tmp_name'], $cv_path)) {
                 error_log("[ERROR] Échec de l'upload du fichier");
@@ -109,7 +125,7 @@ class CandidatureController {
             $lettre_path = null;
             if (isset($_POST['lettre_motivation']) && !empty($_POST['lettre_motivation'])) {
                 $lettre_filename = uniqid('lettre_') . '.txt';
-                $lettre_path = $this->upload_directory . $lettre_filename;
+                $lettre_path = $this->upload_directory . 'lettres/' . $lettre_filename;
                 file_put_contents($lettre_path, $_POST['lettre_motivation']);
             }
 

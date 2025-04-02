@@ -90,6 +90,27 @@ export default function PostulerForm({ params }) {
             return;
         }
 
+        // Vérification du fichier CV
+        if (!formData.cv) {
+            setError("Le CV est requis");
+            setLoading(false);
+            return;
+        }
+
+        // Vérification du type de fichier
+        if (formData.cv.type !== 'application/pdf') {
+            setError("Le CV doit être au format PDF");
+            setLoading(false);
+            return;
+        }
+
+        // Vérification de la taille du fichier (max 5MB)
+        if (formData.cv.size > 5 * 1024 * 1024) {
+            setError("Le CV ne doit pas dépasser 5MB");
+            setLoading(false);
+            return;
+        }
+
         // Conversion explicite en nombre
         const personneId = parseInt(user.id_personne, 10);
         if (isNaN(personneId)) {
@@ -105,13 +126,21 @@ export default function PostulerForm({ params }) {
             formDataToSend.append('id_personne', personneId);
             formDataToSend.append('lettre_motivation', formData.lettreMotivation);
             
+            // Ajout du CV avec vérification
             if (formData.cv) {
+                console.log('Informations du fichier CV:', {
+                    nom: formData.cv.name,
+                    type: formData.cv.type,
+                    taille: formData.cv.size,
+                    lastModified: formData.cv.lastModified
+                });
                 formDataToSend.append('cv', formData.cv);
             }
 
             // Log le contenu complet du FormData
+            console.log('Contenu du FormData:');
             for (let pair of formDataToSend.entries()) {
-                console.log('FormData contient:', pair[0], pair[1]);
+                console.log(pair[0] + ': ' + (pair[0] === 'cv' ? 'Fichier PDF' : pair[1]));
             }
 
             console.log('Envoi de la requête à:', `${API_URL}/candidatures.php`);
@@ -120,8 +149,19 @@ export default function PostulerForm({ params }) {
                 body: formDataToSend,
             });
 
-            const data = await response.json();
-            console.log('Réponse complète du serveur:', data);
+            // Log de la réponse brute
+            const responseText = await response.text();
+            console.log('Réponse brute du serveur:', responseText);
+
+            let data;
+            try {
+                data = JSON.parse(responseText);
+            } catch (e) {
+                console.error('Erreur de parsing JSON:', e);
+                throw new Error('Réponse invalide du serveur');
+            }
+
+            console.log('Réponse parsée du serveur:', data);
 
             if (data.status === 'success') {
                 router.push('/Offres/confirmation');
