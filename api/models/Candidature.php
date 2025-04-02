@@ -59,19 +59,36 @@ class Candidature {
 
     public function getAll() {
         try {
-            $query = "SELECT c.*, p.nom, p.prenom, p.email, o.titre as titre_offre, e.nom_entreprise 
-                     FROM Candidatures c
-                     JOIN Personnes p ON c.id_personne = p.id_personne
-                     JOIN Offres_de_stage o ON c.id_stage = o.id_stage
-                     JOIN Entreprises e ON o.id_entreprise = e.id_entreprise
+            error_log("[DEBUG] Début de getAll()");
+            
+            $query = "SELECT c.*, 
+                     p.nom_personne, p.prenom_personne, p.email_personne, 
+                     o.titre as titre_offre, 
+                     e.nom_entreprise 
+                     FROM " . $this->table_name . " c
+                     JOIN personnes p ON c.id_personne = p.id_personne
+                     JOIN offres_de_stage o ON c.id_stage = o.id_stage
+                     JOIN entreprises e ON o.id_entreprise = e.id_entreprise
                      ORDER BY c.date_candidature DESC";
 
+            error_log("[DEBUG] Requête SQL: " . $query);
+            
             $stmt = $this->db->prepare($query);
-            $stmt->execute();
-
+            $success = $stmt->execute();
+            
+            if (!$success) {
+                error_log("[ERROR] Erreur lors de l'exécution de la requête");
+                error_log("[ERROR] Info PDO: " . print_r($stmt->errorInfo(), true));
+                throw new Exception("Erreur lors de l'exécution de la requête");
+            }
+            
+            error_log("[DEBUG] Nombre de résultats: " . $stmt->rowCount());
+            
             return $stmt;
         } catch (PDOException $e) {
-            error_log("[ERROR] Exception dans getAll(): " . $e->getMessage());
+            error_log("[ERROR] Exception PDO dans getAll(): " . $e->getMessage());
+            error_log("[ERROR] Code: " . $e->getCode());
+            error_log("[ERROR] Trace: " . $e->getTraceAsString());
             throw new Exception("Erreur lors de la récupération des candidatures");
         }
     }
