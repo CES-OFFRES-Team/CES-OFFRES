@@ -138,16 +138,23 @@ class CandidatureController {
 
     private function getCandidaturesByPersonne($id_personne) {
         try {
+            error_log("[DEBUG] Récupération des candidatures pour la personne ID: " . $id_personne);
+            
             $candidatures = $this->candidature->getByPersonne($id_personne);
             
             if ($candidatures === false) {
+                error_log("[ERROR] Échec de la récupération des candidatures");
                 throw new Exception("Erreur lors de la récupération des candidatures");
             }
 
+            // Même si aucune candidature n'est trouvée, on renvoie un tableau vide avec succès
+            error_log("[DEBUG] Candidatures récupérées avec succès. Nombre: " . count($candidatures));
+            
             return json_encode([
                 'status' => 'success',
                 'data' => $candidatures
             ]);
+            
         } catch (Exception $e) {
             error_log("[ERROR] Exception dans getCandidaturesByPersonne: " . $e->getMessage());
             http_response_code(400);

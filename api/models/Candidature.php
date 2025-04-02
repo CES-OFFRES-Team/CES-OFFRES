@@ -2,7 +2,7 @@
 
 class Candidature {
     private $conn;
-    private $table_name = "candidatures";
+    private $table_name = "Candidatures";
 
     public function __construct($db) {
         $this->conn = $db;
@@ -92,18 +92,28 @@ class Candidature {
 
     public function getByPersonne($id_personne) {
         try {
-            $query = "SELECT c.*, o.titre as titre_offre, e.nom as nom_entreprise 
-                     FROM " . $this->table_name . " c
-                     JOIN offres o ON c.id_stage = o.id
-                     JOIN entreprises e ON o.id_entreprise = e.id
+            $query = "SELECT c.*, o.titre, e.nom as nom_entreprise 
+                     FROM Candidatures c
+                     JOIN Offres_de_stage o ON c.id_stage = o.id_stage
+                     JOIN Entreprises e ON o.id_entreprise = e.id_entreprise
                      WHERE c.id_personne = :id_personne
                      ORDER BY c.date_candidature DESC";
 
+            error_log("[DEBUG] Requête SQL: " . $query);
+            error_log("[DEBUG] ID personne: " . $id_personne);
+
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(":id_personne", $id_personne);
-            $stmt->execute();
+            
+            if (!$stmt->execute()) {
+                error_log("[ERROR] Erreur d'exécution de la requête: " . print_r($stmt->errorInfo(), true));
+                return false;
+            }
 
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            error_log("[DEBUG] Nombre de candidatures trouvées: " . count($result));
+            
+            return $result;
         } catch (PDOException $e) {
             error_log("[ERROR] Erreur PDO dans getByPersonne: " . $e->getMessage());
             return false;
@@ -177,7 +187,7 @@ class Candidature {
 
     public function candidatureExists($id_personne, $id_stage) {
         try {
-            $query = "SELECT id FROM " . $this->table_name . " 
+            $query = "SELECT id_candidature FROM " . $this->table_name . " 
                      WHERE id_personne = :id_personne AND id_stage = :id_stage";
 
             $stmt = $this->conn->prepare($query);
