@@ -24,10 +24,6 @@ export default function PostulerForm({ params }) {
     const [offre, setOffre] = useState(null);
     const [user, setUser] = useState(null);
     const [formData, setFormData] = useState({
-        nom: '',
-        prenom: '',
-        email: '',
-        telephone: '',
         cv: null,
         lettreMotivation: '',
     });
@@ -40,13 +36,6 @@ export default function PostulerForm({ params }) {
             return;
         }
         setUser(userData);
-        setFormData(prev => ({
-            ...prev,
-            nom: userData.nom || '',
-            prenom: userData.prenom || '',
-            email: userData.email || '',
-            telephone: userData.telephone || ''
-        }));
 
         // Récupérer les détails de l'offre
         const fetchOffre = async () => {
@@ -89,10 +78,7 @@ export default function PostulerForm({ params }) {
             const formDataToSend = new FormData();
             
             formDataToSend.append('id_stage', params.id);
-            formDataToSend.append('nom', formData.nom);
-            formDataToSend.append('prenom', formData.prenom);
-            formDataToSend.append('email', formData.email);
-            formDataToSend.append('telephone', formData.telephone);
+            formDataToSend.append('id_personne', user.id_personne);
             formDataToSend.append('lettre_motivation', formData.lettreMotivation);
             
             if (formData.cv) {
@@ -101,10 +87,7 @@ export default function PostulerForm({ params }) {
 
             console.log('Envoi de la candidature:', {
                 id_stage: params.id,
-                nom: formData.nom,
-                prenom: formData.prenom,
-                email: formData.email,
-                telephone: formData.telephone,
+                id_personne: user.id_personne,
                 cv: formData.cv ? formData.cv.name : null
             });
 
@@ -183,58 +166,6 @@ export default function PostulerForm({ params }) {
             <div className="form-section">
                 <h2>Formulaire de candidature</h2>
                 <form onSubmit={handleSubmit} className="postuler-form">
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label htmlFor="nom">Nom *</label>
-                            <input
-                                type="text"
-                                id="nom"
-                                required
-                                value={formData.nom}
-                                onChange={(e) => setFormData({...formData, nom: e.target.value})}
-                                placeholder="Votre nom"
-                            />
-                        </div>
-                        
-                        <div className="form-group">
-                            <label htmlFor="prenom">Prénom *</label>
-                            <input
-                                type="text"
-                                id="prenom"
-                                required
-                                value={formData.prenom}
-                                onChange={(e) => setFormData({...formData, prenom: e.target.value})}
-                                placeholder="Votre prénom"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label htmlFor="email">Email *</label>
-                            <input
-                                type="email"
-                                id="email"
-                                required
-                                value={formData.email}
-                                onChange={(e) => setFormData({...formData, email: e.target.value})}
-                                placeholder="votre.email@exemple.com"
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="telephone">Téléphone *</label>
-                            <input
-                                type="tel"
-                                id="telephone"
-                                required
-                                value={formData.telephone}
-                                onChange={(e) => setFormData({...formData, telephone: e.target.value})}
-                                placeholder="06 12 34 56 78"
-                            />
-                        </div>
-                    </div>
-
                     <div className="form-group">
                         <label htmlFor="cv">CV (PDF) *</label>
                         <input
@@ -244,27 +175,23 @@ export default function PostulerForm({ params }) {
                             required
                             onChange={(e) => setFormData({...formData, cv: e.target.files[0]})}
                         />
-                        <small>Format accepté : PDF uniquement</small>
+                        <small>Format accepté : PDF</small>
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="lettreMotivation">Lettre de motivation *</label>
+                        <label htmlFor="lettreMotivation">Lettre de motivation</label>
                         <textarea
                             id="lettreMotivation"
-                            required
                             value={formData.lettreMotivation}
                             onChange={(e) => setFormData({...formData, lettreMotivation: e.target.value})}
-                            placeholder="Expliquez pourquoi vous êtes intéressé(e) par ce stage et ce que vous pouvez apporter à l'entreprise..."
+                            placeholder="Votre lettre de motivation"
                             rows="6"
                         />
                     </div>
 
                     <div className="form-actions">
-                        <button type="button" className="btn btn-outline" onClick={handleGoBack}>
-                            Annuler
-                        </button>
                         <button type="submit" className="btn btn-primary" disabled={loading}>
-                            {loading ? 'Envoi en cours...' : 'Envoyer ma candidature'}
+                            {loading ? 'Envoi en cours...' : 'Postuler'}
                         </button>
                     </div>
                 </form>
