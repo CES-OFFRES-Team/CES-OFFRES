@@ -75,7 +75,7 @@ export default function PostulerForm({ params }) {
 
         try {
             // Vérifier si l'utilisateur est connecté
-            if (!userData) {
+            if (!user) {
                 throw new Error("Vous devez être connecté pour postuler");
             }
 
@@ -98,20 +98,20 @@ export default function PostulerForm({ params }) {
             // Créer un FormData pour l'envoi des fichiers
             const submitData = new FormData();
             submitData.append('cv', cvFile);
-            submitData.append('id_personne', userData.id);
+            submitData.append('id_personne', user.id_personne);
             submitData.append('id_stage', params.id);
             
-            if (formData.lettre_motivation) {
-                submitData.append('lettre_motivation', formData.lettre_motivation);
+            if (formData.lettreMotivation) {
+                submitData.append('lettre_motivation', formData.lettreMotivation);
             }
 
             // Afficher les données envoyées pour le debug
             console.log('Données envoyées:', {
-                id_personne: userData.id,
+                id_personne: user.id_personne,
                 id_stage: params.id,
                 cv: cvFile.name,
                 cv_size: cvFile.size,
-                lettre_motivation: formData.lettre_motivation ? 'présente' : 'absente'
+                lettre_motivation: formData.lettreMotivation ? 'présente' : 'absente'
             });
 
             // Envoyer la candidature
