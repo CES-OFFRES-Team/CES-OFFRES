@@ -13,7 +13,7 @@ class Candidature {
             $query = "INSERT INTO " . $this->table_name . " 
                     (id_personne, id_stage, cv_path, lettre_path, statut, date_candidature) 
                     VALUES 
-                    (:id_personne, :id_stage, :cv_path, :lettre_path, :statut, NOW())";
+                    (:id_personne, :id_stage, :cv_path, :lettre_path, :statut, CURDATE())";
 
             $stmt = $this->conn->prepare($query);
 
@@ -36,9 +36,8 @@ class Candidature {
 
     public function getById($id) {
         try {
-            $query = "SELECT c.*, p.nom, p.prenom, p.email, o.titre as titre_offre, e.nom_entreprise 
-                     FROM Candidatures c
-                     JOIN Personnes p ON c.id_personne = p.id_personne
+            $query = "SELECT c.*, o.titre, e.nom_entreprise 
+                     FROM " . $this->table_name . " c
                      JOIN Offres_de_stage o ON c.id_stage = o.id_stage
                      JOIN Entreprises e ON o.id_entreprise = e.id_entreprise
                      WHERE c.id_candidature = :id";
@@ -50,51 +49,56 @@ class Candidature {
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             error_log("[ERROR] Exception dans getById(): " . $e->getMessage());
-            throw new Exception("Erreur lors de la récupération de la candidature");
+            return false;
         }
     }
 
     public function getAll() {
         try {
-            error_log("[DEBUG] Début de getAll()");
-            
-            $query = "SELECT c.*, 
-                     p.nom_personne, p.prenom_personne, p.email_personne, 
-                     o.titre as titre_offre, 
-                     e.nom_entreprise 
+            $query = "SELECT 
+                        c.id_candidature,
+                        c.cv_path,
+                        c.lettre_path,
+                        c.statut,
+                        c.date_candidature,
+                        c.id_personne,
+                        c.id_stage,
+                        o.titre,
+                        e.nom_entreprise,
+                        p.nom as nom_personne,
+                        p.prenom as prenom_personne,
+                        p.email as email_personne
                      FROM " . $this->table_name . " c
-                     JOIN personnes p ON c.id_personne = p.id_personne
-                     JOIN offres_de_stage o ON c.id_stage = o.id_stage
-                     JOIN entreprises e ON o.id_entreprise = e.id_entreprise
+                     JOIN Personnes p ON c.id_personne = p.id_personne
+                     JOIN Offres_de_stage o ON c.id_stage = o.id_stage
+                     JOIN Entreprises e ON o.id_entreprise = e.id_entreprise
                      ORDER BY c.date_candidature DESC";
 
-            error_log("[DEBUG] Requête SQL: " . $query);
-            
             $stmt = $this->conn->prepare($query);
-            $success = $stmt->execute();
             
-            if (!$success) {
-                error_log("[ERROR] Erreur lors de l'exécution de la requête");
-                error_log("[ERROR] Info PDO: " . print_r($stmt->errorInfo(), true));
-                throw new Exception("Erreur lors de l'exécution de la requête");
+            if (!$stmt->execute()) {
+                error_log("[ERROR] Erreur d'exécution de la requête: " . print_r($stmt->errorInfo(), true));
+                return false;
             }
-            
-            error_log("[DEBUG] Nombre de résultats: " . $stmt->rowCount());
-            
-            return $stmt;
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("[ERROR] Exception PDO dans getAll(): " . $e->getMessage());
-            error_log("[ERROR] Code: " . $e->getCode());
-            error_log("[ERROR] Trace: " . $e->getTraceAsString());
-            throw new Exception("Erreur lors de la récupération des candidatures");
+            error_log("[ERROR] Erreur PDO dans getAll: " . $e->getMessage());
+            return false;
         }
     }
 
     public function getByPersonne($id_personne) {
         try {
             $query = "SELECT 
-                        c.*,
-                        o.titre_stage as titre,
+                        c.id_candidature,
+                        c.cv_path,
+                        c.lettre_path,
+                        c.statut,
+                        c.date_candidature,
+                        c.id_personne,
+                        c.id_stage,
+                        o.titre,
                         e.nom_entreprise
                      FROM Candidatures c
                      JOIN Offres_de_stage o ON c.id_stage = o.id_stage
@@ -110,6 +114,7 @@ class Candidature {
             
             if (!$stmt->execute()) {
                 error_log("[ERROR] Erreur d'exécution de la requête: " . print_r($stmt->errorInfo(), true));
+                error_log("[ERROR] Code erreur: " . implode(', ', $stmt->errorInfo()));
                 return false;
             }
 
@@ -120,6 +125,8 @@ class Candidature {
             return $result;
         } catch (PDOException $e) {
             error_log("[ERROR] Erreur PDO dans getByPersonne: " . $e->getMessage());
+            error_log("[ERROR] Code erreur: " . $e->getCode());
+            error_log("[ERROR] Trace: " . $e->getTraceAsString());
             return false;
         }
     }
@@ -127,7 +134,7 @@ class Candidature {
     public function getByOffre($id_stage) {
         try {
             $query = "SELECT c.*, p.nom, p.prenom, p.email 
-                     FROM Candidatures c
+                     FROM " . $this->table_name . " c
                      JOIN Personnes p ON c.id_personne = p.id_personne
                      WHERE c.id_stage = :id_stage
                      ORDER BY c.date_candidature DESC";
@@ -136,10 +143,10 @@ class Candidature {
             $stmt->bindParam(':id_stage', $id_stage);
             $stmt->execute();
             
-            return $stmt;
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             error_log("[ERROR] Exception dans getByOffre(): " . $e->getMessage());
-            throw new Exception("Erreur lors de la récupération des candidatures pour l'offre");
+            return false;
         }
     }
 
@@ -191,8 +198,10 @@ class Candidature {
 
     public function candidatureExists($id_personne, $id_stage) {
         try {
-            $query = "SELECT id_candidature FROM " . $this->table_name . " 
-                     WHERE id_personne = :id_personne AND id_stage = :id_stage";
+            $query = "SELECT id_candidature 
+                     FROM " . $this->table_name . " 
+                     WHERE id_personne = :id_personne 
+                     AND id_stage = :id_stage";
 
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(":id_personne", $id_personne);
