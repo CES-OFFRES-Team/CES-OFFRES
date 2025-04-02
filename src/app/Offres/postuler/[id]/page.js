@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
+import { getUserData } from '../../utils/auth';
 import './PostulerForm.css';
 
 const API_URL = 'http://20.19.36.142:8000/api';
@@ -30,18 +31,13 @@ export default function PostulerForm({ params }) {
 
   useEffect(() => {
     // Récupérer les informations de l'utilisateur connecté
-    const fetchUser = async () => {
-      try {
-        const userData = localStorage.getItem('user');
-        if (!userData) {
-          throw new Error('Vous devez être connecté pour postuler');
-        }
-        setUser(JSON.parse(userData));
-      } catch (err) {
-        console.error('Erreur:', err);
-        setError(err.message);
-      }
-    };
+    const userData = getUserData();
+    if (!userData) {
+      setError('Vous devez être connecté pour postuler');
+      setLoading(false);
+      return;
+    }
+    setUser(userData);
 
     // Récupérer les détails de l'offre
     const fetchOffre = async () => {
@@ -59,10 +55,11 @@ export default function PostulerForm({ params }) {
       } catch (err) {
         console.error('Erreur:', err);
         setError(err.message);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchUser();
     fetchOffre();
   }, [id]);
 
