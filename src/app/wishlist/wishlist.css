@@ -1,0 +1,102 @@
+.wishlist-container {
+    padding: 2rem;
+    background: #e0e7ff;
+    min-height: 100vh;
+}
+
+.wishlist-wrapper {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.wishlist-title {
+    font-size: 2rem;
+    color: #2d79f3;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.offres-grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.offre-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.offre-card:hover {
+    transform: translateY(-5px);
+}
+
+.offre-title {
+    font-size: 1.3rem;
+    margin-bottom: 0.3rem;
+    color: #1e3a8a;
+}
+
+.offre-company {
+    font-size: 0.9rem;
+    color: #4b5563;
+}
+
+.offre-details {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: #374151;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.offre-actions {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.btn-outline {
+    border: 1px solid #2d79f3;
+    background: transparent;
+    color: #2d79f3;
+}
+
+.btn-outline:hover {
+    background: #2d79f3;
+    color: white;
+}
+
+.wishlist-remove svg {
+    vertical-align: middle;
+    margin-right: 0.4rem;
+}
+
+.wishlist-empty {
+    text-align: center;
+    color: #6b7280;
+    margin-top: 2rem;
+}
