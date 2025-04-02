@@ -36,11 +36,15 @@ error_log("[DEBUG] Chemin traité: " . $path);
 $id = null;
 if (preg_match('/\/(\d+)$/', $path, $matches)) {
     $id = $matches[1];
+    // Nettoyer le chemin pour le routage
+    $path = preg_replace('/\/\d+$/', '', $path);
     error_log("[DEBUG] ID extrait: " . $id);
+    error_log("[DEBUG] Chemin nettoyé: " . $path);
 }
 
 // Routage
 try {
+    error_log("[DEBUG] Tentative de routage pour le chemin: " . $path . " avec la méthode: " . $method . " et l'ID: " . ($id ?? 'null'));
     switch ($path) {
         case '/users':
         case '/users/etudiants':
@@ -61,6 +65,7 @@ try {
             break;
 
         case '/offres':
+        case (preg_match('/^\/offres\/\d+$/', $path) ? $path : !$path):
             $controller = new OffreController();
             echo $controller->handleRequest($method, $id);
             break;
