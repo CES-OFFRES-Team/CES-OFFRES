@@ -1,9 +1,28 @@
 <?php
 error_log("[DEBUG] Début du traitement de la requête dans index.php");
 
-header('Access-Control-Allow-Origin: *');
+// Récupération de l'origine de la requête
+$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+error_log("[DEBUG] Origine de la requête: " . $origin);
+
+// Liste des origines autorisées
+$allowed_origins = [
+    'http://20.19.36.142',
+    'http://20.19.36.142:8000',
+    'http://localhost:3000'
+];
+
+// Vérification si l'origine est autorisée
+if (in_array($origin, $allowed_origins)) {
+    header("Access-Control-Allow-Origin: $origin");
+    error_log("[DEBUG] Origine autorisée: $origin");
+} else {
+    error_log("[DEBUG] Origine non autorisée: $origin");
+}
+
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Accept, Origin');
+header('Access-Control-Allow-Credentials: true');
 header('Content-Type: application/json');
 
 // Gestion des requêtes OPTIONS pour CORS

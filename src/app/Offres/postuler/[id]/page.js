@@ -164,7 +164,10 @@ export default function PostulerForm({ params }) {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
-                        'Origin': window.location.origin
+                        'Origin': window.location.origin,
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                        'Access-Control-Allow-Headers': 'Content-Type, Accept'
                     },
                     mode: 'cors',
                     credentials: 'include',
@@ -214,7 +217,9 @@ export default function PostulerForm({ params }) {
                         - URL: ${url}
                         - Origin: ${window.location.origin}
                         - Mode: CORS
-                        - Credentials: include`);
+                        - Credentials: include
+                        
+                        Si le problème persiste, veuillez contacter l'administrateur du système.`);
                 } else {
                     setError(error.message);
                 }
