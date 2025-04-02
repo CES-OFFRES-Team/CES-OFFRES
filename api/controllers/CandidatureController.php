@@ -10,16 +10,22 @@ class CandidatureController {
     private $upload_directory;
 
     public function __construct() {
-        $database = new Database();
-        $this->db = $database->getConnection();
-        $this->candidature = new Candidature($this->db);
-        $this->personne = new Personne($this->db);
-        // Utiliser le chemin absolu pour le dossier d'upload
-        $this->upload_directory = dirname(__DIR__) . '/uploads/';
-        error_log("[DEBUG] Chemin du dossier d'upload: " . $this->upload_directory);
-        
-        // Créer les dossiers nécessaires s'ils n'existent pas
-        $this->createUploadDirectories();
+        try {
+            $database = new Database();
+            $this->db = $database->getConnection();
+            if (!$this->db) {
+                throw new Exception("Erreur de connexion à la base de données");
+            }
+            $this->candidature = new Candidature($this->db);
+            $this->personne = new Personne($this->db);
+            $this->upload_directory = dirname(__DIR__) . '/uploads/';
+            error_log("[DEBUG] Chemin du dossier d'upload: " . $this->upload_directory);
+            
+            $this->createUploadDirectories();
+        } catch (Exception $e) {
+            error_log("[ERROR] Erreur dans le constructeur: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     private function createUploadDirectories() {
@@ -80,52 +86,68 @@ class CandidatureController {
     }
 
     public function handleRequest($method, $id = null) {
-        // Récupérer l'origine de la requête
-        $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '*';
-        
-        // Définir les en-têtes CORS
-        header("Access-Control-Allow-Origin: $origin");
-        header("Content-Type: application/json; charset=UTF-8");
-        header("Access-Control-Allow-Methods: POST, GET, PUT, DELETE, OPTIONS");
-        header("Access-Control-Max-Age: 3600");
-        header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-        header("Access-Control-Allow-Credentials: true");
+        try {
+            error_log("[DEBUG] Début du traitement de la requête");
+            error_log("[DEBUG] Méthode: " . $method);
+            error_log("[DEBUG] ID: " . ($id ?? 'null'));
+            error_log("[DEBUG] POST: " . print_r($_POST, true));
+            error_log("[DEBUG] FILES: " . print_r($_FILES, true));
 
-        // Gérer la requête OPTIONS pour CORS
-        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-            http_response_code(200);
-            exit();
-        }
+            // Récupérer l'origine de la requête
+            $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '*';
+            
+            // Définir les en-têtes CORS
+            header("Access-Control-Allow-Origin: $origin");
+            header("Content-Type: application/json; charset=UTF-8");
+            header("Access-Control-Allow-Methods: POST, GET, PUT, DELETE, OPTIONS");
+            header("Access-Control-Max-Age: 3600");
+            header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+            header("Access-Control-Allow-Credentials: true");
 
-        // Log des informations de la requête
-        error_log("[DEBUG] Méthode de la requête: " . $_SERVER['REQUEST_METHOD']);
-        error_log("[DEBUG] Origine de la requête: " . $origin);
-        error_log("[DEBUG] URI de la requête: " . $_SERVER['REQUEST_URI']);
-        error_log("[DEBUG] En-têtes de la requête: " . print_r(getallheaders(), true));
+            // Gérer la requête OPTIONS pour CORS
+            if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+                http_response_code(200);
+                exit();
+            }
 
-        switch ($method) {
-            case 'GET':
-                if ($id) {
-                    return $this->getCandidature($id);
-                }
-                return $this->getAllCandidatures();
-            case 'POST':
-                return $this->createCandidature();
-            case 'PUT':
-                if ($id) {
-                    return $this->updateStatut($id);
-                }
-                http_response_code(400);
-                return json_encode(['status' => 'error', 'message' => 'ID requis pour la mise à jour']);
-            case 'DELETE':
-                if ($id) {
-                    return $this->deleteCandidature($id);
-                }
-                http_response_code(400);
-                return json_encode(['status' => 'error', 'message' => 'ID requis pour la suppression']);
-            default:
-                http_response_code(405);
-                return json_encode(['status' => 'error', 'message' => 'Méthode non autorisée']);
+            switch ($method) {
+                case 'GET':
+                    if ($id) {
+                        return $this->getCandidature($id);
+                    }
+                    return $this->getAllCandidatures();
+                case 'POST':
+                    return $this->createCandidature();
+                case 'PUT':
+                    if ($id) {
+                        return $this->updateStatut($id);
+                    }
+                    http_response_code(400);
+                    return json_encode(['status' => 'error', 'message' => 'ID requis pour la mise à jour']);
+                case 'DELETE':
+                    if ($id) {
+                        return $this->deleteCandidature($id);
+                    }
+                    http_response_code(400);
+                    return json_encode(['status' => 'error', 'message' => 'ID requis pour la suppression']);
+                default:
+                    http_response_code(405);
+                    return json_encode(['status' => 'error', 'message' => 'Méthode non autorisée']);
+            }
+        } catch (Exception $e) {
+            error_log("[ERROR] Exception dans handleRequest: " . $e->getMessage());
+            error_log("[ERROR] Trace: " . $e->getTraceAsString());
+            http_response_code(500);
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Erreur serveur interne: ' . $e->getMessage(),
+                'debug_info' => [
+                    'error' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'trace' => $e->getTraceAsString()
+                ]
+            ]);
         }
     }
 
@@ -146,6 +168,8 @@ class CandidatureController {
                 'id_personne' => $_POST['id_personne'] ?? null,
                 'id_stage' => $_POST['id_stage'] ?? null
             ];
+
+            $logs[] = "[DEBUG] Données reçues: " . print_r($data, true);
 
             if (!$data['id_personne'] || !$data['id_stage']) {
                 throw new Exception("ID personne et ID stage requis");
@@ -229,7 +253,13 @@ class CandidatureController {
             return json_encode([
                 'status' => 'error',
                 'message' => $e->getMessage(),
-                'logs' => $logs
+                'logs' => $logs,
+                'debug_info' => [
+                    'error' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'trace' => $e->getTraceAsString()
+                ]
             ]);
         }
     }

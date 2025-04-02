@@ -7,6 +7,11 @@ import { getUserData } from '../../../utils/auth';
 
 const API_URL = 'http://20.19.36.142:8000/api';
 
+// Fonction pour construire l'URL de l'API
+const buildApiUrl = (endpoint) => {
+    return `${API_URL}${endpoint}`;
+};
+
 const formatDate = (dateString) => {
     if (!dateString) return 'Date non disponible';
     const date = new Date(dateString);
@@ -62,7 +67,7 @@ export default function PostulerForm({ params }) {
         const fetchOffre = async () => {
             try {
                 addDebugLog(`Tentative de récupération de l'offre ${params.id}`);
-                const response = await fetch(`${API_URL}/offres/${params.id}`);
+                const response = await fetch(buildApiUrl(`/offres/${params.id}`));
                 if (!response.ok) {
                     throw new Error('Erreur lors de la récupération des détails de l\'offre');
                 }
@@ -144,7 +149,6 @@ export default function PostulerForm({ params }) {
             formDataToSend.append('id_personne', personneId);
             formDataToSend.append('lettre_motivation', formData.lettreMotivation);
             
-            // Ajout du CV avec vérification
             if (formData.cv) {
                 addDebugLog('Informations du fichier CV: ' + JSON.stringify({
                     nom: formData.cv.name,
@@ -155,13 +159,12 @@ export default function PostulerForm({ params }) {
                 formDataToSend.append('cv', formData.cv);
             }
 
-            // Log le contenu complet du FormData
             addDebugLog('Contenu du FormData:');
             for (let pair of formDataToSend.entries()) {
                 addDebugLog(pair[0] + ': ' + (pair[0] === 'cv' ? 'Fichier PDF' : pair[1]));
             }
 
-            const url = `${API_URL}/candidatures.php`;
+            const url = buildApiUrl('/candidatures');
             addDebugLog('Envoi de la requête à: ' + url);
             
             try {
