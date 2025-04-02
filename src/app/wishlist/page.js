@@ -1,111 +1,60 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import {
-    HiLocationMarker,
-    HiCalendar,
-    HiClock,
-    HiBriefcase,
-    HiHeart,
-} from "react-icons/hi";
-import "./wishlist.css";
+import React, { useState } from 'react';
+import './wishlist.css';
+import { HiPhone, HiMail } from 'react-icons/hi';
 
-const faussesOffres = [
-    {
-        id: 1,
-        titre: "Stage Dev Web",
-        entreprise: "TechCorp",
-        localisation: "Paris",
-        dateDebut: "2025-05-01",
-        duree: 3,
-        description: "Développement React/Next.js",
-    },
-    {
-        id: 2,
-        titre: "Stage Data Analyst",
-        entreprise: "DataX",
-        localisation: "Lyon",
-        dateDebut: "2025-06-15",
-        duree: 4,
-        description: "Analyse de données Python",
-    },
+const entreprisesDeTest = [
+    { id: 1, nom: 'TechNova', secteur: 'Environnement', telephone: '0149742619', mail: 'contact@technova.com' },
+    { id: 2, nom: 'EcoSolutions', secteur: 'Marketing', telephone: '0135936950', mail: 'contact@ecosolutions.com' },
+    { id: 3, nom: 'GreenByte', secteur: 'Santé', telephone: '0191541096', mail: 'contact@greenbyte.com' },
+    { id: 4, nom: 'CyberHive', secteur: 'Télécom', telephone: '0139002419', mail: 'contact@cyberhive.com' },
+    { id: 5, nom: 'InnovaTech', secteur: 'Construction', telephone: '0126177920', mail: 'contact@innovatech.com' },
+    { id: 6, nom: 'DataBoost', secteur: 'Éducation', telephone: '0116703823', mail: 'contact@databoost.com' },
+    { id: 7, nom: 'BlueCircuit', secteur: 'Énergie', telephone: '0174033949', mail: 'contact@bluecircuit.com' },
+    { id: 8, nom: 'DevSpark', secteur: 'Informatique', telephone: '0123927185', mail: 'contact@devspark.com' },
+    { id: 9, nom: 'NetFusion', secteur: 'Construction', telephone: '0125980384', mail: 'contact@netfusion.com' },
+    { id: 10, nom: 'NextCore', secteur: 'Construction', telephone: '0169203911', mail: 'contact@nextcore.com' },
+    { id: 11, nom: 'QuantumSoft', secteur: 'Santé', telephone: '0159755279', mail: 'contact@quantumsoft.com' },
+    { id: 12, nom: 'CloudLink', secteur: 'Environnement', telephone: '0180779514', mail: 'contact@cloudlink.com' },
+    { id: 13, nom: 'AlgoX', secteur: 'Santé', telephone: '0135882728', mail: 'contact@algox.com' },
+    { id: 14, nom: 'SecureWave', secteur: 'Santé', telephone: '0151756639', mail: 'contact@securewave.com' },
+    { id: 15, nom: 'NeoCode', secteur: 'Environnement', telephone: '0176762431', mail: 'contact@neocode.com' },
+    { id: 16, nom: 'CodeSphere', secteur: 'Finance', telephone: '0152089253', mail: 'contact@codesphere.com' },
+    { id: 17, nom: 'MicroGen', secteur: 'Construction', telephone: '0199084047', mail: 'contact@microgen.com' },
+    { id: 18, nom: 'BrightWare', secteur: 'Télécom', telephone: '0142880452', mail: 'contact@brightware.com' },
+    { id: 19, nom: 'EcoLogic', secteur: 'Énergie', telephone: '0192617809', mail: 'contact@ecologic.com' },
+    { id: 20, nom: 'VisionTech', secteur: 'Informatique', telephone: '0177635816', mail: 'contact@visiontech.com' },
 ];
 
-const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("fr-FR", {
-        month: "long",
-        year: "numeric",
-    });
-};
-
-const OffreCard = ({ offre, onRemove }) => {
-    const router = useRouter();
-
-    return (
-        <div className="offre-card">
-            <div className="offre-header">
-                <h2 className="offre-title">{offre.titre}</h2>
-                <div className="offre-company">{offre.entreprise}</div>
-            </div>
-            <div className="offre-content">
-                <div className="offre-details">
-                    <div className="detail-item">
-                        <HiLocationMarker />
-                        <span>{offre.localisation}</span>
-                    </div>
-                    <div className="detail-item">
-                        <HiCalendar />
-                        <span>Début : {formatDate(offre.dateDebut)}</span>
-                    </div>
-                    <div className="detail-item">
-                        <HiClock />
-                        <span>Durée : {offre.duree} mois</span>
-                    </div>
-                    <div className="detail-item">
-                        <HiBriefcase />
-                        <span>{offre.description}</span>
-                    </div>
-                </div>
-            </div>
-            <div className="offre-actions">
-                <button className="btn btn-outline wishlist-remove" onClick={() => onRemove(offre.id)}>
-                    <HiHeart /> Retirer
-                </button>
-            </div>
-        </div>
-    );
-};
-
 export default function WishlistPage() {
-    const [favoris, setFavoris] = useState([1, 2]);
-    const [offres, setOffres] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const perPage = 6;
+    const totalPages = Math.ceil(entreprisesDeTest.length / perPage);
 
-    useEffect(() => {
-        const filtrer = faussesOffres.filter((o) => favoris.includes(o.id));
-        setOffres(filtrer);
-    }, [favoris]);
-
-    const retirerFavori = (id) => {
-        const newFavoris = favoris.filter((fid) => fid !== id);
-        setFavoris(newFavoris);
-        localStorage.setItem("favoris", JSON.stringify(newFavoris));
-    };
+    const currentItems = entreprisesDeTest.slice(
+        (currentPage - 1) * perPage,
+        currentPage * perPage
+    );
 
     return (
         <div className="wishlist-container">
-            <div className="wishlist-wrapper">
-                <h1 className="wishlist-title">Ma Wishlist</h1>
-                <div className="offres-grid">
-                    {offres.length > 0 ? (
-                        offres.map((offre) => (
-                            <OffreCard key={offre.id} offre={offre} onRemove={retirerFavori} />
-                        ))
-                    ) : (
-                        <p className="wishlist-empty">Aucune offre en favoris.</p>
-                    )}
-                </div>
+            <h1>Ma Wishlist</h1>
+            <div className="wishlist-grid">
+                {currentItems.map((entreprise) => (
+                    <div className="wishlist-card" key={entreprise.id}>
+                        <h2>{entreprise.nom}</h2>
+                        <p><strong>Secteur :</strong> {entreprise.secteur}</p>
+                        <p><HiPhone /> {entreprise.telephone}</p>
+                        <p><HiMail /> {entreprise.mail}</p>
+                    </div>
+                ))}
+            </div>
+
+            <div className="pagination">
+                <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}>Précédent</button>
+                <span>Page {currentPage} / {totalPages}</span>
+                <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)}>Suivant</button>
             </div>
         </div>
     );
