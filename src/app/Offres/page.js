@@ -49,7 +49,7 @@ const OffreCard = ({ offre, onFavorite, isFavorite }) => {
                 </div>
             </div>
             <div className="offre-actions">
-                <button 
+                <button
                     className={`btn btn-outline ${isFavorite ? 'favorite' : ''}`}
                     onClick={() => onFavorite(offre.id)}
                 >
@@ -64,15 +64,29 @@ const OffreCard = ({ offre, onFavorite, isFavorite }) => {
 };
 
 export default function Offres() {
-    const [offres, setOffres] = useState(offresDeStages);
+    const [offres, setOffres] = useState([]);
     const [filtres, setFiltres] = useState({
         villes: [],
         duree: { min: '', max: '' },
         moisDebut: ''
     });
     const [favoris, setFavoris] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const offresParPage = 3;
 
     useEffect(() => {
+        // Génération de 25 fausses offres
+        const faussesOffres = Array.from({ length: 25 }, (_, i) => ({
+            id: i + 1,
+            titre: `Stage ${i + 1}`,
+            entreprise: `Entreprise ${i + 1}`,
+            localisation: 'Lyon',
+            dateDebut: '2025-05-01',
+            duree: ((i % 6) + 1),
+            description: 'Une excellente opportunité pour développer vos compétences.'
+        }));
+        setOffres(faussesOffres);
+
         const savedFavoris = localStorage.getItem('favoris');
         if (savedFavoris) {
             setFavoris(JSON.parse(savedFavoris));
@@ -88,21 +102,15 @@ export default function Offres() {
 
     const filtrerOffres = () => {
         return offres.filter(offre => {
-            // Filtre par villes
-            const matchVilles = filtres.villes.length === 0 || 
-                filtres.villes.some(ville => 
+            const matchVilles = filtres.villes.length === 0 ||
+                filtres.villes.some(ville =>
                     offre.localisation.toLowerCase().includes(ville.toLowerCase())
                 );
-
-            // Filtre par durée
             const dureeMois = parseInt(offre.duree);
             const matchDuree = (!filtres.duree.min || dureeMois >= parseInt(filtres.duree.min)) &&
-                             (!filtres.duree.max || dureeMois <= parseInt(filtres.duree.max));
-
-            // Filtre par mois de début
+                (!filtres.duree.max || dureeMois <= parseInt(filtres.duree.max));
             const moisOffre = new Date(offre.dateDebut).getMonth() + 1;
             const matchMois = !filtres.moisDebut || moisOffre === parseInt(filtres.moisDebut);
-
             return matchVilles && matchDuree && matchMois;
         });
     };
@@ -111,10 +119,15 @@ export default function Offres() {
         const newFavoris = favoris.includes(offreId)
             ? favoris.filter(id => id !== offreId)
             : [...favoris, offreId];
-        
         setFavoris(newFavoris);
         localStorage.setItem('favoris', JSON.stringify(newFavoris));
     };
+
+    const offresFiltrees = filtrerOffres();
+    const indexOfLast = currentPage * offresParPage;
+    const indexOfFirst = indexOfLast - offresParPage;
+    const currentOffres = offresFiltrees.slice(indexOfFirst, indexOfLast);
+    const totalPages = Math.ceil(offresFiltrees.length / offresParPage);
 
     return (
         <div className="offres-container">
@@ -126,13 +139,25 @@ export default function Offres() {
             <Filters onFilterChange={handleFiltreChange} />
 
             <div className="offres-grid">
-                {filtrerOffres().map((offre) => (
+                {currentOffres.map((offre) => (
                     <OffreCard
                         key={offre.id}
                         offre={offre}
                         onFavorite={toggleFavori}
                         isFavorite={favoris.includes(offre.id)}
                     />
+                ))}
+            </div>
+
+            <div className="pagination">
+                {Array.from({ length: totalPages }, (_, i) => (
+                    <button
+                        key={i}
+                        className={`page-btn ${currentPage === i + 1 ? 'active' : ''}`}
+                        onClick={() => setCurrentPage(i + 1)}
+                    >
+                        {i + 1}
+                    </button>
                 ))}
             </div>
         </div>
