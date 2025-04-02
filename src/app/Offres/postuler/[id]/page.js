@@ -158,13 +158,9 @@ export default function PostulerForm({ params }) {
                 addDebugLog('Configuration de la requête:');
                 addDebugLog('- Mode: CORS');
                 addDebugLog('- Credentials: include');
-                addDebugLog('- Headers: Accept: application/json');
                 
                 const response = await fetch(url, {
                     method: 'POST',
-                    headers: {
-                        'Accept': 'application/json'
-                    },
                     mode: 'cors',
                     credentials: 'include',
                     body: formDataToSend,
