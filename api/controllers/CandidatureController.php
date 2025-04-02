@@ -1,16 +1,19 @@
 <?php
 require_once __DIR__ . '/../models/Candidature.php';
+require_once __DIR__ . '/../models/Personne.php';
 require_once __DIR__ . '/../config/database.php';
 
 class CandidatureController {
     private $db;
     private $candidature;
+    private $personne;
     private $upload_directory;
 
     public function __construct() {
         $database = new Database();
         $this->db = $database->getConnection();
         $this->candidature = new Candidature($this->db);
+        $this->personne = new Personne($this->db);
         $this->upload_directory = __DIR__ . '/../uploads/';
 
         // Créer le dossier uploads s'il n'existe pas
@@ -63,16 +66,34 @@ class CandidatureController {
 
             // Valider les données du formulaire
             $data = [
-                'id_personne' => $_POST['id_personne'] ?? null,
+                'nom' => $_POST['nom'] ?? null,
+                'prenom' => $_POST['prenom'] ?? null,
+                'email' => $_POST['email'] ?? null,
+                'telephone' => $_POST['telephone'] ?? null,
                 'id_stage' => $_POST['id_stage'] ?? null,
             ];
 
-            if (!$data['id_personne'] || !$data['id_stage']) {
+            if (!$data['nom'] || !$data['prenom'] || !$data['email'] || !$data['telephone'] || !$data['id_stage']) {
                 throw new Exception("Données manquantes");
             }
 
-            // Vérifier si une candidature existe déjà
-            if ($this->candidature->candidatureExists($data['id_personne'], $data['id_stage'])) {
+            // Vérifier si une personne avec cet email existe déjà
+            $existingPerson = $this->personne->getByEmail($data['email']);
+            if ($existingPerson) {
+                $id_personne = $existingPerson['id_personne'];
+            } else {
+                // Créer une nouvelle personne
+                $personneData = [
+                    'nom' => $data['nom'],
+                    'prenom' => $data['prenom'],
+                    'email' => $data['email'],
+                    'telephone' => $data['telephone']
+                ];
+                $id_personne = $this->personne->create($personneData);
+            }
+
+            // Vérifier si une candidature existe déjà pour cette personne et ce stage
+            if ($this->candidature->candidatureExists($id_personne, $data['id_stage'])) {
                 throw new Exception("Vous avez déjà postulé à cette offre");
             }
 
@@ -98,12 +119,16 @@ class CandidatureController {
                 file_put_contents($lettre_path, $_POST['lettre_motivation']);
             }
 
-            // Préparer les données pour la création
-            $data['cv_path'] = $cv_path;
-            $data['lettre_path'] = $lettre_path;
+            // Préparer les données pour la création de la candidature
+            $candidatureData = [
+                'id_personne' => $id_personne,
+                'id_stage' => $data['id_stage'],
+                'cv_path' => $cv_path,
+                'lettre_path' => $lettre_path
+            ];
 
             // Créer la candidature
-            $id = $this->candidature->create($data);
+            $id = $this->candidature->create($candidatureData);
 
             if ($id) {
                 http_response_code(201);
