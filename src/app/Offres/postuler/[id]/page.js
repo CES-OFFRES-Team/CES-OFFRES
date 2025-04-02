@@ -74,6 +74,10 @@ export default function PostulerForm({ params }) {
         setLoading(true);
         setError(null);
 
+        // Log les données utilisateur au début
+        console.log('Données utilisateur complètes:', user);
+        console.log('ID personne:', user?.id_personne);
+
         if (!user) {
             setError("Vous devez être connecté pour postuler");
             setLoading(false);
@@ -97,20 +101,19 @@ export default function PostulerForm({ params }) {
                 formDataToSend.append('cv', formData.cv);
             }
 
-            console.log('Données de la candidature:', {
-                id_stage: params.id,
-                id_personne: user.id_personne,
-                cv: formData.cv ? formData.cv.name : null,
-                user: user
-            });
+            // Log le contenu complet du FormData
+            for (let pair of formDataToSend.entries()) {
+                console.log('FormData contient:', pair[0], pair[1]);
+            }
 
+            console.log('Envoi de la requête à:', `${API_URL}/candidatures.php`);
             const response = await fetch(`${API_URL}/candidatures.php`, {
                 method: 'POST',
                 body: formDataToSend,
             });
 
             const data = await response.json();
-            console.log('Réponse du serveur:', data);
+            console.log('Réponse complète du serveur:', data);
 
             if (data.status === 'success') {
                 router.push('/Offres/confirmation');
@@ -118,7 +121,7 @@ export default function PostulerForm({ params }) {
                 throw new Error(data.message || 'Erreur lors de l\'envoi de la candidature');
             }
         } catch (error) {
-            console.error('Erreur:', error);
+            console.error('Erreur complète:', error);
             setError(error.message);
         } finally {
             setLoading(false);
