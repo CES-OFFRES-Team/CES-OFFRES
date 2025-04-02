@@ -179,7 +179,17 @@ class CandidatureController {
 
     private function getAllCandidatures() {
         try {
-            $stmt = $this->candidature->getAll();
+            // Récupérer l'id_personne depuis les paramètres GET
+            $id_personne = isset($_GET['id_personne']) ? $_GET['id_personne'] : null;
+            
+            if ($id_personne) {
+                // Si un id_personne est fourni, récupérer uniquement ses candidatures
+                $stmt = $this->candidature->getByPersonne($id_personne);
+            } else {
+                // Sinon, récupérer toutes les candidatures
+                $stmt = $this->candidature->getAll();
+            }
+            
             $num = $stmt->rowCount();
             
             if ($num > 0) {
@@ -194,10 +204,9 @@ class CandidatureController {
                 ]);
             }
             
-            http_response_code(404);
             return json_encode([
-                'status' => 'error',
-                'message' => 'Aucune candidature trouvée'
+                'status' => 'success',
+                'data' => []
             ]);
         } catch (Exception $e) {
             error_log("[ERROR] Exception dans getAllCandidatures: " . $e->getMessage());
