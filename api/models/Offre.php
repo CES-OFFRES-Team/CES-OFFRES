@@ -10,10 +10,12 @@ class Offre {
     public function getAll() {
         try {
             error_log("[DEBUG] Début de la requête getAll dans le modèle Offre");
-            $query = "SELECT o.*, e.nom_entreprise 
+            $query = "SELECT o.id_stage, o.titre, o.description, o.remuneration, 
+                            o.date_debut as date_début, o.date_fin, o.id_entreprise,
+                            e.nom_entreprise 
                      FROM Offres_de_stage o 
                      LEFT JOIN entreprises e ON o.id_entreprise = e.id_entreprise 
-                     ORDER BY o.date_début DESC";
+                     ORDER BY o.date_debut DESC";
             error_log("[DEBUG] Requête SQL: " . $query);
             
             $stmt = $this->db->prepare($query);
@@ -29,9 +31,6 @@ class Offre {
         } catch (PDOException $e) {
             error_log("[ERROR] Erreur PDO dans getAll(): " . $e->getMessage());
             throw new Exception("Erreur lors de la récupération des offres: " . $e->getMessage());
-        } catch (Exception $e) {
-            error_log("[ERROR] Exception dans getAll(): " . $e->getMessage());
-            throw $e;
         }
     }
 
@@ -66,7 +65,7 @@ class Offre {
             error_log("[DEBUG] Début de la création d'une offre avec les données: " . json_encode($data));
             $this->validateData($data);
             
-            $query = "INSERT INTO Offres_de_stage (titre, description, remuneration, date_début, date_fin, id_entreprise) 
+            $query = "INSERT INTO Offres_de_stage (titre, description, remuneration, date_debut, date_fin, id_entreprise) 
                      VALUES (:titre, :description, :remuneration, :date_debut, :date_fin, :id_entreprise)";
             
             $stmt = $this->db->prepare($query);
@@ -100,7 +99,7 @@ class Offre {
                      SET titre = :titre, 
                          description = :description, 
                          remuneration = :remuneration, 
-                         date_début = :date_debut, 
+                         date_debut = :date_debut, 
                          date_fin = :date_fin, 
                          id_entreprise = :id_entreprise 
                      WHERE id_stage = :id";
