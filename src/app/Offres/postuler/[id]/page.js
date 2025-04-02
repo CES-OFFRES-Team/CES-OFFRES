@@ -23,15 +23,20 @@ export default function PostulerForm({ params }) {
     const [loading, setLoading] = useState(true);
     const [offre, setOffre] = useState(null);
     const [user, setUser] = useState(null);
+    const [debugInfo, setDebugInfo] = useState([]);
     const [formData, setFormData] = useState({
         cv: null,
         lettreMotivation: '',
     });
 
+    const addDebugLog = (message) => {
+        setDebugInfo(prev => [...prev, `${new Date().toLocaleTimeString()} - ${message}`]);
+    };
+
     useEffect(() => {
         // Récupérer les informations de l'utilisateur
         const userData = getUserData();
-        console.log('Données utilisateur récupérées:', userData);
+        addDebugLog('Données utilisateur récupérées: ' + JSON.stringify(userData));
         
         if (!userData) {
             setError("Vous devez être connecté pour postuler");
@@ -46,6 +51,7 @@ export default function PostulerForm({ params }) {
         // Récupérer les détails de l'offre
         const fetchOffre = async () => {
             try {
+                addDebugLog(`Tentative de récupération de l'offre ${params.id}`);
                 const response = await fetch(`${API_URL}/offres/${params.id}`);
                 if (!response.ok) {
                     throw new Error('Erreur lors de la récupération des détails de l\'offre');
@@ -53,10 +59,12 @@ export default function PostulerForm({ params }) {
                 const result = await response.json();
                 if (result.status === 'success' && result.data) {
                     setOffre(result.data);
+                    addDebugLog('Offre récupérée avec succès');
                 } else {
                     throw new Error('Offre non trouvée');
                 }
             } catch (err) {
+                addDebugLog('Erreur lors de la récupération de l\'offre: ' + err.message);
                 console.error('Erreur:', err);
                 setError(err.message);
             } finally {
@@ -73,10 +81,10 @@ export default function PostulerForm({ params }) {
         e.preventDefault();
         setLoading(true);
         setError(null);
+        setDebugInfo([]); // Réinitialiser les logs
 
-        // Log les données utilisateur au début
-        console.log('Données utilisateur complètes:', user);
-        console.log('ID personne:', user?.id_personne, 'Type:', typeof user?.id_personne);
+        addDebugLog('Début de la soumission du formulaire');
+        addDebugLog('Données utilisateur: ' + JSON.stringify(user));
 
         if (!user) {
             setError("Vous devez être connecté pour postuler");
@@ -128,23 +136,25 @@ export default function PostulerForm({ params }) {
             
             // Ajout du CV avec vérification
             if (formData.cv) {
-                console.log('Informations du fichier CV:', {
+                addDebugLog('Informations du fichier CV: ' + JSON.stringify({
                     nom: formData.cv.name,
                     type: formData.cv.type,
                     taille: formData.cv.size,
                     lastModified: formData.cv.lastModified
-                });
+                }));
                 formDataToSend.append('cv', formData.cv);
             }
 
             // Log le contenu complet du FormData
-            console.log('Contenu du FormData:');
+            addDebugLog('Contenu du FormData:');
             for (let pair of formDataToSend.entries()) {
-                console.log(pair[0] + ': ' + (pair[0] === 'cv' ? 'Fichier PDF' : pair[1]));
+                addDebugLog(pair[0] + ': ' + (pair[0] === 'cv' ? 'Fichier PDF' : pair[1]));
             }
 
-            console.log('Envoi de la requête à:', `${API_URL}/candidatures.php`);
-            const response = await fetch(`${API_URL}/candidatures.php`, {
+            const url = `${API_URL}/candidatures.php`;
+            addDebugLog('Envoi de la requête à: ' + url);
+            
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -154,25 +164,27 @@ export default function PostulerForm({ params }) {
                 body: formDataToSend,
             });
 
+            addDebugLog('Statut de la réponse: ' + response.status);
+            addDebugLog('En-têtes de la réponse: ' + JSON.stringify(Object.fromEntries(response.headers.entries())));
+
             // Log de la réponse brute
             const responseText = await response.text();
-            console.log('Réponse brute du serveur:', responseText);
+            addDebugLog('Réponse brute du serveur: ' + responseText);
 
             let data;
             try {
                 data = JSON.parse(responseText);
+                addDebugLog('Réponse parsée: ' + JSON.stringify(data));
             } catch (e) {
-                console.error('Erreur de parsing JSON:', e);
-                console.error('Réponse brute reçue:', responseText);
+                addDebugLog('Erreur de parsing JSON: ' + e.message);
+                addDebugLog('Réponse brute reçue: ' + responseText);
                 throw new Error('Réponse invalide du serveur');
             }
 
-            console.log('Réponse parsée du serveur:', data);
-
             // Afficher les logs du serveur
             if (data.logs) {
-                console.log('Logs du serveur:');
-                data.logs.forEach(log => console.log(log));
+                addDebugLog('Logs du serveur:');
+                data.logs.forEach(log => addDebugLog(log));
             }
 
             if (data.status === 'success') {
@@ -181,7 +193,7 @@ export default function PostulerForm({ params }) {
                 throw new Error(data.message || 'Erreur lors de l\'envoi de la candidature');
             }
         } catch (error) {
-            console.error('Erreur complète:', error);
+            addDebugLog('Erreur complète: ' + error.message);
             if (error.message === 'Failed to fetch') {
                 setError("Impossible de contacter le serveur. Veuillez vérifier votre connexion internet ou réessayer plus tard.");
             } else {
@@ -276,6 +288,22 @@ export default function PostulerForm({ params }) {
                         </button>
                     </div>
                 </form>
+
+                {error && (
+                    <div className="error-message">
+                        <h3>Erreur</h3>
+                        <p>{error}</p>
+                    </div>
+                )}
+
+                <div className="debug-info">
+                    <h3>Informations de débogage</h3>
+                    <pre>
+                        {debugInfo.map((log, index) => (
+                            <div key={index} className="log-entry">{log}</div>
+                        ))}
+                    </pre>
+                </div>
             </div>
         </div>
     );
