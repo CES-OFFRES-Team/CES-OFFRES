@@ -66,34 +66,22 @@ class CandidatureController {
 
             // Valider les données du formulaire
             $data = [
-                'nom' => $_POST['nom'] ?? null,
-                'prenom' => $_POST['prenom'] ?? null,
-                'email' => $_POST['email'] ?? null,
-                'telephone' => $_POST['telephone'] ?? null,
+                'id_personne' => $_POST['id_personne'] ?? null,
                 'id_stage' => $_POST['id_stage'] ?? null
             ];
 
-            if (!$data['nom'] || !$data['prenom'] || !$data['email'] || !$data['telephone'] || !$data['id_stage']) {
-                throw new Exception("Données manquantes");
+            if (!$data['id_personne'] || !$data['id_stage']) {
+                throw new Exception("ID personne et ID stage requis");
             }
 
-            // Créer une nouvelle personne
-            $personneData = [
-                'nom' => $data['nom'],
-                'prenom' => $data['prenom'],
-                'email' => $data['email'],
-                'telephone' => $data['telephone']
-            ];
-
-            // Créer la personne et récupérer son ID
-            $id_personne = $this->personne->create($personneData);
-
-            if (!$id_personne) {
-                throw new Exception("Erreur lors de la création de la personne");
+            // Vérifier si la personne existe
+            $personne = $this->personne->getById($data['id_personne']);
+            if (!$personne) {
+                throw new Exception("Personne non trouvée");
             }
 
             // Vérifier si une candidature existe déjà
-            if ($this->candidature->candidatureExists($id_personne, $data['id_stage'])) {
+            if ($this->candidature->candidatureExists($data['id_personne'], $data['id_stage'])) {
                 throw new Exception("Vous avez déjà postulé à cette offre");
             }
 
@@ -121,10 +109,11 @@ class CandidatureController {
 
             // Préparer les données pour la création de la candidature
             $candidatureData = [
-                'id_personne' => $id_personne,
+                'id_personne' => $data['id_personne'],
                 'id_stage' => $data['id_stage'],
                 'cv_path' => $cv_path,
-                'lettre_path' => $lettre_path
+                'lettre_path' => $lettre_path,
+                'statut' => 'En attente'
             ];
 
             // Créer la candidature

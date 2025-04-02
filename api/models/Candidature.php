@@ -16,13 +16,10 @@ class Candidature {
                      VALUES (:cv_path, :lettre_path, :statut, CURDATE(), :id_personne, :id_stage)";
 
             $stmt = $this->db->prepare($query);
-
-            // Définir le statut initial
-            $statut = "En attente";
             
             $stmt->bindParam(':cv_path', $data['cv_path']);
             $stmt->bindParam(':lettre_path', $data['lettre_path']);
-            $stmt->bindParam(':statut', $statut);
+            $stmt->bindParam(':statut', $data['statut']);
             $stmt->bindParam(':id_personne', $data['id_personne']);
             $stmt->bindParam(':id_stage', $data['id_stage']);
 
