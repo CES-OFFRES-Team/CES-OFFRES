@@ -3,19 +3,36 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
 
 export default function Navigation() {
     const [isOpen, setIsOpen] = useState(false);
     const [isMaximized, setIsMaximized] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const router = useRouter();
+
+    const handleLogout = () => {
+        // Mettre à jour l'état local immédiatement
+        setIsLoggedIn(false);
+        setIsAdmin(false);
+        
+        // Supprimer les cookies
+        Cookies.remove('authToken');
+        Cookies.remove('userData');
+        
+        // Rediriger vers la page de connexion
+        router.push('/Login');
+    };
 
     useEffect(() => {
-        // Vérifier si l'utilisateur est admin
+        // Vérifier si l'utilisateur est connecté et admin
         const userData = Cookies.get('userData');
         if (userData) {
             try {
                 const user = JSON.parse(userData);
                 setIsAdmin(user.role === 'Admin');
+                setIsLoggedIn(true);
             } catch (e) {
                 console.error('Erreur lors du parsing des données utilisateur:', e);
             }
@@ -149,10 +166,20 @@ export default function Navigation() {
                     </ul>
                     <ul className="secondary-nav">
                         <li className="nav-item">
-                            <Link href="/Login" className="nav-link">
-                                <i className="fa-solid fa-right-to-bracket"></i>
-                                <span className="nav-label">Connexion</span>
-                            </Link>
+                            {isLoggedIn ? (
+                                <button 
+                                    onClick={handleLogout}
+                                    className="nav-link deconnexion-button"
+                                >
+                                    <i className="fa-solid fa-right-from-bracket"></i>
+                                    <span className="nav-label">Déconnexion</span>
+                                </button>
+                            ) : (
+                                <Link href="/Login" className="nav-link">
+                                    <i className="fa-solid fa-right-to-bracket"></i>
+                                    <span className="nav-label">Connexion</span>
+                                </Link>
+                            )}
                         </li>
                     </ul>
                 </nav>
