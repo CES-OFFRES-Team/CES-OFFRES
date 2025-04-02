@@ -5,7 +5,7 @@ import { HiLocationMarker, HiCalendar, HiClock, HiBriefcase, HiTrash, HiPlus, Hi
 import OffreModal from './OffreModal';
 import './Offres.css';
 
-const API_URL = 'http://20.19.36.142:8000/api';
+const API_URL = 'http://20.19.36.142:8000/api/offres';
 
 // Données fictives pour les offres
 const offresDeTest = [

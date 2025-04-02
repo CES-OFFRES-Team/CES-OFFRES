@@ -189,38 +189,6 @@ class EntrepriseController {
 
     public function updateEntreprise($id) {
         try {
-            // Vérifier le token d'authentification
-            $headers = getallheaders();
-            $authHeader = $headers['Authorization'] ?? '';
-            
-            if (!preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
-                http_response_code(401);
-                return json_encode([
-                    'status' => 'error',
-                    'message' => 'Token non fourni ou format invalide'
-                ]);
-            }
-
-            $token = $matches[1];
-            $user = $this->user->findByToken($token);
-
-            if (!$user) {
-                http_response_code(401);
-                return json_encode([
-                    'status' => 'error',
-                    'message' => 'Token invalide'
-                ]);
-            }
-
-            // Vérifier si l'utilisateur est admin
-            if ($user['role'] !== 'Admin') {
-                http_response_code(403);
-                return json_encode([
-                    'status' => 'error',
-                    'message' => 'Accès non autorisé'
-                ]);
-            }
-
             $data = json_decode(file_get_contents('php://input'), true);
             
             if (!$data) {
@@ -267,53 +235,21 @@ class EntrepriseController {
                 http_response_code(500);
                 return json_encode([
                     'status' => 'error',
-                    'message' => 'Erreur lors de la mise à jour de l\'entreprise'
+                    'message' => 'Échec de la mise à jour'
                 ]);
             }
         } catch (Exception $e) {
-            error_log("[ERROR] Exception lors de la mise à jour de l'entreprise ID: " . $id . " - " . $e->getMessage());
+            error_log("[ERROR] Exception lors de la mise à jour: " . $e->getMessage());
             http_response_code(500);
             return json_encode([
                 'status' => 'error',
-                'message' => 'Erreur serveur lors de la mise à jour'
+                'message' => 'Erreur serveur: ' . $e->getMessage()
             ]);
         }
     }
 
     public function deleteEntreprise($id) {
         try {
-            // Vérifier le token d'authentification
-            $headers = getallheaders();
-            $authHeader = $headers['Authorization'] ?? '';
-            
-            if (!preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
-                http_response_code(401);
-                return json_encode([
-                    'status' => 'error',
-                    'message' => 'Token non fourni ou format invalide'
-                ]);
-            }
-
-            $token = $matches[1];
-            $user = $this->user->findByToken($token);
-
-            if (!$user) {
-                http_response_code(401);
-                return json_encode([
-                    'status' => 'error',
-                    'message' => 'Token invalide'
-                ]);
-            }
-
-            // Vérifier si l'utilisateur est admin
-            if ($user['role'] !== 'Admin') {
-                http_response_code(403);
-                return json_encode([
-                    'status' => 'error',
-                    'message' => 'Accès non autorisé'
-                ]);
-            }
-
             if ($this->entreprise->delete($id)) {
                 error_log("[SUCCESS] Entreprise ID: " . $id . " supprimée avec succès");
                 http_response_code(200);
@@ -326,15 +262,42 @@ class EntrepriseController {
                 http_response_code(500);
                 return json_encode([
                     'status' => 'error',
-                    'message' => 'Erreur lors de la suppression de l\'entreprise'
+                    'message' => 'Échec de la suppression'
                 ]);
             }
         } catch (Exception $e) {
-            error_log("[ERROR] Exception lors de la suppression de l'entreprise ID: " . $id . " - " . $e->getMessage());
+            error_log("[ERROR] Exception lors de la suppression: " . $e->getMessage());
             http_response_code(500);
             return json_encode([
                 'status' => 'error',
-                'message' => 'Erreur serveur lors de la suppression'
+                'message' => 'Erreur serveur: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    public function getEntreprise($id) {
+        try {
+            $entreprise = $this->entreprise->getById($id);
+            
+            if ($entreprise) {
+                http_response_code(200);
+                return json_encode([
+                    'status' => 'success',
+                    'data' => $entreprise
+                ]);
+            } else {
+                http_response_code(404);
+                return json_encode([
+                    'status' => 'error',
+                    'message' => 'Entreprise non trouvée'
+                ]);
+            }
+        } catch (Exception $e) {
+            error_log("[ERROR] Exception lors de la récupération de l'entreprise: " . $e->getMessage());
+            http_response_code(500);
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Erreur serveur: ' . $e->getMessage()
             ]);
         }
     }
