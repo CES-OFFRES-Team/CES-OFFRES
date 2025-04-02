@@ -21,11 +21,36 @@ $tests['pdo_mysql'] = extension_loaded('pdo_mysql');
 
 // Test Database Connection
 try {
+    error_log("[DEBUG] Début du test système");
     $database = new Database();
     $db = $database->getConnection();
-    if($db) {
-        $tests['database'] = true;
+    
+    if(!$db) {
+        throw new Exception("Impossible de se connecter à la base de données");
     }
+
+    // Vérification de la table Offres_de_stage
+    $query = "SHOW COLUMNS FROM Offres_de_stage";
+    $stmt = $db->query($query);
+    $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    error_log("[DEBUG] Colonnes de Offres_de_stage: " . implode(', ', $columns));
+
+    // Vérification de la table entreprises
+    $query = "SHOW COLUMNS FROM entreprises";
+    $stmt = $db->query($query);
+    $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    error_log("[DEBUG] Colonnes de entreprises: " . implode(', ', $columns));
+
+    // Test de la requête principale
+    $query = "SELECT o.*, e.nom_entreprise 
+              FROM Offres_de_stage o 
+              LEFT JOIN entreprises e ON o.id_entreprise = e.id_entreprise 
+              ORDER BY o.date_début DESC";
+    $stmt = $db->query($query);
+    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    error_log("[DEBUG] Nombre d'offres trouvées: " . count($result));
+
+    $tests['database'] = true;
 } catch(Exception $e) {
     $tests['database'] = false;
 }

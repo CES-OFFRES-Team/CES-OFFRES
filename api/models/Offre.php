@@ -13,14 +13,25 @@ class Offre {
             $query = "SELECT o.*, e.nom_entreprise 
                      FROM Offres_de_stage o 
                      LEFT JOIN entreprises e ON o.id_entreprise = e.id_entreprise 
-                     ORDER BY o.date_publication DESC";
+                     ORDER BY o.date_début DESC";
+            error_log("[DEBUG] Requête SQL: " . $query);
+            
             $stmt = $this->db->prepare($query);
             $stmt->execute();
+            
+            if ($stmt->errorInfo()[0] !== '00000') {
+                error_log("[ERROR] Erreur SQL: " . implode(', ', $stmt->errorInfo()));
+                throw new Exception("Erreur SQL lors de la récupération des offres");
+            }
+            
             error_log("[DEBUG] Requête getAll exécutée avec succès");
             return $stmt;
         } catch (PDOException $e) {
-            error_log("[ERROR] Erreur dans getAll(): " . $e->getMessage());
-            throw new Exception("Erreur lors de la récupération des offres");
+            error_log("[ERROR] Erreur PDO dans getAll(): " . $e->getMessage());
+            throw new Exception("Erreur lors de la récupération des offres: " . $e->getMessage());
+        } catch (Exception $e) {
+            error_log("[ERROR] Exception dans getAll(): " . $e->getMessage());
+            throw $e;
         }
     }
 
