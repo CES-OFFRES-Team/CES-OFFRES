@@ -55,8 +55,11 @@ try {
             break;
 
         case '/candidatures':
+            error_log("[DEBUG] Route /candidatures détectée");
+            error_log("[DEBUG] Méthode: " . $method);
+            error_log("[DEBUG] ID: " . ($id ?? 'null'));
             $controller = new CandidatureController();
-            echo $controller->handleRequest($method);
+            echo $controller->handleRequest($method, $id);
             break;
         
         case '/entreprises':

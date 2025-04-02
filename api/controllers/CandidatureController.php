@@ -176,37 +176,47 @@ class CandidatureController {
 
     private function getAllCandidatures() {
         try {
+            error_log("[DEBUG] Début de getAllCandidatures");
+            
             // Récupérer l'id_personne depuis les paramètres GET
             $id_personne = isset($_GET['id_personne']) ? $_GET['id_personne'] : null;
+            error_log("[DEBUG] id_personne reçu: " . var_export($id_personne, true));
             
             if ($id_personne) {
+                error_log("[DEBUG] Récupération des candidatures pour la personne ID: " . $id_personne);
                 // Si un id_personne est fourni, récupérer uniquement ses candidatures
                 $stmt = $this->candidature->getByPersonne($id_personne);
             } else {
+                error_log("[DEBUG] Récupération de toutes les candidatures");
                 // Sinon, récupérer toutes les candidatures
                 $stmt = $this->candidature->getAll();
             }
             
             $num = $stmt->rowCount();
+            error_log("[DEBUG] Nombre de candidatures trouvées: " . $num);
             
             if ($num > 0) {
                 $candidatures_arr = [];
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    error_log("[DEBUG] Candidature trouvée: " . json_encode($row));
                     array_push($candidatures_arr, $row);
                 }
                 
+                error_log("[DEBUG] Envoi de la réponse avec " . count($candidatures_arr) . " candidatures");
                 return json_encode([
                     'status' => 'success',
                     'data' => $candidatures_arr
                 ]);
             }
             
+            error_log("[DEBUG] Aucune candidature trouvée");
             return json_encode([
                 'status' => 'success',
                 'data' => []
             ]);
         } catch (Exception $e) {
             error_log("[ERROR] Exception dans getAllCandidatures: " . $e->getMessage());
+            error_log("[ERROR] Trace complète: " . $e->getTraceAsString());
             http_response_code(500);
             return json_encode([
                 'status' => 'error',
