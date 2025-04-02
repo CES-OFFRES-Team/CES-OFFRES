@@ -22,6 +22,7 @@ export default function PostulerForm({ params }) {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const [offre, setOffre] = useState(null);
+    const [user, setUser] = useState(null);
     const [formData, setFormData] = useState({
         nom: '',
         prenom: '',
@@ -32,6 +33,21 @@ export default function PostulerForm({ params }) {
     });
 
     useEffect(() => {
+        // Récupérer les informations de l'utilisateur
+        const userData = getUserData();
+        if (!userData) {
+            setError("Vous devez être connecté pour postuler");
+            return;
+        }
+        setUser(userData);
+        setFormData(prev => ({
+            ...prev,
+            nom: userData.nom || '',
+            prenom: userData.prenom || '',
+            email: userData.email || '',
+            telephone: userData.telephone || ''
+        }));
+
         // Récupérer les détails de l'offre
         const fetchOffre = async () => {
             try {
@@ -63,14 +79,17 @@ export default function PostulerForm({ params }) {
         setLoading(true);
         setError(null);
 
+        if (!user) {
+            setError("Vous devez être connecté pour postuler");
+            setLoading(false);
+            return;
+        }
+
         try {
             const formDataToSend = new FormData();
             
             formDataToSend.append('id_stage', params.id);
-            formDataToSend.append('nom', formData.nom);
-            formDataToSend.append('prenom', formData.prenom);
-            formDataToSend.append('email', formData.email);
-            formDataToSend.append('telephone', formData.telephone);
+            formDataToSend.append('id_personne', user.id_personne);
             formDataToSend.append('lettre_motivation', formData.lettreMotivation);
             
             if (formData.cv) {
@@ -79,10 +98,7 @@ export default function PostulerForm({ params }) {
 
             console.log('Envoi de la candidature:', {
                 id_stage: params.id,
-                nom: formData.nom,
-                prenom: formData.prenom,
-                email: formData.email,
-                telephone: formData.telephone,
+                id_personne: user.id_personne,
                 cv: formData.cv ? formData.cv.name : null
             });
 
