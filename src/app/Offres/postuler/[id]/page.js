@@ -146,6 +146,10 @@ export default function PostulerForm({ params }) {
             console.log('Envoi de la requête à:', `${API_URL}/candidatures.php`);
             const response = await fetch(`${API_URL}/candidatures.php`, {
                 method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                },
+                credentials: 'include',
                 body: formDataToSend,
             });
 
@@ -158,6 +162,7 @@ export default function PostulerForm({ params }) {
                 data = JSON.parse(responseText);
             } catch (e) {
                 console.error('Erreur de parsing JSON:', e);
+                console.error('Réponse brute reçue:', responseText);
                 throw new Error('Réponse invalide du serveur');
             }
 
@@ -176,7 +181,11 @@ export default function PostulerForm({ params }) {
             }
         } catch (error) {
             console.error('Erreur complète:', error);
-            setError(error.message);
+            if (error.message === 'Failed to fetch') {
+                setError("Impossible de contacter le serveur. Veuillez vérifier votre connexion internet ou réessayer plus tard.");
+            } else {
+                setError(error.message);
+            }
         } finally {
             setLoading(false);
         }
