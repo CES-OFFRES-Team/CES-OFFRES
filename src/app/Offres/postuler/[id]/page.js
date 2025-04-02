@@ -24,16 +24,26 @@ export default function PostulerForm({ params }) {
     const [offre, setOffre] = useState(null);
     const [user, setUser] = useState(null);
     const [debugInfo, setDebugInfo] = useState([]);
+    const [mounted, setMounted] = useState(false);
     const [formData, setFormData] = useState({
         cv: null,
         lettreMotivation: '',
     });
 
     const addDebugLog = (message) => {
-        setDebugInfo(prev => [...prev, `${new Date().toLocaleTimeString()} - ${message}`]);
+        if (mounted) {
+            setDebugInfo(prev => [...prev, `${new Date().toLocaleTimeString()} - ${message}`]);
+        }
     };
 
     useEffect(() => {
+        setMounted(true);
+        return () => setMounted(false);
+    }, []);
+
+    useEffect(() => {
+        if (!mounted) return;
+
         // Récupérer les informations de l'utilisateur
         const userData = getUserData();
         addDebugLog('Données utilisateur récupérées: ' + JSON.stringify(userData));
@@ -75,7 +85,7 @@ export default function PostulerForm({ params }) {
         if (params.id) {
             fetchOffre();
         }
-    }, [params.id]);
+    }, [params.id, mounted]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -234,6 +244,10 @@ export default function PostulerForm({ params }) {
         router.back();
     };
 
+    if (!mounted) {
+        return null;
+    }
+
     if (loading && !offre) {
         return (
             <div className="loading-container">
@@ -322,14 +336,16 @@ export default function PostulerForm({ params }) {
                     </div>
                 )}
 
-                <div className="debug-info">
-                    <h3>Informations de débogage</h3>
-                    <pre>
-                        {debugInfo.map((log, index) => (
-                            <div key={index} className="log-entry">{log}</div>
-                        ))}
-                    </pre>
-                </div>
+                {mounted && (
+                    <div className="debug-info">
+                        <h3>Informations de débogage</h3>
+                        <pre>
+                            {debugInfo.map((log, index) => (
+                                <div key={index} className="log-entry">{log}</div>
+                            ))}
+                        </pre>
+                    </div>
+                )}
             </div>
         </div>
     );
