@@ -45,18 +45,36 @@ export default function PostulerForm({ params }) {
         // Récupérer les détails de l'offre
         const fetchOffre = async () => {
             try {
-                const response = await fetch(`${API_URL}/offres/${params.id}`);
+                const response = await fetch(`${API_URL}/offres.php?id=${params.id}`);
                 if (!response.ok) {
+                    console.error('Erreur HTTP:', response.status);
                     throw new Error('Erreur lors de la récupération des détails de l\'offre');
                 }
-                const result = await response.json();
+
+                const responseText = await response.text();
+                console.log('Réponse brute:', responseText);
+
+                if (!responseText) {
+                    throw new Error('Réponse vide du serveur');
+                }
+
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (e) {
+                    console.error('Erreur parsing JSON:', e);
+                    throw new Error('Format de réponse invalide');
+                }
+
                 if (result.status === 'success' && result.data) {
+                    console.log('Données de l\'offre:', result.data);
                     setOffre(result.data);
                 } else {
-                    throw new Error('Offre non trouvée');
+                    console.error('Données invalides:', result);
+                    throw new Error(result.message || 'Offre non trouvée');
                 }
             } catch (err) {
-                console.error('Erreur:', err);
+                console.error('Erreur complète:', err);
                 setError(err.message);
             } finally {
                 setLoading(false);
