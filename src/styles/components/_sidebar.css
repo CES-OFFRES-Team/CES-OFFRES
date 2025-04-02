@@ -66,12 +66,14 @@
     width: var(--sidebar-width-expanded);
 }
 
-.sidebar.maximized + main {
-    margin-left: var(--sidebar-width);
+/* Ajustement des marges du contenu principal */
+main {
     transition: margin-left var(--transition-speed) ease;
+    margin-left: 0;
 }
 
-.sidebar.maximized.expanded + main {
+/* En mode maximisé - uniquement décalé quand la sidebar est étendue */
+.sidebar.maximized.expanded ~ main {
     margin-left: var(--sidebar-width-expanded);
 }
 
@@ -85,8 +87,9 @@
     transform: translateX(0);
 }
 
-.sidebar:not(.maximized) + main {
-    margin-left: 0;
+/* Décalage du contenu en mode burger quand le menu est ouvert */
+.sidebar:not(.maximized).expanded ~ main {
+    margin-left: var(--sidebar-width-expanded);
 }
 
 /* Mobile header */
