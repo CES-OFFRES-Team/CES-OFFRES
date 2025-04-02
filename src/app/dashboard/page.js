@@ -138,14 +138,19 @@ export default function Dashboard() {
                                         <div className="candidature-info">
                                             <p><strong>Entreprise :</strong> {candidature.nom_entreprise}</p>
                                             <p><strong>Date de candidature :</strong> {new Date(candidature.date_candidature).toLocaleDateString('fr-FR')}</p>
+                                            <p><strong>Statut :</strong> {candidature.statut}</p>
                                         </div>
                                         <div className="candidature-actions">
-                                            <button className="btn btn-outline" onClick={() => window.open(candidature.cv_path, '_blank')}>
-                                                Voir mon CV
-                                            </button>
-                                            <button className="btn btn-outline" onClick={() => window.open(candidature.lettre_path, '_blank')}>
-                                                Voir ma lettre
-                                            </button>
+                                            {candidature.cv_path && (
+                                                <button className="btn btn-outline" onClick={() => window.open(`${API_URL}/${candidature.cv_path}`, '_blank')}>
+                                                    Voir mon CV
+                                                </button>
+                                            )}
+                                            {candidature.lettre_path && (
+                                                <button className="btn btn-outline" onClick={() => window.open(`${API_URL}/${candidature.lettre_path}`, '_blank')}>
+                                                    Voir ma lettre
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 ))}

@@ -92,7 +92,10 @@ class Candidature {
 
     public function getByPersonne($id_personne) {
         try {
-            $query = "SELECT c.*, o.titre, e.nom as nom_entreprise 
+            $query = "SELECT 
+                        c.*,
+                        o.titre_stage as titre,
+                        e.nom_entreprise
                      FROM Candidatures c
                      JOIN Offres_de_stage o ON c.id_stage = o.id_stage
                      JOIN Entreprises e ON o.id_entreprise = e.id_entreprise
@@ -112,6 +115,7 @@ class Candidature {
 
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             error_log("[DEBUG] Nombre de candidatures trouvées: " . count($result));
+            error_log("[DEBUG] Données récupérées: " . print_r($result, true));
             
             return $result;
         } catch (PDOException $e) {

@@ -23,20 +23,22 @@ $path = parse_url($request_uri, PHP_URL_PATH);
 $path = str_replace('/api', '', $path);
 error_log("[DEBUG] Chemin traité: " . $path);
 
-// Extraction de l'ID si présent
-$id = null;
-if (preg_match('/\/(\d+)$/', $path, $matches)) {
-    $id = $matches[1];
-    // Nettoyer le chemin pour le routage
-    $path = preg_replace('/\/\d+$/', '', $path);
-    error_log("[DEBUG] ID extrait: " . $id);
-    error_log("[DEBUG] Chemin nettoyé: " . $path);
+// Extraction des paramètres GET
+$query_params = [];
+if (isset($_SERVER['QUERY_STRING'])) {
+    parse_str($_SERVER['QUERY_STRING'], $query_params);
+    error_log("[DEBUG] Paramètres GET: " . print_r($query_params, true));
 }
 
 // Routage
 try {
-    error_log("[DEBUG] Tentative de routage pour le chemin: " . $path . " avec la méthode: " . $method . " et l'ID: " . ($id ?? 'null'));
-    switch ($path) {
+    error_log("[DEBUG] Tentative de routage pour le chemin: " . $path);
+    
+    // Extraire le chemin de base (sans paramètres)
+    $base_path = strtok($path, '?');
+    error_log("[DEBUG] Chemin de base: " . $base_path);
+
+    switch ($base_path) {
         case '/users':
         case '/users/etudiants':
         case '/users/pilotes':
@@ -46,26 +48,25 @@ try {
             break;
 
         case '/candidatures':
+        case '/candidatures.php':  // Ajout pour la compatibilité
             error_log("[DEBUG] Route /candidatures détectée");
             error_log("[DEBUG] Méthode: " . $method);
-            error_log("[DEBUG] ID: " . ($id ?? 'null'));
             $controller = new CandidatureController();
-            echo $controller->handleRequest($method, $id);
+            echo $controller->handleRequest($method, isset($query_params['id']) ? $query_params['id'] : null);
             break;
         
         case '/entreprises':
             $controller = new EntrepriseController();
-            echo $controller->handleRequest($method, $id);
+            echo $controller->handleRequest($method, isset($query_params['id']) ? $query_params['id'] : null);
             break;
 
         case '/offres':
-        case (preg_match('/^\/offres\/\d+$/', $path) ? $path : !$path):
             $controller = new OffreController();
-            echo $controller->handleRequest($method, $id);
+            echo $controller->handleRequest($method, isset($query_params['id']) ? $query_params['id'] : null);
             break;
 
         default:
-            error_log("[ERROR] Route non trouvée: " . $path);
+            error_log("[ERROR] Route non trouvée: " . $base_path);
             http_response_code(404);
             echo json_encode([
                 'status' => 'error',
@@ -83,8 +84,7 @@ try {
         'debug_info' => [
             'error' => $e->getMessage(),
             'file' => $e->getFile(),
-            'line' => $e->getLine(),
-            'trace' => $e->getTraceAsString()
+            'line' => $e->getLine()
         ]
     ]);
 }
