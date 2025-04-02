@@ -23,30 +23,14 @@ export default function PostulerForm({ params }) {
     const [loading, setLoading] = useState(true);
     const [offre, setOffre] = useState(null);
     const [user, setUser] = useState(null);
-    const [debugInfo, setDebugInfo] = useState([]);
-    const [mounted, setMounted] = useState(false);
     const [formData, setFormData] = useState({
         cv: null,
         lettreMotivation: '',
     });
 
-    const addDebugLog = (message) => {
-        if (mounted) {
-            setDebugInfo(prev => [...prev, `${new Date().toLocaleTimeString()} - ${message}`]);
-        }
-    };
-
     useEffect(() => {
-        setMounted(true);
-        return () => setMounted(false);
-    }, []);
-
-    useEffect(() => {
-        if (!mounted) return;
-
         // Récupérer les informations de l'utilisateur
         const userData = getUserData();
-        addDebugLog('Données utilisateur récupérées: ' + JSON.stringify(userData));
         
         if (!userData) {
             setError("Vous devez être connecté pour postuler");
@@ -61,7 +45,6 @@ export default function PostulerForm({ params }) {
         // Récupérer les détails de l'offre
         const fetchOffre = async () => {
             try {
-                addDebugLog(`Tentative de récupération de l'offre ${params.id}`);
                 const response = await fetch(`${API_URL}/offres/${params.id}`);
                 if (!response.ok) {
                     throw new Error('Erreur lors de la récupération des détails de l\'offre');
@@ -69,12 +52,10 @@ export default function PostulerForm({ params }) {
                 const result = await response.json();
                 if (result.status === 'success' && result.data) {
                     setOffre(result.data);
-                    addDebugLog('Offre récupérée avec succès');
                 } else {
                     throw new Error('Offre non trouvée');
                 }
             } catch (err) {
-                addDebugLog('Erreur lors de la récupération de l\'offre: ' + err.message);
                 console.error('Erreur:', err);
                 setError(err.message);
             } finally {
@@ -85,168 +66,68 @@ export default function PostulerForm({ params }) {
         if (params.id) {
             fetchOffre();
         }
-    }, [params.id, mounted]);
+    }, [params.id]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
-        setDebugInfo([]); // Réinitialiser les logs
 
-        addDebugLog('Début de la soumission du formulaire');
-        addDebugLog('Données utilisateur: ' + JSON.stringify(user));
-
-        if (!user) {
+        if (!user || !user.id_personne) {
             setError("Vous devez être connecté pour postuler");
             setLoading(false);
             return;
         }
 
-        if (!user.id_personne) {
-            setError("Erreur: ID utilisateur non trouvé");
-            setLoading(false);
-            return;
-        }
-
-        // Vérification du fichier CV
+        // Vérifications du CV
         if (!formData.cv) {
             setError("Le CV est requis");
             setLoading(false);
             return;
         }
-
-        // Vérification du type de fichier
         if (formData.cv.type !== 'application/pdf') {
             setError("Le CV doit être au format PDF");
             setLoading(false);
             return;
         }
-
-        // Vérification de la taille du fichier (max 5MB)
         if (formData.cv.size > 5 * 1024 * 1024) {
             setError("Le CV ne doit pas dépasser 5MB");
             setLoading(false);
             return;
         }
 
-        // Conversion explicite en nombre
-        const personneId = parseInt(user.id_personne, 10);
-        if (isNaN(personneId)) {
-            setError("Erreur: ID utilisateur invalide");
-            setLoading(false);
-            return;
-        }
-
         try {
             const formDataToSend = new FormData();
-            
             formDataToSend.append('id_stage', params.id);
-            formDataToSend.append('id_personne', personneId);
+            formDataToSend.append('id_personne', user.id_personne);
             formDataToSend.append('lettre_motivation', formData.lettreMotivation);
-            
-            // Ajout du CV avec vérification
-            if (formData.cv) {
-                addDebugLog('Informations du fichier CV: ' + JSON.stringify({
-                    nom: formData.cv.name,
-                    type: formData.cv.type,
-                    taille: formData.cv.size,
-                    lastModified: formData.cv.lastModified
-                }));
-                formDataToSend.append('cv', formData.cv);
-            }
+            formDataToSend.append('cv', formData.cv);
 
-            // Log le contenu complet du FormData
-            addDebugLog('Contenu du FormData:');
-            for (let pair of formDataToSend.entries()) {
-                addDebugLog(pair[0] + ': ' + (pair[0] === 'cv' ? 'Fichier PDF' : pair[1]));
-            }
+            const response = await fetch(`${API_URL}/candidatures.php`, {
+                method: 'POST',
+                mode: 'cors',
+                credentials: 'include',
+                body: formDataToSend,
+            });
 
-            const url = `${API_URL}/candidatures.php`;
-            addDebugLog('Envoi de la requête à: ' + url);
-            
-            try {
-                addDebugLog('Configuration de la requête:');
-                addDebugLog('- Mode: CORS');
-                addDebugLog('- Credentials: include');
-                
-                const response = await fetch(url, {
-                    method: 'POST',
-                    mode: 'cors',
-                    credentials: 'include',
-                    body: formDataToSend,
-                });
+            const data = await response.json();
 
-                if (!response.ok) {
-                    throw new Error(`Erreur HTTP: ${response.status}`);
-                }
-
-                addDebugLog('Statut de la réponse: ' + response.status);
-                
-                // Log de la réponse brute
-                const responseText = await response.text();
-                addDebugLog('Réponse brute du serveur: ' + responseText);
-
-                let data;
-                try {
-                    data = JSON.parse(responseText);
-                    addDebugLog('Réponse parsée: ' + JSON.stringify(data));
-                } catch (e) {
-                    addDebugLog('Erreur de parsing JSON: ' + e.message);
-                    addDebugLog('Réponse brute reçue: ' + responseText);
-                    throw new Error('Réponse invalide du serveur');
-                }
-
-                // Afficher les logs du serveur
-                if (data.logs) {
-                    addDebugLog('Logs du serveur:');
-                    data.logs.forEach(log => addDebugLog(log));
-                }
-
-                if (data.status === 'success') {
-                    router.push('/Offres/confirmation');
-                } else {
-                    throw new Error(data.message || 'Erreur lors de l\'envoi de la candidature');
-                }
-            } catch (error) {
-                addDebugLog('Erreur complète: ' + error.message);
-                addDebugLog('Type d\'erreur: ' + error.name);
-                
-                if (error.message === 'Failed to fetch') {
-                    setError(`Erreur de connexion au serveur. Veuillez vérifier que:
-                        1. Le serveur est accessible à l'adresse ${API_URL}
-                        2. Votre connexion internet est active
-                        3. Le serveur autorise les requêtes CORS depuis ${window.location.origin}
-                        
-                        Détails techniques:
-                        - URL: ${url}
-                        - Origin: ${window.location.origin}
-                        - Mode: CORS
-                        - Credentials: include
-                        
-                        Si le problème persiste, veuillez contacter l'administrateur du système.`);
-                } else {
-                    setError(error.message);
-                }
-            } finally {
-                setLoading(false);
+            if (data.status === 'success') {
+                router.push('/Offres/confirmation');
+            } else {
+                throw new Error(data.message || 'Erreur lors de l\'envoi de la candidature');
             }
         } catch (error) {
-            addDebugLog('Erreur complète: ' + error.message);
-            if (error.message === 'Failed to fetch') {
-                setError("Impossible de contacter le serveur. Veuillez vérifier votre connexion internet ou réessayer plus tard.");
-            } else {
-                setError(error.message);
-            }
+            console.error('Erreur:', error);
+            setError(error.message || "Une erreur est survenue lors de l'envoi de la candidature");
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleGoBack = () => {
         router.back();
     };
-
-    if (!mounted) {
-        return null;
-    }
 
     if (loading && !offre) {
         return (
@@ -308,7 +189,7 @@ export default function PostulerForm({ params }) {
                             required
                             onChange={(e) => setFormData({...formData, cv: e.target.files[0]})}
                         />
-                        <small>Format accepté : PDF</small>
+                        <small>Format accepté : PDF (max 5MB)</small>
                     </div>
 
                     <div className="form-group">
@@ -333,17 +214,6 @@ export default function PostulerForm({ params }) {
                     <div className="error-message">
                         <h3>Erreur</h3>
                         <p>{error}</p>
-                    </div>
-                )}
-
-                {mounted && (
-                    <div className="debug-info">
-                        <h3>Informations de débogage</h3>
-                        <pre>
-                            {debugInfo.map((log, index) => (
-                                <div key={index} className="log-entry">{log}</div>
-                            ))}
-                        </pre>
                     </div>
                 )}
             </div>
