@@ -20,5 +20,9 @@ if (isset($_GET['id'])) {
 // Créer une instance du contrôleur
 $controller = new CandidatureController();
 
-// Gérer la requête
-echo $controller->handleRequest($method, $id); 
+// Gérer la requête et stocker la réponse
+$response = $controller->handleRequest($method, $id);
+
+// Envoyer la réponse
+header('Content-Type: application/json');
+echo $response; 
