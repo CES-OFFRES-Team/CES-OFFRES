@@ -1,74 +1,119 @@
 .confirmation-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   min-height: 100vh;
-  padding: 20px;
-  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: #f8fafc;
 }
 
-.confirmation-card {
+.confirmation-content {
   background: white;
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 3rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   text-align: center;
-  max-width: 500px;
+  max-width: 600px;
   width: 100%;
+  animation: slideUp 0.5s ease-out;
 }
 
-.confirmation-icon {
-  font-size: 48px;
-  color: #4CAF50;
-  margin-bottom: 20px;
-  height: 80px;
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.success-icon {
   width: 80px;
-  line-height: 80px;
+  height: 80px;
+  margin: 0 auto 2rem;
+  background-color: #10b981;
   border-radius: 50%;
-  background: #E8F5E9;
-  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: scaleIn 0.5s ease-out;
 }
 
-.confirmation-card h1 {
-  color: #333;
-  margin-bottom: 20px;
-  font-size: 24px;
+.success-icon svg {
+  width: 40px;
+  height: 40px;
+  color: white;
 }
 
-.confirmation-card p {
-  color: #666;
-  margin-bottom: 30px;
-  line-height: 1.5;
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
 }
 
-.retour-button {
-  background-color: #2196F3;
+h1 {
+  color: #1f2937;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.confirmation-message {
+  color: #4b5563;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.confirmation-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #3b82f6;
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
 }
 
-.retour-button:hover {
-  background-color: #1976D2;
+.btn-primary:hover {
+  background-color: #2563eb;
 }
 
-@media (max-width: 600px) {
-  .confirmation-card {
-    padding: 20px;
+.btn-outline {
+  background-color: transparent;
+  color: #3b82f6;
+  border: 2px solid #3b82f6;
+}
+
+.btn-outline:hover {
+  background-color: #eff6ff;
+}
+
+@media (max-width: 640px) {
+  .confirmation-content {
+    padding: 2rem;
   }
 
-  .confirmation-card h1 {
-    font-size: 20px;
+  .confirmation-actions {
+    flex-direction: column;
   }
 
-  .confirmation-icon {
-    font-size: 36px;
-    height: 60px;
-    width: 60px;
-    line-height: 60px;
+  .btn {
+    width: 100%;
   }
 } 

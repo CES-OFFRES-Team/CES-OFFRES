@@ -5,184 +5,228 @@ require_once __DIR__ . '/../config/database.php';
 class CandidatureController {
     private $db;
     private $candidature;
+    private $upload_directory;
 
     public function __construct() {
         $database = new Database();
         $this->db = $database->getConnection();
         $this->candidature = new Candidature($this->db);
+        $this->upload_directory = __DIR__ . '/../uploads/';
+
+        // Créer le dossier uploads s'il n'existe pas
+        if (!file_exists($this->upload_directory)) {
+            mkdir($this->upload_directory, 0777, true);
+        }
     }
 
-    public function handleRequest($method) {
-        header('Access-Control-Allow-Origin: *');
-        header('Content-Type: application/json');
-        header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-        header('Access-Control-Allow-Headers: Content-Type, X-Requested-With');
-
-        // Log de la méthode et des en-têtes
-        error_log("Méthode reçue: " . $method);
-        error_log("Headers reçus: " . json_encode(getallheaders()));
+    public function handleRequest($method, $id = null) {
+        header("Access-Control-Allow-Origin: *");
+        header("Content-Type: application/json; charset=UTF-8");
+        header("Access-Control-Allow-Methods: POST, GET, PUT, DELETE, OPTIONS");
+        header("Access-Control-Max-Age: 3600");
+        header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
         switch ($method) {
+            case 'GET':
+                if ($id) {
+                    return $this->getCandidature($id);
+                }
+                return $this->getAllCandidatures();
             case 'POST':
                 return $this->createCandidature();
-            case 'GET':
-                return $this->getCandidatures();
-            case 'OPTIONS':
-                http_response_code(200);
-                return json_encode(['status' => 'success']);
+            case 'PUT':
+                if ($id) {
+                    return $this->updateStatut($id);
+                }
+                http_response_code(400);
+                return json_encode(['status' => 'error', 'message' => 'ID requis pour la mise à jour']);
+            case 'DELETE':
+                if ($id) {
+                    return $this->deleteCandidature($id);
+                }
+                http_response_code(400);
+                return json_encode(['status' => 'error', 'message' => 'ID requis pour la suppression']);
             default:
                 http_response_code(405);
-                return json_encode(['error' => 'Méthode non autorisée']);
+                return json_encode(['status' => 'error', 'message' => 'Méthode non autorisée']);
         }
     }
 
     private function createCandidature() {
         try {
-            // Log des données reçues
-            error_log("POST data reçues: " . json_encode($_POST));
-            error_log("FILES data reçues: " . json_encode($_FILES));
-
-            // Récupérer les données POST
-            $offre_id = $_POST['offre_id'] ?? null;
-            $nom = $_POST['nom'] ?? null;
-            $prenom = $_POST['prenom'] ?? null;
-            $email = $_POST['email'] ?? null;
-            $telephone = $_POST['telephone'] ?? null;
-            $lettre_motivation = $_POST['lettre_motivation'] ?? null;
-
-            // Log des données extraites
-            error_log("Données extraites: " . json_encode([
-                'offre_id' => $offre_id,
-                'nom' => $nom,
-                'prenom' => $prenom,
-                'email' => $email,
-                'telephone' => $telephone,
-                'lettre_motivation' => $lettre_motivation,
-                'cv_present' => isset($_FILES['cv'])
-            ]));
-
-            // Vérifier les données requises
-            if (!$offre_id || !$nom || !$prenom || !$email || !$telephone || !$lettre_motivation || !isset($_FILES['cv'])) {
-                $missing = [];
-                if (!$offre_id) $missing[] = 'offre_id';
-                if (!$nom) $missing[] = 'nom';
-                if (!$prenom) $missing[] = 'prenom';
-                if (!$email) $missing[] = 'email';
-                if (!$telephone) $missing[] = 'telephone';
-                if (!$lettre_motivation) $missing[] = 'lettre_motivation';
-                if (!isset($_FILES['cv'])) $missing[] = 'cv';
-
-                error_log("Données manquantes: " . json_encode($missing));
-                
-                http_response_code(400);
-                return json_encode([
-                    'status' => 'error',
-                    'message' => 'Données manquantes: ' . implode(', ', $missing)
-                ]);
+            error_log("[DEBUG] Début de la création d'une candidature");
+            
+            // Vérifier si des fichiers ont été envoyés
+            if (!isset($_FILES['cv'])) {
+                throw new Exception("Le CV est requis");
             }
 
-            // Gérer l'upload du CV
-            $cv_path = $this->handleCVUpload($_FILES['cv']);
-            if (!$cv_path) {
-                error_log("Erreur upload CV: " . json_encode($_FILES['cv']));
-                http_response_code(400);
-                return json_encode([
-                    'status' => 'error',
-                    'message' => 'Erreur lors du téléchargement du CV'
-                ]);
+            // Valider les données du formulaire
+            $data = [
+                'id_personne' => $_POST['id_personne'] ?? null,
+                'id_stage' => $_POST['id_stage'] ?? null,
+            ];
+
+            if (!$data['id_personne'] || !$data['id_stage']) {
+                throw new Exception("Données manquantes");
             }
 
-            // Assigner les valeurs au modèle
-            $this->candidature->offre_id = $offre_id;
-            $this->candidature->nom = $nom;
-            $this->candidature->prenom = $prenom;
-            $this->candidature->email = $email;
-            $this->candidature->telephone = $telephone;
-            $this->candidature->cv_path = $cv_path;
-            $this->candidature->lettre_motivation = $lettre_motivation;
+            // Vérifier si une candidature existe déjà
+            if ($this->candidature->candidatureExists($data['id_personne'], $data['id_stage'])) {
+                throw new Exception("Vous avez déjà postulé à cette offre");
+            }
+
+            // Gérer le CV
+            $cv_info = pathinfo($_FILES['cv']['name']);
+            $cv_extension = strtolower($cv_info['extension']);
+            if ($cv_extension !== 'pdf') {
+                throw new Exception("Le CV doit être au format PDF");
+            }
+
+            $cv_filename = uniqid('cv_') . '.pdf';
+            $cv_path = $this->upload_directory . $cv_filename;
+
+            if (!move_uploaded_file($_FILES['cv']['tmp_name'], $cv_path)) {
+                throw new Exception("Erreur lors de l'upload du CV");
+            }
+
+            // Gérer la lettre de motivation
+            $lettre_path = null;
+            if (isset($_POST['lettre_motivation']) && !empty($_POST['lettre_motivation'])) {
+                $lettre_filename = uniqid('lettre_') . '.txt';
+                $lettre_path = $this->upload_directory . $lettre_filename;
+                file_put_contents($lettre_path, $_POST['lettre_motivation']);
+            }
+
+            // Préparer les données pour la création
+            $data['cv_path'] = $cv_path;
+            $data['lettre_path'] = $lettre_path;
 
             // Créer la candidature
-            if ($this->candidature->create()) {
+            $id = $this->candidature->create($data);
+
+            if ($id) {
                 http_response_code(201);
                 return json_encode([
                     'status' => 'success',
-                    'message' => 'Candidature créée avec succès'
+                    'message' => 'Candidature créée avec succès',
+                    'data' => ['id' => $id]
                 ]);
             }
 
-            error_log("Erreur création candidature dans la base de données");
-            http_response_code(500);
-            return json_encode([
-                'status' => 'error',
-                'message' => 'Erreur lors de la création de la candidature'
-            ]);
+            throw new Exception("Erreur lors de la création de la candidature");
 
         } catch (Exception $e) {
-            error_log("Exception: " . $e->getMessage());
-            http_response_code(500);
+            error_log("[ERROR] Exception dans createCandidature: " . $e->getMessage());
+            http_response_code(400);
             return json_encode([
                 'status' => 'error',
-                'message' => 'Erreur serveur: ' . $e->getMessage()
+                'message' => $e->getMessage()
             ]);
         }
     }
 
-    private function getCandidatures() {
+    private function getCandidature($id) {
         try {
-            $offre_id = $_GET['offre_id'] ?? null;
+            $result = $this->candidature->getById($id);
             
-            if (!$offre_id) {
-                http_response_code(400);
+            if ($result) {
                 return json_encode([
-                    'status' => 'error',
-                    'message' => 'ID de l\'offre manquant'
+                    'status' => 'success',
+                    'data' => $result
                 ]);
             }
-
-            $stmt = $this->candidature->getCandidaturesByOffre($offre_id);
-            $candidatures = [];
-
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $candidatures[] = $row;
-            }
-
+            
+            http_response_code(404);
             return json_encode([
-                'status' => 'success',
-                'data' => $candidatures
+                'status' => 'error',
+                'message' => 'Candidature non trouvée'
             ]);
-
         } catch (Exception $e) {
+            error_log("[ERROR] Exception dans getCandidature: " . $e->getMessage());
             http_response_code(500);
             return json_encode([
                 'status' => 'error',
-                'message' => 'Erreur lors de la récupération des candidatures'
+                'message' => $e->getMessage()
             ]);
         }
     }
 
-    private function handleCVUpload($file) {
-        // Vérifier si le dossier uploads/cv existe, sinon le créer
-        $upload_dir = __DIR__ . '/../uploads/cv/';
-        if (!file_exists($upload_dir)) {
-            mkdir($upload_dir, 0777, true);
+    private function getAllCandidatures() {
+        try {
+            $stmt = $this->candidature->getAll();
+            $num = $stmt->rowCount();
+            
+            if ($num > 0) {
+                $candidatures_arr = [];
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    array_push($candidatures_arr, $row);
+                }
+                
+                return json_encode([
+                    'status' => 'success',
+                    'data' => $candidatures_arr
+                ]);
+            }
+            
+            http_response_code(404);
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Aucune candidature trouvée'
+            ]);
+        } catch (Exception $e) {
+            error_log("[ERROR] Exception dans getAllCandidatures: " . $e->getMessage());
+            http_response_code(500);
+            return json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
         }
+    }
 
-        // Vérifier le type de fichier
-        $allowed_types = ['application/pdf'];
-        if (!in_array($file['type'], $allowed_types)) {
-            return false;
+    private function updateStatut($id) {
+        try {
+            $data = json_decode(file_get_contents("php://input"), true);
+            
+            if (!isset($data['statut'])) {
+                throw new Exception("Le statut est requis");
+            }
+            
+            if ($this->candidature->updateStatut($id, $data['statut'])) {
+                return json_encode([
+                    'status' => 'success',
+                    'message' => 'Statut mis à jour avec succès'
+                ]);
+            }
+            
+            throw new Exception("Erreur lors de la mise à jour du statut");
+        } catch (Exception $e) {
+            error_log("[ERROR] Exception dans updateStatut: " . $e->getMessage());
+            http_response_code(400);
+            return json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
         }
+    }
 
-        // Générer un nom de fichier unique
-        $file_extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-        $file_name = uniqid() . '.' . $file_extension;
-        $file_path = $upload_dir . $file_name;
-
-        // Déplacer le fichier
-        if (move_uploaded_file($file['tmp_name'], $file_path)) {
-            return 'uploads/cv/' . $file_name;
+    private function deleteCandidature($id) {
+        try {
+            if ($this->candidature->delete($id)) {
+                return json_encode([
+                    'status' => 'success',
+                    'message' => 'Candidature supprimée avec succès'
+                ]);
+            }
+            
+            throw new Exception("Erreur lors de la suppression de la candidature");
+        } catch (Exception $e) {
+            error_log("[ERROR] Exception dans deleteCandidature: " . $e->getMessage());
+            http_response_code(500);
+            return json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
         }
-
-        return false;
     }
 } 

@@ -22,16 +22,28 @@ export default function PostulerForm({ params }) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [offre, setOffre] = useState(null);
+  const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
-    nom: '',
-    prenom: '',
-    email: '',
-    telephone: '',
     cv: null,
     lettreMotivation: '',
   });
 
   useEffect(() => {
+    // Récupérer les informations de l'utilisateur connecté
+    const fetchUser = async () => {
+      try {
+        const userData = localStorage.getItem('user');
+        if (!userData) {
+          throw new Error('Vous devez être connecté pour postuler');
+        }
+        setUser(JSON.parse(userData));
+      } catch (err) {
+        console.error('Erreur:', err);
+        setError(err.message);
+      }
+    };
+
+    // Récupérer les détails de l'offre
     const fetchOffre = async () => {
       try {
         const response = await fetch(`${API_URL}/offres/${id}`);
@@ -47,11 +59,10 @@ export default function PostulerForm({ params }) {
       } catch (err) {
         console.error('Erreur:', err);
         setError(err.message);
-      } finally {
-        setLoading(false);
       }
     };
 
+    fetchUser();
     fetchOffre();
   }, [id]);
 
@@ -61,37 +72,30 @@ export default function PostulerForm({ params }) {
     setError(null);
 
     try {
+      if (!user) {
+        throw new Error('Vous devez être connecté pour postuler');
+      }
+
       const formDataToSend = new FormData();
       
-      formDataToSend.append('offre_id', id);
-      formDataToSend.append('nom', formData.nom);
-      formDataToSend.append('prenom', formData.prenom);
-      formDataToSend.append('email', formData.email);
-      formDataToSend.append('telephone', formData.telephone);
+      formDataToSend.append('id_personne', user.id_personne);
+      formDataToSend.append('id_stage', id);
       formDataToSend.append('lettre_motivation', formData.lettreMotivation);
       
       if (formData.cv) {
         formDataToSend.append('cv', formData.cv);
       }
 
-      console.log('Envoi de la candidature pour l\'offre:', {
-        offre_id: id,
-        titre_offre: offre?.titre,
-        entreprise: offre?.nom_entreprise,
-        candidat: `${formData.prenom} ${formData.nom}`,
-        email: formData.email,
+      console.log('Envoi de la candidature:', {
+        id_personne: user.id_personne,
+        id_stage: id,
         cv: formData.cv ? formData.cv.name : null
       });
 
-      const response = await fetch(`${API_URL}/candidatures`, {
+      const response = await fetch(`${API_URL}/candidatures.php`, {
         method: 'POST',
         body: formDataToSend,
       });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Erreur ${response.status}: ${errorText}`);
-      }
 
       const data = await response.json();
 
@@ -163,58 +167,6 @@ export default function PostulerForm({ params }) {
       <div className="form-section">
         <h2>Formulaire de candidature</h2>
         <form onSubmit={handleSubmit} className="postuler-form">
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="nom">Nom *</label>
-              <input
-                type="text"
-                id="nom"
-                required
-                value={formData.nom}
-                onChange={(e) => setFormData({...formData, nom: e.target.value})}
-                placeholder="Votre nom"
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="prenom">Prénom *</label>
-              <input
-                type="text"
-                id="prenom"
-                required
-                value={formData.prenom}
-                onChange={(e) => setFormData({...formData, prenom: e.target.value})}
-                placeholder="Votre prénom"
-              />
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="email">Email *</label>
-              <input
-                type="email"
-                id="email"
-                required
-                value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
-                placeholder="votre.email@exemple.com"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="telephone">Téléphone *</label>
-              <input
-                type="tel"
-                id="telephone"
-                required
-                value={formData.telephone}
-                onChange={(e) => setFormData({...formData, telephone: e.target.value})}
-                placeholder="06 12 34 56 78"
-              />
-            </div>
-          </div>
-
           <div className="form-group">
             <label htmlFor="cv">CV (PDF) *</label>
             <input
