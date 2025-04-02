@@ -5,41 +5,64 @@ import Image from 'next/image';
 
 export default function Navigation() {
     const [isOpen, setIsOpen] = useState(false);
-    const [showBurger, setShowBurger] = useState(false);
+    const [isMaximized, setIsMaximized] = useState(false);
 
     useEffect(() => {
-        const handleResize = () => {
-            setShowBurger(window.innerWidth <= 1200);
-        };
-        
-        handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+        const checkWindowState = () => {
+            // Méthode 1: Vérifier si la fenêtre occupe tout l'écran disponible
+            const method1 = window.outerWidth >= window.screen.availWidth && 
+                          window.outerHeight >= window.screen.availHeight;
 
-    const toggleMenu = () => {
-        setIsOpen(!isOpen);
-    };
+            // Méthode 2: Vérifier le ratio d'occupation
+            const heightRatio = window.innerHeight / window.screen.availHeight;
+            const widthRatio = window.innerWidth / window.screen.availWidth;
+            const method2 = heightRatio > 0.95 && widthRatio > 0.95;
+
+            // Méthode 3: Vérifier si la fenêtre est à 0,0 et occupe presque tout l'écran
+            const method3 = window.screenX <= 0 && 
+                          window.screenY <= 0 && 
+                          Math.abs(window.outerWidth - window.screen.availWidth) < 10 && 
+                          Math.abs(window.outerHeight - window.screen.availHeight) < 10;
+
+            // On considère la fenêtre maximisée si au moins deux méthodes le confirment
+            const isMax = [method1, method2, method3].filter(Boolean).length >= 2;
+            
+            setIsMaximized(isMax);
+        };
+
+        // Vérifier l'état initial
+        checkWindowState();
+
+        // Vérifier à chaque changement de taille
+        window.addEventListener('resize', checkWindowState);
+
+        // Vérifier périodiquement (au cas où)
+        const interval = setInterval(checkWindowState, 1000);
+
+        return () => {
+            window.removeEventListener('resize', checkWindowState);
+            clearInterval(interval);
+        };
+    }, []);
 
     return (
         <>
-            {showBurger && (
-                <button 
-                    className={`menu-toggle ${isOpen ? 'active' : ''}`} 
-                    onClick={toggleMenu}
-                    aria-label="Toggle navigation"
-                >
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            )}
-            <aside 
-                className={`sidebar ${isOpen ? 'expanded' : ''}`}
-                onMouseEnter={() => !showBurger && setIsOpen(true)}
-                onMouseLeave={() => !showBurger && setIsOpen(false)}
+            {/* Le menu burger est toujours dans le DOM mais caché en CSS si maximisé */}
+            <button 
+                className={`menu-toggle ${isOpen ? 'active' : ''} ${isMaximized ? 'hidden' : ''}`}
+                onClick={() => setIsOpen(!isOpen)}
+                aria-label="Toggle navigation"
             >
-                {showBurger && (
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <aside 
+                className={`sidebar ${isOpen ? 'expanded' : ''} ${isMaximized ? 'maximized' : ''}`}
+                onMouseEnter={() => isMaximized && setIsOpen(true)}
+                onMouseLeave={() => isMaximized && setIsOpen(false)}
+            >
+                {!isMaximized && (
                     <div className="mobile-header">
                         <button 
                             className="back-button"
@@ -51,12 +74,6 @@ export default function Navigation() {
                         </button>
                     </div>
                 )}
-                <button 
-                    className="close-menu"
-                    onClick={() => setIsOpen(false)}
-                >
-                    <i className="fa-solid fa-chevron-left"></i>
-                </button>
                 <div className="logo-container">
                     <Image 
                         src="/images/logo.svg" 
