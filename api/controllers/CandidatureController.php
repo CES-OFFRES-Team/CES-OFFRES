@@ -80,7 +80,11 @@ class CandidatureController {
     }
 
     public function handleRequest($method, $id = null) {
-        header("Access-Control-Allow-Origin: *");
+        // Récupérer l'origine de la requête
+        $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '*';
+        
+        // Définir les en-têtes CORS
+        header("Access-Control-Allow-Origin: $origin");
         header("Content-Type: application/json; charset=UTF-8");
         header("Access-Control-Allow-Methods: POST, GET, PUT, DELETE, OPTIONS");
         header("Access-Control-Max-Age: 3600");
@@ -92,6 +96,12 @@ class CandidatureController {
             http_response_code(200);
             exit();
         }
+
+        // Log des informations de la requête
+        error_log("[DEBUG] Méthode de la requête: " . $_SERVER['REQUEST_METHOD']);
+        error_log("[DEBUG] Origine de la requête: " . $origin);
+        error_log("[DEBUG] URI de la requête: " . $_SERVER['REQUEST_URI']);
+        error_log("[DEBUG] En-têtes de la requête: " . print_r(getallheaders(), true));
 
         switch ($method) {
             case 'GET':

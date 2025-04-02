@@ -149,6 +149,7 @@ export default function PostulerForm({ params }) {
                 headers: {
                     'Accept': 'application/json',
                 },
+                mode: 'cors',
                 credentials: 'include',
                 body: formDataToSend,
             });
