@@ -31,28 +31,51 @@ class CandidatureController {
 
         foreach ($directories as $dir) {
             error_log("[DEBUG] Vérification du dossier: " . $dir);
+            
+            // Créer le dossier s'il n'existe pas
             if (!file_exists($dir)) {
                 error_log("[DEBUG] Création du dossier: " . $dir);
                 if (!mkdir($dir, 0777, true)) {
                     error_log("[ERROR] Impossible de créer le dossier: " . $dir);
                     error_log("[ERROR] Dernière erreur PHP: " . error_get_last()['message']);
+                    throw new Exception("Impossible de créer le dossier d'upload: " . $dir);
                 }
             }
             
             // Vérifier et corriger les permissions
             if (!is_writable($dir)) {
                 error_log("[DEBUG] Tentative de correction des permissions pour: " . $dir);
+                // Essayer de changer les permissions
                 if (!chmod($dir, 0777)) {
                     error_log("[ERROR] Impossible de modifier les permissions du dossier: " . $dir);
                     error_log("[ERROR] Dernière erreur PHP: " . error_get_last()['message']);
+                    // Si on ne peut pas changer les permissions, essayer de créer un nouveau dossier
+                    $temp_dir = $dir . '_temp';
+                    if (mkdir($temp_dir, 0777, true)) {
+                        error_log("[DEBUG] Création d'un nouveau dossier avec les bonnes permissions: " . $temp_dir);
+                        // Supprimer l'ancien dossier
+                        if (file_exists($dir)) {
+                            rmdir($dir);
+                        }
+                        // Renommer le nouveau dossier
+                        rename($temp_dir, $dir);
+                    } else {
+                        throw new Exception("Impossible de configurer le dossier d'upload: " . $dir);
+                    }
                 }
             }
             
+            // Vérifier l'état final du dossier
             error_log("[DEBUG] État final du dossier " . $dir . ":");
             error_log("[DEBUG] - Existe: " . (file_exists($dir) ? 'Oui' : 'Non'));
             error_log("[DEBUG] - Est un dossier: " . (is_dir($dir) ? 'Oui' : 'Non'));
             error_log("[DEBUG] - Permissions: " . substr(sprintf('%o', fileperms($dir)), -4));
             error_log("[DEBUG] - Accessible en écriture: " . (is_writable($dir) ? 'Oui' : 'Non'));
+            
+            // Vérifier que le dossier est bien accessible
+            if (!is_writable($dir)) {
+                throw new Exception("Le dossier d'upload n'est pas accessible en écriture: " . $dir);
+            }
         }
     }
 
