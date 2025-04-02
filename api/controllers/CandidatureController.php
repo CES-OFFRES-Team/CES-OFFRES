@@ -163,11 +163,13 @@ class CandidatureController {
             if ($id) {
                 error_log("[DEBUG] Candidature créée avec succès, ID: " . $id);
                 http_response_code(201);
-                return json_encode([
+                header('Content-Type: application/json');
+                echo json_encode([
                     'status' => 'success',
                     'message' => 'Candidature créée avec succès',
                     'data' => ['id' => $id]
                 ]);
+                return;
             }
 
             error_log("[ERROR] Échec de la création de la candidature dans la base de données");
@@ -176,10 +178,12 @@ class CandidatureController {
         } catch (Exception $e) {
             error_log("[ERROR] Exception dans createCandidature: " . $e->getMessage());
             http_response_code(400);
-            return json_encode([
+            header('Content-Type: application/json');
+            echo json_encode([
                 'status' => 'error',
                 'message' => $e->getMessage()
             ]);
+            return;
         }
     }
 

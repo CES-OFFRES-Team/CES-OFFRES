@@ -120,12 +120,24 @@ export default function PostulerForm({ params }) {
                 body: submitData
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || "Erreur lors de l'envoi de la candidature");
+            // Vérifier si la réponse est vide
+            const responseText = await response.text();
+            if (!responseText) {
+                throw new Error("La réponse du serveur est vide");
             }
 
-            const data = await response.json();
+            // Essayer de parser le JSON
+            let data;
+            try {
+                data = JSON.parse(responseText);
+            } catch (e) {
+                console.error('Erreur de parsing JSON:', responseText);
+                throw new Error("Format de réponse invalide du serveur");
+            }
+
+            if (!response.ok) {
+                throw new Error(data.message || "Erreur lors de l'envoi de la candidature");
+            }
             
             if (data.status === 'success') {
                 router.push('/candidatures/confirmation');
