@@ -30,17 +30,35 @@ export default function Dashboard() {
     const fetchCandidatures = async (idPersonne) => {
         try {
             const response = await fetch(`${API_URL}/candidatures.php?id_personne=${idPersonne}`);
-            if (!response.ok) {
-                throw new Error('Erreur lors de la récupération des candidatures');
+            
+            // Vérifier si la réponse est vide
+            const responseText = await response.text();
+            if (!responseText) {
+                throw new Error("La réponse du serveur est vide");
             }
-            const data = await response.json();
+
+            // Essayer de parser le JSON
+            let data;
+            try {
+                data = JSON.parse(responseText);
+            } catch (e) {
+                console.error('Erreur de parsing JSON:', responseText);
+                throw new Error("Format de réponse invalide du serveur");
+            }
+
+            if (!response.ok) {
+                throw new Error(data.message || "Erreur lors de la récupération des candidatures");
+            }
+
             if (data.status === 'success') {
                 setCandidatures(data.data);
                 setStats(prev => ({ ...prev, candidatures: data.data.length }));
+            } else {
+                throw new Error(data.message || "Erreur lors de la récupération des candidatures");
             }
-        } catch (err) {
-            console.error('Erreur:', err);
-            setError(err.message);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des candidatures:', error);
+            setError(error.message);
         } finally {
             setLoading(false);
         }
