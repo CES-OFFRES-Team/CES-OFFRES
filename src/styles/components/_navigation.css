@@ -1,0 +1,45 @@
+.nav-link {
+    color: #151A2D !important;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+}
+
+.nav-link:hover {
+    transform: translateY(-2px);
+    color: #151A2D !important;
+}
+
+.menu-toggle {
+    display: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+}
+
+.menu-toggle:hover {
+    background: rgba(21, 26, 45, 0.05);
+}
+
+.menu-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: #151A2D;
+    margin: 5px 0;
+    transition: all 0.3s ease;
+}
+
+.menu-open .menu-toggle span:first-child {
+    transform: rotate(45deg) translate(5px, 5px);
+    background: #151A2D;
+}
+
+.menu-open .menu-toggle span:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-open .menu-toggle span:last-child {
+    transform: rotate(-45deg) translate(5px, -5px);
+    background: #151A2D;
+}

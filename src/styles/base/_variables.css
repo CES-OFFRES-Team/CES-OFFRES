@@ -1,10 +1,11 @@
 :root {
     /* Colors */
     --background: #ffffff;
-    --foreground: #000000;
-    --primary: #0070f3;
-    --secondary: #1a1a1a;
-    --sidebar-bg: #151A2D;
+    --foreground: #151A2D;
+    --primary: #1E40AF;
+    --secondary: #3B82F6;
+    --text-primary: #151A2D;
+    --text-secondary: #151A2D;
 
     /* Border Radius */
     --border-radius-xl: 40px;

@@ -4,12 +4,17 @@ const nextConfig = {
     unoptimized: true,
   },
   reactStrictMode: true,
+  cssModules: true,
   webpack(config) {
     config.module.rules.push({
       test: /\.(png|jpg|gif|svg|webp)$/i,
       type: 'asset/resource'
-    })
-    return config
+    });
+    config.module.rules.push({
+      test: /\.css$/i,
+      use: ["style-loader", "css-loader"],
+    });
+    return config;
   },
   async rewrites() {
     return [

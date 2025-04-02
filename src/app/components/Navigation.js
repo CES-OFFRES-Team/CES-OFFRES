@@ -14,15 +14,15 @@ export default function Navigation() {
 
     const handleLogout = () => {
         // Mettre à jour l'état local immédiatement
-        setIsLoggedIn(false);
-        setIsAdmin(false);
+        setIsLoggedIn(false),  // Changed semicolon to comma
+        setIsAdmin(false);     // Keep semicolon for last statement
         
         // Supprimer les cookies
         Cookies.remove('authToken');
-        Cookies.remove('userData');
+        Cookies.remove('isAdmin');
         
-        // Rediriger vers la page de connexion
-        router.push('/Login');
+        // Rediriger vers la page d'accueil
+        router.push('/');
     };
 
     useEffect(() => {
@@ -74,6 +74,16 @@ export default function Navigation() {
             clearInterval(interval);
         };
     }, []);
+
+    useEffect(() => {
+        // Ajouter/retirer les classes sur le body pour le footer
+        document.body.classList.toggle('sidebar-expanded', isOpen);
+        document.body.classList.toggle('maximized', isMaximized);
+
+        return () => {
+            document.body.classList.remove('sidebar-expanded', 'maximized');
+        };
+    }, [isOpen, isMaximized]);
 
     return (
         <>
