@@ -1,21 +1,31 @@
 <?php
 
 require_once __DIR__ . '/../models/Offre.php';
+require_once __DIR__ . '/../config/database.php';
 
 class OffreController {
+    private $db;
     private $offre;
 
-    public function __construct($db) {
-        $this->offre = new Offre($db);
+    public function __construct() {
+        error_log("[DEBUG] Initialisation du contrôleur Offre");
+        $database = new Database();
+        $this->db = $database->getConnection();
+        $this->offre = new Offre($this->db);
     }
 
-    public function handleRequest($method, $id = null) {
-        // Définition des en-têtes CORS
+    public function handleRequest($method = null, $id = null) {
+        error_log("[DEBUG] Début du traitement de la requête");
         header("Access-Control-Allow-Origin: *");
         header("Content-Type: application/json; charset=UTF-8");
         header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
         header("Access-Control-Max-Age: 3600");
         header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+
+        if ($method === null) {
+            $method = $_SERVER['REQUEST_METHOD'];
+        }
+        error_log("[DEBUG] Méthode HTTP: " . $method);
 
         switch ($method) {
             case 'GET':
@@ -60,14 +70,32 @@ class OffreController {
         try {
             error_log("[DEBUG] Début de la récupération des offres");
             $stmt = $this->offre->getAll();
-            $offres = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            if (count($offres) > 0) {
-                error_log("[DEBUG] " . count($offres) . " offres trouvées");
+            $num = $stmt->rowCount();
+            error_log("[DEBUG] Nombre d'offres trouvées: " . $num);
+
+            if($num > 0) {
+                $offres_arr = array();
+                $offres_arr["data"] = array();
+
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    extract($row);
+                    $offre_item = array(
+                        "id_stage" => $id_stage,
+                        "titre" => $titre,
+                        "description" => $description,
+                        "remuneration" => $remuneration,
+                        "date_debut" => $date_début,
+                        "date_fin" => $date_fin,
+                        "id_entreprise" => $id_entreprise,
+                        "nom_entreprise" => $nom_entreprise
+                    );
+                    array_push($offres_arr["data"], $offre_item);
+                }
+                error_log("[DEBUG] Données des offres: " . json_encode($offres_arr));
                 http_response_code(200);
                 return json_encode([
                     'status' => 'success',
-                    'data' => $offres
+                    'data' => $offres_arr["data"]
                 ]);
             } else {
                 error_log("[DEBUG] Aucune offre trouvée");
