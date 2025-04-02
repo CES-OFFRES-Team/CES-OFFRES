@@ -55,11 +55,17 @@ class Personne {
 
     public function getById($id) {
         try {
+            error_log("[DEBUG] Personne::getById - ID reçu: " . var_export($id, true) . ", type: " . gettype($id));
+            
             $query = "SELECT * FROM " . $this->table_name . " WHERE id_personne = :id";
             $stmt = $this->db->prepare($query);
-            $stmt->bindParam(':id', $id);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
-            return $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            error_log("[DEBUG] Personne::getById - Résultat: " . var_export($result, true));
+            
+            return $result;
         } catch (PDOException $e) {
             error_log("[ERROR] Exception dans Personne::getById(): " . $e->getMessage());
             throw new Exception("Erreur lors de la récupération de la personne");
