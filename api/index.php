@@ -16,6 +16,7 @@ require_once 'controllers/BaseController.php';
 require_once 'controllers/UserController.php';
 require_once 'controllers/CandidatureController.php';
 require_once __DIR__ . '/controllers/EntrepriseController.php';
+require_once __DIR__ . '/controllers/OffreController.php';
 
 // Récupération de l'URL
 $request_uri = $_SERVER['REQUEST_URI'];
@@ -64,6 +65,17 @@ switch ($path) {
 
     case (preg_match('/^\/entreprises\/\d+$/', $path) ? true : false):
         $controller = new EntrepriseController();
+        $id = substr($path, strrpos($path, '/') + 1);
+        echo $controller->handleRequest($method, $id);
+        break;
+
+    case '/offres':
+        $controller = new OffreController();
+        echo $controller->handleRequest($method);
+        break;
+
+    case (preg_match('/^\/offres\/\d+$/', $path) ? true : false):
+        $controller = new OffreController();
         $id = substr($path, strrpos($path, '/') + 1);
         echo $controller->handleRequest($method, $id);
         break;
