@@ -1,37 +1,8 @@
 <?php
 error_log("[DEBUG] Début du traitement de la requête dans index.php");
 
-// Récupération de l'origine de la requête
-$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
-error_log("[DEBUG] Origine de la requête: " . $origin);
-
-// Liste des origines autorisées
-$allowed_origins = [
-    'http://20.19.36.142',
-    'http://20.19.36.142:8000',
-    'http://localhost:3000'
-];
-
-// Vérification si l'origine est autorisée
-if (in_array($origin, $allowed_origins)) {
-    header("Access-Control-Allow-Origin: $origin");
-    error_log("[DEBUG] Origine autorisée: $origin");
-} else {
-    error_log("[DEBUG] Origine non autorisée: $origin");
-}
-
-// En-têtes CORS pour les requêtes préliminaires (OPTIONS)
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Accept, Origin');
-header('Access-Control-Allow-Credentials: true');
-header('Access-Control-Max-Age: 86400'); // 24 heures
-
-// Gestion des requêtes OPTIONS pour CORS
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    error_log("[DEBUG] Requête OPTIONS détectée");
-    http_response_code(200);
-    exit();
-}
+// Chargement de la configuration CORS
+require_once 'config/cors.php';
 
 // Chargement des classes
 require_once 'config/database.php';

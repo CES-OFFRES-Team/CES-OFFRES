@@ -166,9 +166,12 @@ export default function PostulerForm({ params }) {
                     body: formDataToSend,
                 });
 
-                addDebugLog('Statut de la réponse: ' + response.status);
-                addDebugLog('En-têtes de la réponse: ' + JSON.stringify(Object.fromEntries(response.headers.entries())));
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
 
+                addDebugLog('Statut de la réponse: ' + response.status);
+                
                 // Log de la réponse brute
                 const responseText = await response.text();
                 addDebugLog('Réponse brute du serveur: ' + responseText);
@@ -197,7 +200,6 @@ export default function PostulerForm({ params }) {
             } catch (error) {
                 addDebugLog('Erreur complète: ' + error.message);
                 addDebugLog('Type d\'erreur: ' + error.name);
-                addDebugLog('Stack trace: ' + error.stack);
                 
                 if (error.message === 'Failed to fetch') {
                     setError(`Erreur de connexion au serveur. Veuillez vérifier que:
