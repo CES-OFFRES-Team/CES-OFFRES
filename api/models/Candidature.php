@@ -1,39 +1,36 @@
 <?php
 
 class Candidature {
-    private $db;
+    private $conn;
     private $table_name = "candidatures";
 
     public function __construct($db) {
-        $this->db = $db;
+        $this->conn = $db;
     }
 
     public function create($data) {
         try {
-            error_log("[DEBUG] Début de la création d'une candidature avec les données: " . json_encode($data));
-            
-            $query = "INSERT INTO Candidatures (cv_path, lettre_path, statut, date_candidature, id_personne, id_stage) 
-                     VALUES (:cv_path, :lettre_path, :statut, CURDATE(), :id_personne, :id_stage)";
+            $query = "INSERT INTO " . $this->table_name . " 
+                    (id_personne, id_stage, cv_path, lettre_path, statut, date_candidature) 
+                    VALUES 
+                    (:id_personne, :id_stage, :cv_path, :lettre_path, :statut, NOW())";
 
-            $stmt = $this->db->prepare($query);
-            
-            $stmt->bindParam(':cv_path', $data['cv_path']);
-            $stmt->bindParam(':lettre_path', $data['lettre_path']);
-            $stmt->bindParam(':statut', $data['statut']);
-            $stmt->bindParam(':id_personne', $data['id_personne']);
-            $stmt->bindParam(':id_stage', $data['id_stage']);
+            $stmt = $this->conn->prepare($query);
+
+            // Nettoyer et lier les données
+            $stmt->bindParam(":id_personne", $data['id_personne']);
+            $stmt->bindParam(":id_stage", $data['id_stage']);
+            $stmt->bindParam(":cv_path", $data['cv_path']);
+            $stmt->bindParam(":lettre_path", $data['lettre_path']);
+            $stmt->bindParam(":statut", $data['statut']);
 
             if ($stmt->execute()) {
-                $id = $this->db->lastInsertId();
-                error_log("[DEBUG] Candidature créée avec l'ID: " . $id);
-                return $id;
+                return $this->conn->lastInsertId();
             }
-            
-            error_log("[ERROR] Échec de la création de la candidature");
             return false;
         } catch (PDOException $e) {
-            error_log("[ERROR] Exception dans create(): " . $e->getMessage());
-            throw new Exception("Erreur lors de la création de la candidature: " . $e->getMessage());
+            error_log("[ERROR] Erreur PDO dans create: " . $e->getMessage());
+            return false;
         }
     }
 
@@ -46,7 +43,7 @@ class Candidature {
                      JOIN Entreprises e ON o.id_entreprise = e.id_entreprise
                      WHERE c.id_candidature = :id";
 
-            $stmt = $this->db->prepare($query);
+            $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':id', $id);
             $stmt->execute();
 
@@ -73,7 +70,7 @@ class Candidature {
 
             error_log("[DEBUG] Requête SQL: " . $query);
             
-            $stmt = $this->db->prepare($query);
+            $stmt = $this->conn->prepare($query);
             $success = $stmt->execute();
             
             if (!$success) {
@@ -95,21 +92,21 @@ class Candidature {
 
     public function getByPersonne($id_personne) {
         try {
-            $query = "SELECT c.*, o.titre as titre_offre, e.nom_entreprise 
-                     FROM Candidatures c
-                     JOIN Offres_de_stage o ON c.id_stage = o.id_stage
-                     JOIN Entreprises e ON o.id_entreprise = e.id_entreprise
+            $query = "SELECT c.*, o.titre as titre_offre, e.nom as nom_entreprise 
+                     FROM " . $this->table_name . " c
+                     JOIN offres o ON c.id_stage = o.id
+                     JOIN entreprises e ON o.id_entreprise = e.id
                      WHERE c.id_personne = :id_personne
                      ORDER BY c.date_candidature DESC";
 
-            $stmt = $this->db->prepare($query);
-            $stmt->bindParam(':id_personne', $id_personne);
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(":id_personne", $id_personne);
             $stmt->execute();
 
-            return $stmt;
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("[ERROR] Exception dans getByPersonne(): " . $e->getMessage());
-            throw new Exception("Erreur lors de la récupération des candidatures de la personne");
+            error_log("[ERROR] Erreur PDO dans getByPersonne: " . $e->getMessage());
+            return false;
         }
     }
 
@@ -121,7 +118,7 @@ class Candidature {
                      WHERE c.id_stage = :id_stage
                      ORDER BY c.date_candidature DESC";
             
-            $stmt = $this->db->prepare($query);
+            $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':id_stage', $id_stage);
             $stmt->execute();
             
@@ -136,7 +133,7 @@ class Candidature {
         try {
             $query = "UPDATE Candidatures SET statut = :statut WHERE id_candidature = :id";
 
-            $stmt = $this->db->prepare($query);
+            $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':id', $id);
             $stmt->bindParam(':statut', $statut);
 
@@ -151,14 +148,14 @@ class Candidature {
         try {
             // D'abord, récupérer les chemins des fichiers
             $query = "SELECT cv_path, lettre_path FROM Candidatures WHERE id_candidature = :id";
-            $stmt = $this->db->prepare($query);
+            $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':id', $id);
             $stmt->execute();
             $files = $stmt->fetch(PDO::FETCH_ASSOC);
             
             // Supprimer la candidature de la base de données
             $query = "DELETE FROM Candidatures WHERE id_candidature = :id";
-            $stmt = $this->db->prepare($query);
+            $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':id', $id);
             
             if ($stmt->execute()) {
@@ -180,18 +177,18 @@ class Candidature {
 
     public function candidatureExists($id_personne, $id_stage) {
         try {
-            $query = "SELECT COUNT(*) FROM Candidatures 
+            $query = "SELECT id FROM " . $this->table_name . " 
                      WHERE id_personne = :id_personne AND id_stage = :id_stage";
-            
-            $stmt = $this->db->prepare($query);
-            $stmt->bindParam(':id_personne', $id_personne);
-            $stmt->bindParam(':id_stage', $id_stage);
+
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(":id_personne", $id_personne);
+            $stmt->bindParam(":id_stage", $id_stage);
             $stmt->execute();
-            
-            return $stmt->fetchColumn() > 0;
+
+            return $stmt->rowCount() > 0;
         } catch (PDOException $e) {
-            error_log("[ERROR] Exception dans candidatureExists(): " . $e->getMessage());
-            throw new Exception("Erreur lors de la vérification de l'existence de la candidature");
+            error_log("[ERROR] Erreur PDO dans candidatureExists: " . $e->getMessage());
+            return false;
         }
     }
 } 
