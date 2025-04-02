@@ -69,11 +69,17 @@ class CandidatureController {
 
             // Valider les données du formulaire
             $data = [
+                'id_personne' => $_POST['id_personne'] ?? null,
                 'id_stage' => $_POST['id_stage'] ?? null
             ];
 
-            if (!$data['id_stage']) {
-                throw new Exception("ID du stage manquant");
+            if (!$data['id_personne'] || !$data['id_stage']) {
+                throw new Exception("Données manquantes");
+            }
+
+            // Vérifier si une candidature existe déjà
+            if ($this->candidature->candidatureExists($data['id_personne'], $data['id_stage'])) {
+                throw new Exception("Vous avez déjà postulé à cette offre");
             }
 
             // Gérer le CV
@@ -98,15 +104,12 @@ class CandidatureController {
                 file_put_contents($lettre_path, $_POST['lettre_motivation']);
             }
 
-            // Préparer les données pour la création de la candidature
-            $candidatureData = [
-                'id_stage' => $data['id_stage'],
-                'cv_path' => $cv_path,
-                'lettre_path' => $lettre_path
-            ];
+            // Préparer les données pour la création
+            $data['cv_path'] = $cv_path;
+            $data['lettre_path'] = $lettre_path;
 
             // Créer la candidature
-            $id = $this->candidature->create($candidatureData);
+            $id = $this->candidature->create($data);
 
             if ($id) {
                 http_response_code(201);

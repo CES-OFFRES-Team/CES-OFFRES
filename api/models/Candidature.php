@@ -11,18 +11,20 @@ class Candidature {
     public function create($data) {
         try {
             $query = "INSERT INTO " . $this->table_name . "
-                    (cv_path, lettre_path, statut, date_candidature, id_stage)
+                    (cv_path, lettre_path, statut, date_candidature, id_personne, id_stage)
                     VALUES
-                    (:cv_path, :lettre_path, :statut, NOW(), :id_stage)";
+                    (:cv_path, :lettre_path, :statut, NOW(), :id_personne, :id_stage)";
 
             $stmt = $this->conn->prepare($query);
 
             // Nettoyer les données
+            $id_personne = htmlspecialchars(strip_tags($data['id_personne']));
             $id_stage = htmlspecialchars(strip_tags($data['id_stage']));
             $cv_path = htmlspecialchars(strip_tags($data['cv_path']));
             $lettre_path = $data['lettre_path'] ? htmlspecialchars(strip_tags($data['lettre_path'])) : null;
 
             // Lier les valeurs
+            $stmt->bindParam(":id_personne", $id_personne);
             $stmt->bindParam(":id_stage", $id_stage);
             $stmt->bindParam(":cv_path", $cv_path);
             $stmt->bindParam(":lettre_path", $lettre_path);
@@ -118,7 +120,7 @@ class Candidature {
 
     public function candidatureExists($id_personne, $id_stage) {
         try {
-            $query = "SELECT COUNT(*) FROM Candidatures 
+            $query = "SELECT COUNT(*) FROM " . $this->table_name . "
                      WHERE id_personne = :id_personne AND id_stage = :id_stage";
             
             $stmt = $this->conn->prepare($query);
