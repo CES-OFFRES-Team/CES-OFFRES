@@ -58,6 +58,7 @@ class CandidatureController {
     private function createCandidature() {
         try {
             error_log("[DEBUG] Début de la création d'une candidature");
+            error_log("[DEBUG] Contenu de \$_FILES: " . print_r($_FILES, true));
             
             // Vérifier si des fichiers ont été envoyés
             if (!isset($_FILES['cv'])) {
@@ -82,16 +83,27 @@ class CandidatureController {
             // Gérer le CV
             $cv_info = pathinfo($_FILES['cv']['name']);
             $cv_extension = strtolower($cv_info['extension']);
+            error_log("[DEBUG] Extension du fichier CV: " . $cv_extension);
+            
             if ($cv_extension !== 'pdf') {
                 throw new Exception("Le CV doit être au format PDF");
             }
 
             $cv_filename = uniqid('cv_') . '.pdf';
             $cv_path = $this->upload_directory . $cv_filename;
+            
+            error_log("[DEBUG] Chemin du dossier d'upload: " . $this->upload_directory);
+            error_log("[DEBUG] Chemin complet du fichier: " . $cv_path);
+            error_log("[DEBUG] Le dossier existe: " . (file_exists($this->upload_directory) ? 'Oui' : 'Non'));
+            error_log("[DEBUG] Le dossier est accessible en écriture: " . (is_writable($this->upload_directory) ? 'Oui' : 'Non'));
 
             if (!move_uploaded_file($_FILES['cv']['tmp_name'], $cv_path)) {
+                error_log("[ERROR] Échec de l'upload du fichier");
+                error_log("[ERROR] Erreur de upload: " . error_get_last()['message']);
                 throw new Exception("Erreur lors de l'upload du CV");
             }
+
+            error_log("[DEBUG] CV uploadé avec succès à: " . $cv_path);
 
             // Gérer la lettre de motivation
             $lettre_path = null;
