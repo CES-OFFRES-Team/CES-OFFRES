@@ -2,12 +2,25 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import Cookies from 'js-cookie';
 
 export default function Navigation() {
     const [isOpen, setIsOpen] = useState(false);
     const [isMaximized, setIsMaximized] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
+        // Vérifier si l'utilisateur est admin
+        const userData = Cookies.get('userData');
+        if (userData) {
+            try {
+                const user = JSON.parse(userData);
+                setIsAdmin(user.role === 'Admin');
+            } catch (e) {
+                console.error('Erreur lors du parsing des données utilisateur:', e);
+            }
+        }
+
         const checkWindowState = () => {
             // Méthode 1: Vérifier si la fenêtre occupe tout l'écran disponible
             const method1 = window.outerWidth >= window.screen.availWidth && 
@@ -86,9 +99,9 @@ export default function Navigation() {
                 <nav className="sidebar-nav">
                     <ul className="primary-nav">
                         <li className="nav-item">
-                            <Link href="/" className="nav-link">
-                                <i className="fa-solid fa-house"></i>
-                                <span className="nav-label">Accueil</span>
+                            <Link href={isAdmin ? "/admin" : "/"} className="nav-link">
+                                <i className={`fa-solid ${isAdmin ? "fa-gauge-high" : "fa-house"}`}></i>
+                                <span className="nav-label">{isAdmin ? "Dashboard" : "Accueil"}</span>
                             </Link>
                         </li>
                         <li className="nav-item">
@@ -97,12 +110,42 @@ export default function Navigation() {
                                 <span className="nav-label">Offres</span>
                             </Link>
                         </li>
-                        <li className="nav-item">
-                            <Link href="/Contact" className="nav-link">
-                                <i className="fa-solid fa-envelope"></i>
-                                <span className="nav-label">Contact</span>
-                            </Link>
-                        </li>
+                        {isAdmin && (
+                            <>
+                                <li className="nav-item">
+                                    <Link href="/admin/entreprises" className="nav-link">
+                                        <i className="fa-solid fa-building"></i>
+                                        <span className="nav-label">Entreprises</span>
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link href="/admin/Etudiants" className="nav-link">
+                                        <i className="fa-solid fa-user-graduate"></i>
+                                        <span className="nav-label">Étudiants</span>
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link href="/admin/pilotes" className="nav-link">
+                                        <i className="fa-solid fa-user-tie"></i>
+                                        <span className="nav-label">Pilotes</span>
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link href="/admin/support" className="nav-link">
+                                        <i className="fa-solid fa-headset"></i>
+                                        <span className="nav-label">Support</span>
+                                    </Link>
+                                </li>
+                            </>
+                        )}
+                        {!isAdmin && (
+                            <li className="nav-item">
+                                <Link href="/Contact" className="nav-link">
+                                    <i className="fa-solid fa-envelope"></i>
+                                    <span className="nav-label">Contact</span>
+                                </Link>
+                            </li>
+                        )}
                     </ul>
                     <ul className="secondary-nav">
                         <li className="nav-item">
