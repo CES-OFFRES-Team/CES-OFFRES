@@ -18,7 +18,6 @@ const formatDate = (dateString) => {
 };
 
 export default function PostulerForm({ params }) {
-    const id = React.use(Promise.resolve(params.id));
     const router = useRouter();
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -47,7 +46,7 @@ export default function PostulerForm({ params }) {
         // Récupérer les détails de l'offre
         const fetchOffre = async () => {
             try {
-                const response = await fetch(`${API_URL}/offres/${id}`);
+                const response = await fetch(`${API_URL}/offres/${params.id}`);
                 if (!response.ok) {
                     throw new Error('Erreur lors de la récupération des détails de l\'offre');
                 }
@@ -65,10 +64,10 @@ export default function PostulerForm({ params }) {
             }
         };
 
-        if (id) {
+        if (params.id) {
             fetchOffre();
         }
-    }, [id]);
+    }, [params.id]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -90,7 +89,7 @@ export default function PostulerForm({ params }) {
         try {
             const formDataToSend = new FormData();
             
-            formDataToSend.append('id_stage', id);
+            formDataToSend.append('id_stage', params.id);
             formDataToSend.append('id_personne', user.id_personne);
             formDataToSend.append('lettre_motivation', formData.lettreMotivation);
             
@@ -99,7 +98,7 @@ export default function PostulerForm({ params }) {
             }
 
             console.log('Données de la candidature:', {
-                id_stage: id,
+                id_stage: params.id,
                 id_personne: user.id_personne,
                 cv: formData.cv ? formData.cv.name : null,
                 user: user
