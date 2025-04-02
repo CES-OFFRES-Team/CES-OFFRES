@@ -28,6 +28,9 @@ class CandidatureController {
 
         switch ($method) {
             case 'GET':
+                if (isset($_GET['id_personne'])) {
+                    return $this->getCandidaturesByPersonne($_GET['id_personne']);
+                }
                 if ($id) {
                     return $this->getCandidature($id);
                 }
@@ -222,6 +225,37 @@ class CandidatureController {
             throw new Exception("Erreur lors de la suppression de la candidature");
         } catch (Exception $e) {
             error_log("[ERROR] Exception dans deleteCandidature: " . $e->getMessage());
+            http_response_code(500);
+            return json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    private function getCandidaturesByPersonne($id_personne) {
+        try {
+            $stmt = $this->candidature->getByPersonne($id_personne);
+            $num = $stmt->rowCount();
+            
+            if ($num > 0) {
+                $candidatures_arr = [];
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    array_push($candidatures_arr, $row);
+                }
+                
+                return json_encode([
+                    'status' => 'success',
+                    'data' => $candidatures_arr
+                ]);
+            }
+            
+            return json_encode([
+                'status' => 'success',
+                'data' => []
+            ]);
+        } catch (Exception $e) {
+            error_log("[ERROR] Exception dans getCandidaturesByPersonne: " . $e->getMessage());
             http_response_code(500);
             return json_encode([
                 'status' => 'error',
