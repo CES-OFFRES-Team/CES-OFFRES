@@ -100,19 +100,12 @@ export default function PostulerForm({ params }) {
             submitData.append('cv', cvFile);
             submitData.append('id_personne', user.id_personne);
             submitData.append('id_stage', params.id);
+            submitData.append('statut', 'En attente');
             
-            if (formData.lettreMotivation) {
+            // Ajouter la lettre de motivation si présente
+            if (formData.lettreMotivation.trim()) {
                 submitData.append('lettre_motivation', formData.lettreMotivation);
             }
-
-            // Afficher les données envoyées pour le debug
-            console.log('Données envoyées:', {
-                id_personne: user.id_personne,
-                id_stage: params.id,
-                cv: cvFile.name,
-                cv_size: cvFile.size,
-                lettre_motivation: formData.lettreMotivation ? 'présente' : 'absente'
-            });
 
             // Envoyer la candidature
             const response = await fetch(`${API_URL}/candidatures.php`, {
@@ -120,33 +113,32 @@ export default function PostulerForm({ params }) {
                 body: submitData
             });
 
-            // Vérifier si la réponse est vide
-            const responseText = await response.text();
-            if (!responseText) {
-                throw new Error("La réponse du serveur est vide");
+            // Vérifier la réponse
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Réponse serveur:', errorText);
+                throw new Error("Erreur lors de l'envoi de la candidature");
             }
 
-            // Essayer de parser le JSON
             let data;
             try {
+                const responseText = await response.text();
                 data = JSON.parse(responseText);
+                console.log('Réponse serveur:', data);
             } catch (e) {
-                console.error('Erreur de parsing JSON:', responseText);
+                console.error('Erreur de parsing JSON:', e);
                 throw new Error("Format de réponse invalide du serveur");
             }
 
-            if (!response.ok) {
-                throw new Error(data.message || "Erreur lors de l'envoi de la candidature");
-            }
-            
             if (data.status === 'success') {
-                router.push('/candidatures/confirmation');
+                router.push('/dashboard');
             } else {
                 throw new Error(data.message || "Erreur lors de l'envoi de la candidature");
             }
+
         } catch (error) {
             console.error('Erreur lors de la soumission:', error);
-            setError(error.message);
+            setError(error.message || "Une erreur est survenue lors de l'envoi de la candidature");
         } finally {
             setLoading(false);
         }
