@@ -17,25 +17,56 @@ class WishListController {
     }
 
     private function getAuthenticatedUser() {
+        error_log("[DEBUG] Début getAuthenticatedUser");
+        
         $headers = apache_request_headers();
+        error_log("[DEBUG] Headers reçus: " . print_r($headers, true));
+        
         if (!isset($headers['Authorization'])) {
+            error_log("[ERROR] Header Authorization manquant");
             throw new Exception('Token manquant');
         }
 
         $token = str_replace('Bearer ', '', $headers['Authorization']);
+        error_log("[DEBUG] Token extrait: " . $token);
         
         // Vérifier le token en utilisant la méthode findByToken du modèle User
         $user = $this->userModel->findByToken($token);
+        error_log("[DEBUG] Résultat findByToken: " . ($user ? json_encode($user) : 'null'));
         
         if (!$user) {
-            error_log("Token invalide ou utilisateur non trouvé");
+            error_log("[ERROR] Token invalide ou utilisateur non trouvé");
             throw new Exception('Token invalide');
         }
 
         return $user;
     }
 
+    private function getWishList($userId) {
+        try {
+            error_log("[DEBUG] Début getWishList pour userId: " . $userId);
+            
+            $wishList = $this->wishListModel->getWishList($userId);
+            error_log("[DEBUG] Résultat getWishList: " . ($wishList ? json_encode($wishList) : 'false'));
+            
+            if ($wishList === false) {
+                error_log("[ERROR] Erreur lors de la récupération de la wishlist");
+                throw new Exception("Erreur lors de la récupération de la wishlist");
+            }
+
+            return json_encode([
+                'status' => 'success',
+                'stages' => $wishList
+            ]);
+        } catch (Exception $e) {
+            error_log("[ERROR] Exception dans getWishList: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function handleRequest($method, $action = null, $id = null) {
+        error_log("[DEBUG] Début handleRequest - Méthode: $method, Action: $action, ID: $id");
+        
         header("Access-Control-Allow-Origin: *");
         header("Content-Type: application/json; charset=UTF-8");
         header("Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS");
@@ -51,10 +82,12 @@ class WishListController {
             // Vérifier l'authentification pour toutes les routes sauf OPTIONS
             if ($method !== 'OPTIONS') {
                 $user = $this->getAuthenticatedUser();
+                error_log("[DEBUG] Utilisateur authentifié: " . json_encode($user));
             }
 
             switch ($action) {
                 case 'list':
+                    error_log("[DEBUG] Action list détectée");
                     return $this->getWishList($user['id_personne']);
                 case 'add':
                     return $this->addToWishList($user['id_personne']);
@@ -65,36 +98,19 @@ class WishListController {
                     http_response_code(400);
                     return json_encode(['error' => 'ID du stage manquant']);
                 default:
+                    error_log("[ERROR] Action non reconnue: " . $action);
                     http_response_code(404);
                     return json_encode(['error' => 'Action non trouvée']);
             }
         } catch (Exception $e) {
             error_log("[ERROR] Exception dans WishListController: " . $e->getMessage());
+            error_log("[ERROR] Trace complète: " . $e->getTraceAsString());
             
             if ($e->getMessage() === 'Token manquant' || $e->getMessage() === 'Token invalide') {
                 http_response_code(401);
                 return json_encode(['error' => $e->getMessage()]);
             }
             
-            http_response_code(500);
-            return json_encode(['error' => 'Erreur lors de la récupération de la wishlist']);
-        }
-    }
-
-    private function getWishList($userId) {
-        try {
-            $wishList = $this->wishListModel->getWishList($userId);
-            
-            if ($wishList === false) {
-                throw new Exception("Erreur lors de la récupération de la wishlist");
-            }
-
-            return json_encode([
-                'status' => 'success',
-                'stages' => $wishList
-            ]);
-        } catch (Exception $e) {
-            error_log("Erreur dans getWishList: " . $e->getMessage());
             http_response_code(500);
             return json_encode(['error' => 'Erreur lors de la récupération de la wishlist']);
         }
