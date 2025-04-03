@@ -16,11 +16,29 @@ class CandidatureController {
             }
             $this->candidature = new Candidature($this->db);
             
-            // Définir le chemin d'upload de manière absolue
-            $this->upload_directory = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uploads';
-            error_log("[DEBUG] Chemin d'upload absolu: " . $this->upload_directory);
+            // Définir le chemin d'upload en fonction de l'environnement
+            $possible_paths = [
+                dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uploads',  // Chemin local
+                '/var/www/html/CES-OFFRES/api/uploads'  // Chemin sur le serveur
+            ];
 
-            // Vérifier les permissions des dossiers
+            $upload_dir_found = false;
+            foreach ($possible_paths as $path) {
+                error_log("[DEBUG] Vérification du chemin: " . $path);
+                if (file_exists($path)) {
+                    $this->upload_directory = $path;
+                    $upload_dir_found = true;
+                    error_log("[DEBUG] Chemin d'upload trouvé: " . $path);
+                    break;
+                }
+            }
+
+            if (!$upload_dir_found) {
+                error_log("[ERROR] Aucun dossier d'upload trouvé dans les chemins possibles");
+                throw new Exception("Le dossier d'upload n'a pas été trouvé");
+            }
+
+            // Vérifier les sous-dossiers
             $required_dirs = [
                 $this->upload_directory => "dossier principal d'upload",
                 $this->upload_directory . DIRECTORY_SEPARATOR . 'cv' => "dossier des CVs",
@@ -32,7 +50,12 @@ class CandidatureController {
                 
                 if (!file_exists($dir)) {
                     error_log("[ERROR] Le " . $description . " n'existe pas: " . $dir);
-                    throw new Exception("Le " . $description . " n'existe pas");
+                    // Tentative de création du dossier
+                    if (!@mkdir($dir, 0777, true)) {
+                        error_log("[ERROR] Impossible de créer le " . $description);
+                        throw new Exception("Le " . $description . " n'existe pas et ne peut pas être créé");
+                    }
+                    error_log("[DEBUG] " . $description . " créé avec succès");
                 }
 
                 error_log("[DEBUG] Permissions actuelles du " . $description . ": " . substr(sprintf('%o', fileperms($dir)), -4));
