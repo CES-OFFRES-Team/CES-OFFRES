@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import './wishlist.css';
 import { HiPhone, HiMail, HiTrash, HiGlobeAlt, HiLocationMarker } from 'react-icons/hi';
-import { getUserData, getAuthToken } from '../../utils/auth';
+import { getUserData, getAuthToken, isAuthenticated } from '../../utils/auth';
 
 export default function WishList() {
     const [favoris, setFavoris] = useState([]);
@@ -19,41 +19,55 @@ export default function WishList() {
     const fetchWishList = async () => {
         try {
             setLoading(true);
+            
+            // Vérification complète de l'authentification
+            const isAuth = isAuthenticated();
+            console.log('Est authentifié:', isAuth);
+            
             const userData = getUserData();
             const token = getAuthToken();
             
-            // Logs détaillés pour le débogage
-            console.log('Données utilisateur complètes:', userData);
-            console.log('Token récupéré:', token);
-            console.log('ID utilisateur:', userData?.id_personne);
+            // Logs détaillés
+            console.log('=== Début des logs de débogage ===');
+            console.log('Token brut:', token);
+            console.log('Token tronqué:', token ? `${token.substring(0, 20)}...` : 'aucun');
+            console.log('Données utilisateur:', userData);
+            console.log('ID personne:', userData?.id_personne);
+            console.log('=== Fin des logs de débogage ===');
 
-            if (!userData || !userData.id_personne) {
-                console.error('Données utilisateur invalides:', userData);
-                setError('Utilisateur non authentifié ou ID manquant');
+            if (!isAuth) {
+                setError('Utilisateur non authentifié');
                 return;
             }
 
             if (!token) {
-                console.error('Token manquant');
                 setError('Token d\'authentification manquant');
                 return;
             }
 
-            const response = await fetch(`http://20.19.36.142:8000/api/wishlist/list`, {
-                method: 'GET',
+            // Log de la requête complète
+            const requestInfo = {
+                url: 'http://20.19.36.142:8000/api/wishlist/list',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
+            };
+            console.log('Détails de la requête:', requestInfo);
+
+            const response = await fetch(requestInfo.url, {
+                method: 'GET',
+                headers: requestInfo.headers
             });
 
             // Log de la réponse complète
-            console.log('Statut de la réponse:', response.status);
-            console.log('Headers de la réponse:', Object.fromEntries(response.headers.entries()));
-
+            console.log('=== Réponse du serveur ===');
+            console.log('Status:', response.status);
+            console.log('Headers:', Object.fromEntries(response.headers.entries()));
+            
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error('Réponse complète:', errorText);
+                console.error('Corps de la réponse d\'erreur:', errorText);
                 throw new Error(`Erreur lors de la récupération de la wishlist (${response.status}): ${errorText}`);
             }
 
