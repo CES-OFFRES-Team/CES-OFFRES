@@ -36,44 +36,29 @@ export default function EtudiantLayout({ children }) {
                     
                     <ul className="dashboard-menu">
                         <li>
-                            <Link 
-                                href="/etudiant/dashboard" 
-                                className={`nav-link ${pathname === '/etudiant/dashboard' ? 'active' : ''}`}
-                            >
+                            <Link href="/etudiant/dashboard">
                                 <i className="fas fa-home"></i> Tableau de bord
                             </Link>
                         </li>
                         <li>
-                            <Link 
-                                href="/etudiant/offres" 
-                                className={`nav-link ${pathname === '/etudiant/offres' ? 'active' : ''}`}
-                            >
+                            <Link href="/Offres">
                                 <i className="fas fa-briefcase"></i> Offres de stage
                             </Link>
                         </li>
                         <li>
-                            <Link 
-                                href="/etudiant/candidatures" 
-                                className={`nav-link ${pathname === '/etudiant/candidatures' ? 'active' : ''}`}
-                            >
+                            <Link href="/etudiant/candidatures">
                                 <i className="fas fa-file-alt"></i> Mes candidatures
                             </Link>
                         </li>
                         <li>
-                            <Link 
-                                href="/etudiant/profil" 
-                                className={`nav-link ${pathname === '/etudiant/profil' ? 'active' : ''}`}
-                            >
+                            <Link href="/etudiant/profile">
                                 <i className="fas fa-user"></i> Mon profil
                             </Link>
                         </li>
                         
                         {userRole === 'Admin' && (
                             <li className="admin-access">
-                                <Link 
-                                    href="/admin" 
-                                    className="nav-link admin-link"
-                                >
+                                <Link href="/admin">
                                     <i className="fas fa-cogs"></i> Accès Admin
                                 </Link>
                             </li>
