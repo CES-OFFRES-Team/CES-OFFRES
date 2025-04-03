@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { memo } from 'react';
 import Link from 'next/link';
 import './AdminHome.css';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 
 // Composants mémoïsés pour éviter les rendus inutiles
@@ -38,37 +39,39 @@ export default function AdminHome() {
     ];
 
     return (
-        <main>
-            <div className="home-container">
-                <section className="hero-section">
-                    <div className="hero-content">
-                        <h1>Interface administrateur</h1>
-                        <p>Gérez les données et les utilisateurs de la plateforme.</p>
-                    </div>
-                </section>
+        <ProtectedRoute requiredRole="Admin">
+            <main>
+                <div className="home-container">
+                    <section className="hero-section">
+                        <div className="hero-content">
+                            <h1>Interface administrateur</h1>
+                            <p>Gérez les données et les utilisateurs de la plateforme.</p>
+                        </div>
+                    </section>
 
-                <section className="features-section">
-                    {panels.map((panel, index) => (
-                        <AdminCard
-                            key={index}
-                            icon={panel.icon}
-                            title={panel.title}
-                            description={panel.description}
-                            link={panel.link}
-                        />
-                    ))}
-                </section>
+                    <section className="features-section">
+                        {panels.map((panel, index) => (
+                            <AdminCard
+                                key={index}
+                                icon={panel.icon}
+                                title={panel.title}
+                                description={panel.description}
+                                link={panel.link}
+                            />
+                        ))}
+                    </section>
 
-                <section className="stats-section">
-                    {stats.map((stat, index) => (
-                        <StatItem
-                            key={index}
-                            number={stat.number}
-                            description={stat.description}
-                        />
-                    ))}
-                </section>
-            </div>
-        </main>
+                    <section className="stats-section">
+                        {stats.map((stat, index) => (
+                            <StatItem
+                                key={index}
+                                number={stat.number}
+                                description={stat.description}
+                            />
+                        ))}
+                    </section>
+                </div>
+            </main>
+        </ProtectedRoute>
     );
 }

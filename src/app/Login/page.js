@@ -127,9 +127,17 @@ export default function LoginPage() {
       try {
         const data = await loginUser(email, password);
         
+        // Vérifier si on a bien un token dans la réponse
+        if (!data.token) {
+          throw new Error('Token manquant dans la réponse du serveur');
+        }
+        
+        // Vérifier le "Se souvenir de moi"
+        const rememberMe = document.getElementById('cbx')?.checked || false;
+        
         // Sauvegarder le token et les données utilisateur avec les fonctions de auth.js
-        setAuthToken(data.token);
-        setUserData(data.user);
+        setAuthToken(data.token, rememberMe);
+        setUserData(data.user, rememberMe);
         
         // Afficher le message de succès
         setSuccessMessage(`Connexion réussie ! Bienvenue ${data.user.prenom} ${data.user.nom}`);
@@ -139,14 +147,22 @@ export default function LoginPage() {
         
         console.log('Rôle de l\'utilisateur pour redirection:', data.user.role);
         
-        if (data.user.role === 'Admin') {
-          redirectPath = '/admin';
-        } else if (data.user.role === 'Pilote') {
-          redirectPath = '/pilote/dashboard';
-        } else if (data.user.role === 'Etudiant') {
-          redirectPath = '/dashboard';
-        } else if (data.user.role === 'Entreprise') {
-          redirectPath = '/entreprise/dashboard';
+        // Définir le chemin de redirection en fonction du rôle
+        switch (data.user.role) {
+          case 'Admin':
+            redirectPath = '/admin';
+            break;
+          case 'Pilote':
+            redirectPath = '/pilote/dashboard';
+            break;
+          case 'Etudiant':
+            redirectPath = '/dashboard';
+            break;
+          case 'Entreprise':
+            redirectPath = '/entreprise/dashboard';
+            break;
+          default:
+            redirectPath = '/dashboard';
         }
         
         console.log('Redirection programmée vers:', redirectPath);
@@ -154,10 +170,12 @@ export default function LoginPage() {
         // Attendre un peu pour que l'utilisateur puisse voir le message de succès
         setTimeout(() => {
           console.log('Exécution de la redirection vers:', redirectPath);
+          // Utiliser router.push pour la navigation côté client
           router.push(redirectPath);
         }, 1500);
       } catch (error) {
-        setErrorMessage(error.message);
+        console.error('Erreur lors de la connexion:', error);
+        setErrorMessage(error.message || 'Erreur lors de la connexion');
       }
     }
   };

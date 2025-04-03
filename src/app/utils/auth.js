@@ -2,6 +2,7 @@ import Cookies from 'js-cookie';
 
 const TOKEN_KEY = 'authToken';
 const USER_DATA_KEY = 'userData';
+const USER_ROLE_KEY = 'userRole';
 
 export const setAuthToken = (token, rememberMe = false) => {
     const options = {
@@ -22,12 +23,23 @@ export const setUserData = (userData, rememberMe = false) => {
         sameSite: 'strict',
         expires: rememberMe ? 7 : 1
     };
+    
+    // Enregistrer les données utilisateur
     Cookies.set(USER_DATA_KEY, JSON.stringify(userData), options);
+    
+    // Enregistrer le rôle séparément pour un accès plus facile
+    if (userData && userData.role) {
+        Cookies.set(USER_ROLE_KEY, userData.role, options);
+    }
 };
 
 export const getUserData = () => {
     const userData = Cookies.get(USER_DATA_KEY);
     return userData ? JSON.parse(userData) : null;
+};
+
+export const getUserRole = () => {
+    return Cookies.get(USER_ROLE_KEY) || null;
 };
 
 export const isAuthenticated = () => {
@@ -36,9 +48,28 @@ export const isAuthenticated = () => {
     return !!(token && userData);
 };
 
+export const hasRole = (requiredRole) => {
+    const userRole = getUserRole();
+    if (!userRole) return false;
+    
+    // Si le role requis est 'Admin', vérifier si l'utilisateur est admin
+    if (requiredRole === 'Admin') {
+        return userRole === 'Admin';
+    }
+    
+    // Si le role requis est 'Pilote', vérifier si l'utilisateur est pilote ou admin
+    if (requiredRole === 'Pilote') {
+        return userRole === 'Pilote' || userRole === 'Admin';
+    }
+    
+    // Pour les autres roles, vérifier l'égalité
+    return userRole === requiredRole;
+};
+
 export const logout = () => {
     Cookies.remove(TOKEN_KEY);
     Cookies.remove(USER_DATA_KEY);
+    Cookies.remove(USER_ROLE_KEY);
     window.location.href = '/login';
 };
 
