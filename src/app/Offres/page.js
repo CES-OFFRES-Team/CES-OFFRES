@@ -70,9 +70,13 @@ export default function Offres() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [filtres, setFiltres] = useState({
-        entreprises: [], // Changed from string to array
-        villes: [],     // Changed from string to array
-        themes: []
+        entreprises: [],
+        villes: [],
+        themes: [],
+        periode: {
+            debut: '',
+            fin: ''
+        }
     });
     const [favoris, setFavoris] = useState([]);
 
@@ -157,7 +161,10 @@ export default function Offres() {
                     offre.titre.toLowerCase().includes(theme)
                 );
 
-            return matchEntreprise && matchVille && matchThemes;
+            const matchDates = (!filtres.periode.debut || offre.date_debut >= filtres.periode.debut) &&
+                (!filtres.periode.fin || offre.date_fin <= filtres.periode.fin);
+
+            return matchEntreprise && matchVille && matchThemes && matchDates;
         });
     };
 

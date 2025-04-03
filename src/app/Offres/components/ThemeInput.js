@@ -26,7 +26,7 @@ const ThemeInput = ({ themes, onThemesChange }) => {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Ajouter un thème (Appuyez sur Entrée)"
+                placeholder="Rechercher des thèmes"
                 className={styles.themeInput}
             />
             {themes.length > 0 && (
