@@ -1,15 +1,11 @@
 import Cookies from 'js-cookie';
-
-// Clés pour les cookies
-const TOKEN_KEY = 'authToken';
-const USER_DATA_KEY = 'userData';
-const USER_ROLE_KEY = 'userRole';
+import { COOKIE_KEYS } from './constants';
 
 /**
  * Récupère le token d'authentification
  */
 export const getAuthToken = () => {
-    return Cookies.get(TOKEN_KEY);
+    return Cookies.get(COOKIE_KEYS.AUTH_TOKEN);
 };
 
 /**
@@ -17,7 +13,7 @@ export const getAuthToken = () => {
  */
 export const getUserData = () => {
     try {
-        const userData = Cookies.get(USER_DATA_KEY);
+        const userData = Cookies.get(COOKIE_KEYS.USER_DATA);
         return userData ? JSON.parse(userData) : null;
     } catch (error) {
         console.error('Erreur de parsing des données utilisateur:', error);
@@ -29,7 +25,7 @@ export const getUserData = () => {
  * Récupère le rôle de l'utilisateur connecté
  */
 export const getUserRole = () => {
-    return Cookies.get(USER_ROLE_KEY) || null;
+    return Cookies.get(COOKIE_KEYS.USER_ROLE) || null;
 };
 
 /**
@@ -61,27 +57,22 @@ export const hasRole = (requiredRole) => {
 export const logout = () => {
     console.log('Déconnexion en cours...');
     
-    // Supprimer les cookies avec différentes options
-    const options = [
-        { path: '/' },
-        { path: '/', domain: window.location.hostname }
-    ];
+    // Supprimer les cookies avec les mêmes options que lors de la définition
+    const cookieOptions = { 
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict'
+    };
     
-    // Supprimer les cookies
-    options.forEach(opt => {
-        Cookies.remove(TOKEN_KEY, opt);
-        Cookies.remove(USER_DATA_KEY, opt);
-        Cookies.remove(USER_ROLE_KEY, opt);
-    });
+    Cookies.remove(COOKIE_KEYS.AUTH_TOKEN, cookieOptions);
+    Cookies.remove(COOKIE_KEYS.USER_DATA, cookieOptions);
+    Cookies.remove(COOKIE_KEYS.USER_ROLE, cookieOptions);
     
     // Vérifier que les cookies ont bien été supprimés
     console.log('Vérification après suppression:');
-    console.log('Token:', Cookies.get(TOKEN_KEY) ? 'existe encore' : 'supprimé');
-    console.log('UserData:', Cookies.get(USER_DATA_KEY) ? 'existe encore' : 'supprimé');
-    console.log('UserRole:', Cookies.get(USER_ROLE_KEY) ? 'existe encore' : 'supprimé');
-    
-    // Rediriger vers la page de login
-    window.location.href = '/Login';
+    console.log('Token:', Cookies.get(COOKIE_KEYS.AUTH_TOKEN) ? 'existe encore' : 'supprimé');
+    console.log('UserData:', Cookies.get(COOKIE_KEYS.USER_DATA) ? 'existe encore' : 'supprimé');
+    console.log('UserRole:', Cookies.get(COOKIE_KEYS.USER_ROLE) ? 'existe encore' : 'supprimé');
 };
 
 // Fonction pour vérifier si le token est toujours valide avec le backend
@@ -106,8 +97,7 @@ export const verifyToken = async () => {
             return false;
         }
 
-        const data = await response.json();
-        return data.valid === true;
+        return true;
     } catch (error) {
         console.error('Erreur lors de la vérification du token:', error);
         return false;

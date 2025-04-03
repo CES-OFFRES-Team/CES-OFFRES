@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import './login.css';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
+import { COOKIE_KEYS, USER_ROLES, REDIRECT_PATHS } from '../utils/constants';
+import { useAuth } from '../contexts/AuthContext';
 
 const EmailIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 32 32" height="20">
@@ -34,6 +36,7 @@ const EyeIcon = ({ showPassword }) => (
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -61,13 +64,12 @@ export default function LoginPage() {
     
     try {
       // Effectuer la requête de connexion
-      const response = await fetch('http://20.19.36.142:8000/api/login', {
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
         },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password }),
       });
       
       // Récupérer les données
@@ -83,136 +85,118 @@ export default function LoginPage() {
         throw new Error('Réponse du serveur incomplète');
       }
       
-      // Formater les données utilisateur
-      const userData = {
-        id: data.user.id_personne || data.user.id || 0,
-        nom: data.user.nom || data.user.nom_personne || '',
-        prenom: data.user.prenom || data.user.prenom_personne || '',
-        email: data.user.email || data.user.email_personne || email,
-        role: data.user.role || 'Etudiant'
-      };
-      
-      console.log('Données utilisateur reçues:', userData);
-      
-      // Vérifier "Se souvenir de moi"
-      const rememberMe = document.getElementById('cbx')?.checked || false;
-      
-      // Définir les cookies avec des options plus permissives
-      const cookieOptions = { 
-        expires: rememberMe ? 7 : 1, 
-        secure: false, // Désactiver secure pour le développement local
-        sameSite: 'lax', // Utiliser lax au lieu de strict
-        path: '/'
-      };
-      
-      // Enregistrer les données dans les cookies
-      Cookies.set('authToken', data.token, cookieOptions);
-      Cookies.set('userData', JSON.stringify(userData), cookieOptions);
-      Cookies.set('userRole', userData.role, cookieOptions);
-      
-      console.log('Cookies définis:', document.cookie);
+      // Mettre à jour le contexte d'authentification (qui gère les cookies)
+      login(data.user, data.token);
       
       // Afficher le succès
-      setSuccessMessage(`Connexion réussie ! Bienvenue ${userData.prenom}`);
+      setSuccessMessage(`Connexion réussie ! Bienvenue ${data.user.prenom}`);
       
       // Déterminer la redirection en fonction du rôle
-      let redirectPath;
-      switch (userData.role.toLowerCase()) {
-        case 'admin':
-          redirectPath = '/admin';
-          break;
-        case 'etudiant':
-          redirectPath = '/etudiant/dashboard';
-          break;
-        case 'pilote':
-          redirectPath = '/pilote/dashboard';
-          break;
-        case 'entreprise':
-          redirectPath = '/entreprise/dashboard';
-          break;
-        default:
-          redirectPath = '/etudiant/dashboard';
-      }
+      const userRole = data.user.role;
+      const redirectPath = REDIRECT_PATHS[userRole] || REDIRECT_PATHS[USER_ROLES.ETUDIANT];
       
       console.log('Redirection vers:', redirectPath);
       
       // Rediriger immédiatement
-      window.location.href = redirectPath;
+      router.push(redirectPath);
       
     } catch (error) {
       console.error('Erreur lors de la connexion:', error);
-      setErrorMessage(error.message || 'Erreur de connexion');
+      setErrorMessage(error.message || 'Erreur de connexion au serveur');
       setIsLoading(false);
     }
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'email') {
+      setEmail(value);
+    } else if (name === 'password') {
+      setPassword(value);
+    }
+  };
+
   return (
-    <div className="center-container">
-      <form className="form" onSubmit={handleSubmit}>
-        {successMessage && <p className="success-message">{successMessage}</p>}
-        {errorMessage && <p className="error-message">{errorMessage}</p>}
-
-        <div className="flex-column">
-          <label>Email</label>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Connexion
+          </h2>
         </div>
-        <div className="inputForm">
-          <EmailIcon />
-          <input
-            placeholder="Entrez votre Email"
-            className="input"
-            type="text"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={isLoading}
-          />
-        </div>
-
-        <div className="flex-column">
-          <label>Mot de passe</label>
-        </div>
-        <div className="inputForm">
-          <PasswordIcon />
-          <input
-            placeholder="Entrez votre mot de passe"
-            className="input"
-            type={showPassword ? "text" : "password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            disabled={isLoading}
-          />
-          <button type="button" className="toggle-password" onClick={togglePasswordVisibility} disabled={isLoading}>
-            <EyeIcon showPassword={showPassword} />
-          </button>
-        </div>
-
-        <div className="flex-row">
-          <div>
-            <label htmlFor="cbx" className="cbx">
-              <input type="checkbox" id="cbx" disabled={isLoading} />
-              <div className="flip">
-                <div className="front"></div>
-                <div className="back">
-                  <svg viewBox="0 0 16 14" height="14" width="16">
-                    <path d="M2 8.5L6 12.5L14 1.5"></path>
-                  </svg>
-                </div>
-              </div>
-            </label>
-            <span className="remember-me-text">Se souvenir de moi</span>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          {successMessage && <p className="text-center text-sm text-green-600">{successMessage}</p>}
+          {errorMessage && (
+            <div className="rounded-md bg-red-50 p-4">
+              <div className="text-sm text-red-700">{errorMessage}</div>
+            </div>
+          )}
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="email" className="sr-only">
+                Email
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Email"
+                value={email}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="sr-only">
+                Mot de passe
+              </label>
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Mot de passe"
+                value={password}
+                onChange={handleChange}
+              />
+              <button type="button" className="toggle-password" onClick={togglePasswordVisibility} disabled={isLoading}>
+                <EyeIcon showPassword={showPassword} />
+              </button>
+            </div>
           </div>
-          <span className="span">Mot de passe oublié ?</span>
-        </div>
-        
-        <button 
-          className="button-submit" 
-          type="submit" 
-          disabled={isLoading}
-        >
-          {isLoading ? 'Connexion en cours...' : 'Se connecter'}
-        </button>
-        
-        <p className="p">Vous n'avez pas de compte ? <a href="/Contact" className="span">Nous contactez</a></p>
-      </form>
+
+          <div className="flex-row">
+            <div>
+              <label htmlFor="cbx" className="cbx">
+                <input type="checkbox" id="cbx" disabled={isLoading} />
+                <div className="flip">
+                  <div className="front"></div>
+                  <div className="back">
+                    <svg viewBox="0 0 16 14" height="14" width="16">
+                      <path d="M2 8.5L6 12.5L14 1.5"></path>
+                    </svg>
+                  </div>
+                </div>
+              </label>
+              <span className="remember-me-text">Se souvenir de moi</span>
+            </div>
+            <span className="span">Mot de passe oublié ?</span>
+          </div>
+          
+          <div>
+            <button
+              type="submit"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              {isLoading ? 'Connexion en cours...' : 'Se connecter'}
+            </button>
+          </div>
+          
+          <p className="p">Vous n'avez pas de compte ? <a href="/Contact" className="span">Nous contactez</a></p>
+        </form>
+      </div>
     </div>
   );
 }
