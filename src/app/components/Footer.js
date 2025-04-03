@@ -48,7 +48,7 @@ export default function Footer() {
           <ul>
             <li><Link href="/">Accueil</Link></li>
             <li><Link href="/Offres">Offres de stage</Link></li>
-            <li><Link href="/faq">FAQ</Link></li>
+            <li><Link href="/FAQ">FAQ</Link></li>
             <li><Link href="/about">À propos</Link></li>
           </ul>
         </div>
@@ -89,7 +89,7 @@ export default function Footer() {
 
       <div className="footer-bottom">
         <div className="company-info">
-          <p>CES'Offres - CESI École d'Ingénieurs</p>
+          <p>CES'Offres - Partenaire officiel de CESI École d'Ingénieurs</p>
           <p>93 Boulevard de la Seine, 92000 Nanterre</p>
         </div>
         <div className="footer-copyright">
