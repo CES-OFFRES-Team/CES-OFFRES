@@ -21,10 +21,14 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <AuthProvider>
-          <Navigation />
-          <main>{children}</main>
-          <ScrollToTop />
-          <Footer />
+          <div className="flex flex-col min-h-screen">
+            <Navigation />
+            <main className="flex-grow">
+              {children}
+            </main>
+            <ScrollToTop />
+            <Footer />
+          </div>
         </AuthProvider>
       </body>
     </html>

@@ -7,26 +7,36 @@ import { USER_ROLES } from '../utils/constants';
 import './etudiant.css';
 
 export default function EtudiantLayout({ children }) {
-    const { user, logout } = useAuth();
+    const { user, logout, loading } = useAuth();
     const router = useRouter();
 
-    // Rediriger si l'utilisateur n'est pas connecté ou n'est pas un étudiant
     useEffect(() => {
-        if (!user) {
-            router.push('/Login');
-        } else if (user.role !== USER_ROLES.ETUDIANT) {
-            router.push('/Login');
+        // Vérifier si l'utilisateur est connecté et est un étudiant
+        if (!loading) {  // Attendre que le chargement initial soit terminé
+            if (!user) {
+                console.log('Utilisateur non connecté, redirection vers login');
+                router.push('/Login');
+            } else if (user.role !== USER_ROLES.ETUDIANT) {
+                console.log('Utilisateur non étudiant, redirection vers login');
+                router.push('/Login');
+            }
         }
-    }, [user, router]);
+    }, [user, loading, router]);
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        console.log('Déconnexion en cours...');
         logout();
+        console.log('Redirection vers la page de connexion...');
         router.push('/Login');
     };
 
-    // Afficher un écran de chargement si l'utilisateur n'est pas encore vérifié
-    if (!user) {
-        return <div className="flex items-center justify-center min-h-screen">Chargement...</div>;
+    // Afficher un écran de chargement pendant la vérification
+    if (loading || !user) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+            </div>
+        );
     }
 
     return (
@@ -34,6 +44,7 @@ export default function EtudiantLayout({ children }) {
             <div className="w-64 bg-gray-800 text-white">
                 <div className="p-4">
                     <h1 className="text-xl font-bold">CES OFFRES</h1>
+                    <p className="text-sm mt-2">Connecté en tant que : {user.prenom} {user.nom}</p>
                 </div>
                 <nav className="mt-4">
                     <Link href="/etudiant/dashboard" className="block px-4 py-2 hover:bg-gray-700">
@@ -47,14 +58,16 @@ export default function EtudiantLayout({ children }) {
                     </Link>
                     <button
                         onClick={handleLogout}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-700"
+                        className="w-full text-left px-4 py-2 hover:bg-gray-700 focus:outline-none"
                     >
                         <i className="fas fa-sign-out-alt"></i> Déconnexion
                     </button>
                 </nav>
             </div>
-            <div className="flex-1">
-                {children}
+            <div className="flex-1 bg-gray-100">
+                <div className="p-8">
+                    {children}
+                </div>
             </div>
         </div>
     );
