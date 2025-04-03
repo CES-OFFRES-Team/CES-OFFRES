@@ -63,7 +63,10 @@ export default function LoginPage() {
       // Effectuer la requête de connexion
       const response = await fetch('http://20.19.36.142:8000/api/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
         body: JSON.stringify({ email, password })
       });
       
@@ -94,7 +97,8 @@ export default function LoginPage() {
       const cookieOptions = { 
         expires: rememberMe ? 7 : 1, 
         secure: true,
-        sameSite: 'strict'
+        sameSite: 'strict',
+        path: '/'
       };
       
       // Enregistrer les données dans les cookies
@@ -102,27 +106,39 @@ export default function LoginPage() {
       Cookies.set('userData', JSON.stringify(userData), cookieOptions);
       Cookies.set('userRole', userData.role, cookieOptions);
       
+      // Vérifier que les cookies ont bien été enregistrés
+      const token = Cookies.get('authToken');
+      if (!token) {
+        throw new Error('Erreur lors de l\'enregistrement du token');
+      }
+      
       // Afficher le succès
       setSuccessMessage(`Connexion réussie ! Bienvenue ${userData.prenom}`);
       
       // Déterminer la redirection en fonction du rôle
       let redirectPath;
-      switch (userData.role) {
-        case 'Admin': redirectPath = '/admin'; break;
-        case 'Pilote': redirectPath = '/pilote/dashboard'; break;
-        case 'Etudiant': redirectPath = '/etudiant/dashboard'; break;
-        case 'Entreprise': redirectPath = '/entreprise/dashboard'; break;
-        default: redirectPath = '/etudiant/dashboard';
+      switch (userData.role.toLowerCase()) {
+        case 'admin':
+          redirectPath = '/admin';
+          break;
+        case 'etudiant':
+          redirectPath = '/etudiant/dashboard';
+          break;
+        case 'pilote':
+          redirectPath = '/pilote/dashboard';
+          break;
+        case 'entreprise':
+          redirectPath = '/entreprise/dashboard';
+          break;
+        default:
+          redirectPath = '/etudiant/dashboard';
       }
       
-      // Rediriger après un court délai
-      setTimeout(() => {
-        window.location.href = redirectPath; // Utiliser une redirection complète
-      }, 500);
+      // Rediriger immédiatement
+      window.location.href = redirectPath;
       
     } catch (error) {
       setErrorMessage(error.message || 'Erreur de connexion');
-    } finally {
       setIsLoading(false);
     }
   };

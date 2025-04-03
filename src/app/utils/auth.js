@@ -82,16 +82,26 @@ export const logout = () => {
 export const verifyToken = async () => {
     try {
         const token = getAuthToken();
-        if (!token) return false;
+        if (!token) {
+            console.log('Token non trouvé dans les cookies');
+            return false;
+        }
 
         const response = await fetch('http://20.19.36.142:8000/api/verify-token', {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
             }
         });
 
-        return response.ok;
+        if (!response.ok) {
+            console.log('Token invalide selon le serveur');
+            return false;
+        }
+
+        const data = await response.json();
+        return data.valid === true;
     } catch (error) {
         console.error('Erreur lors de la vérification du token:', error);
         return false;

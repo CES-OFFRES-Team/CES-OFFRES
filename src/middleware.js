@@ -13,8 +13,9 @@ export function middleware(request) {
     return NextResponse.next();
   }
   
-  // Si l'utilisateur n'est pas connecté, rediriger vers la page de connexion
-  if (!authToken) {
+  // Vérification plus robuste du token
+  if (!authToken || !authToken.value || authToken.value.trim() === '') {
+    console.log('Token invalide ou manquant');
     return NextResponse.redirect(new URL('/Login', request.url));
   }
   
