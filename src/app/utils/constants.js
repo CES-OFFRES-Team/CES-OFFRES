@@ -5,6 +5,9 @@ export const COOKIE_KEYS = {
   USER_ROLE: 'userRole'
 };
 
+// URL de l'API
+export const API_URL = 'http://20.19.36.142:8000/api';
+
 // Rôles utilisateurs
 export const USER_ROLES = {
   ADMIN: 'Admin',
