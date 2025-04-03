@@ -61,15 +61,21 @@ export const hasRole = (requiredRole) => {
 export const logout = () => {
     console.log('Suppression des cookies...');
     
-    // Supprimer tous les cookies liés à l'authentification
-    Cookies.remove('authToken', { path: '/' });
-    Cookies.remove('userData', { path: '/' });
-    Cookies.remove('userRole', { path: '/' });
-    
-    // Supprimer avec différentes options pour s'assurer qu'ils sont bien supprimés
-    Cookies.remove('authToken', { path: '/', domain: window.location.hostname });
-    Cookies.remove('userData', { path: '/', domain: window.location.hostname });
-    Cookies.remove('userRole', { path: '/', domain: window.location.hostname });
+    // Supprimer tous les cookies liés à l'authentification avec différentes options
+    const cookieOptions = [
+        { path: '/' },
+        { path: '/', domain: window.location.hostname },
+        { path: '/', domain: '.' + window.location.hostname },
+        { path: '/', domain: window.location.hostname.split('.').slice(-2).join('.') }
+    ];
+
+    const cookiesToRemove = ['authToken', 'userData', 'userRole'];
+
+    cookiesToRemove.forEach(cookieName => {
+        cookieOptions.forEach(options => {
+            Cookies.remove(cookieName, options);
+        });
+    });
     
     // Vérifier que les cookies ont bien été supprimés
     const token = Cookies.get('authToken');
@@ -81,7 +87,7 @@ export const logout = () => {
     console.log('UserData:', userData ? 'existe encore' : 'supprimé');
     console.log('UserRole:', userRole ? 'existe encore' : 'supprimé');
     
-    // Rediriger vers la page de connexion
+    // Forcer un rechargement complet de la page pour vider le cache
     window.location.href = '/Login';
 };
 
