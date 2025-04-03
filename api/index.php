@@ -105,24 +105,24 @@ try {
         // Routes pour la wishlist
         case '/wishlist/list':
             $controller = new WishListController();
-            echo $controller->getWishList();
+            echo $controller->handleRequest($method, 'getWishList');
             break;
 
         case '/wishlist/add':
             $controller = new WishListController();
-            echo $controller->addToWishList();
+            echo $controller->handleRequest($method, 'addToWishList');
             break;
 
         case '/wishlist/remove':
             $controller = new WishListController();
             $idStage = isset($query_params['id']) ? $query_params['id'] : null;
-            echo $controller->removeFromWishList($idStage);
+            echo $controller->handleRequest($method, 'removeFromWishList', $idStage);
             break;
 
         case '/wishlist/check':
             $controller = new WishListController();
             $idStage = isset($query_params['id']) ? $query_params['id'] : null;
-            echo $controller->checkWishListStatus($idStage);
+            echo $controller->handleRequest($method, 'checkWishListStatus', $idStage);
             break;
 
         default:

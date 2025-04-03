@@ -11,6 +11,21 @@ class WishListController extends BaseController {
         $this->wishListModel = new WishList();
     }
 
+    public function handleRequest($method, $action, $id = null) {
+        switch ($action) {
+            case 'getWishList':
+                return $this->getWishList();
+            case 'addToWishList':
+                return $this->addToWishList();
+            case 'removeFromWishList':
+                return $this->removeFromWishList($id);
+            case 'checkWishListStatus':
+                return $this->checkWishListStatus($id);
+            default:
+                return $this->jsonResponse(['error' => 'Action non supportée'], 400);
+        }
+    }
+
     public function getWishList() {
         try {
             $userData = $this->getUserData();
