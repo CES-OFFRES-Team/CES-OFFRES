@@ -1,10 +1,9 @@
 "use client";
 import React, { useState } from 'react';
 import './login.css';
-import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
-import { COOKIE_KEYS, USER_ROLES, REDIRECT_PATHS } from '../utils/constants';
-import { useAuth } from '../contexts/AuthContext';
+import { setAuthToken, setUserData } from '../utils/auth';
+import { useRouter } from 'next/navigation';
 
 const EmailIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 32 32" height="20">
@@ -34,179 +33,212 @@ const EyeIcon = ({ showPassword }) => (
   )
 );
 
+const loginUser = async (email, password) => {
+    try {
+        console.log('Tentative de connexion avec:', { email });
+        
+        const response = await fetch('http://20.19.36.142:8000/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+        });
+
+        console.log('Status de la réponse:', response.status);
+        
+        // Vérifier si la réponse est vide
+        const text = await response.text();
+        console.log('Réponse brute du serveur:', text);
+
+        if (!text) {
+            throw new Error('Réponse vide du serveur');
+        }
+
+        // Essayer de parser le JSON
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            console.error('Erreur de parsing JSON:', e);
+            throw new Error('Réponse invalide du serveur');
+        }
+
+        console.log('Données parsées:', data);
+
+        if (!response.ok) {
+            throw new Error(data.error || data.message || 'Erreur lors de la connexion');
+        }
+
+        // Vérifier la structure de la réponse
+        if (!data.user) {
+            console.error('Structure de la réponse incorrecte:', data);
+            throw new Error('Format de réponse incorrect');
+        }
+
+        // Afficher la structure complète des données utilisateur
+        console.log('Structure complète des données utilisateur:', data.user);
+
+        // Vérifier si l'utilisateur a un ID
+        if (!data.user.id_personne && !data.user.id) {
+            console.error('Aucun ID trouvé dans les données utilisateur:', data.user);
+            throw new Error('ID utilisateur non trouvé dans la réponse');
+        }
+
+        // S'assurer que les champs essentiels sont présents
+        const userData = {
+            id_personne: data.user.id_personne || data.user.id, // Essayer les deux formats possibles
+            nom: data.user.nom || data.user.nom_personne || '',
+            prenom: data.user.prenom || data.user.prenom_personne || '',
+            email: data.user.email || data.user.email_personne || email,
+            role: data.user.role || 'Etudiant' // Valeur par défaut si le rôle est manquant
+        };
+
+        // Logs détaillés pour déboguer
+        console.log('Rôle récupéré de l\'API:', data.user.role);
+        console.log('Données utilisateur finales:', userData);
+
+        // Mettre à jour les données avec les valeurs normalisées
+        data.user = userData;
+
+        return data;
+    } catch (error) {
+        console.error('Erreur complète:', error);
+        throw new Error(error.message || 'Erreur de connexion au serveur');
+    }
+};
+
 export default function LoginPage() {
   const router = useRouter();
-  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Réinitialiser les messages
     setErrorMessage('');
     setSuccessMessage('');
-    
-    // Vérifier les champs
-    if (!email || !password) {
+
+    if (email === '' || password === '') {
       setErrorMessage('Veuillez remplir tous les champs.');
-      return;
-    }
-    
-    // Activer le chargement
-    setIsLoading(true);
-    
-    try {
-      // Effectuer la requête de connexion
-      const response = await fetch('http://20.19.36.142:8000/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-      
-      // Récupérer les données
-      const data = await response.json();
-      
-      // Log des données reçues
-      console.log('Données reçues du serveur:', data);
-      console.log('Données utilisateur:', data.user);
-      
-      // Vérifier la réponse
-      if (!response.ok || data.status === 'error') {
-        throw new Error(data.message || 'Identifiants incorrects');
+    } else {
+      try {
+        const data = await loginUser(email, password);
+        
+        // Vérifier si on a bien un token dans la réponse
+        if (!data.token) {
+          throw new Error('Token manquant dans la réponse du serveur');
+        }
+        
+        // Vérifier le "Se souvenir de moi"
+        const rememberMe = document.getElementById('cbx')?.checked || false;
+        
+        // Sauvegarder le token et les données utilisateur avec les fonctions de auth.js
+        setAuthToken(data.token, rememberMe);
+        setUserData(data.user, rememberMe);
+        
+        // Afficher le message de succès
+        setSuccessMessage(`Connexion réussie ! Bienvenue ${data.user.prenom} ${data.user.nom}`);
+        
+        // Redirection en fonction du rôle
+        let redirectPath = '/dashboard';  // Chemin de repli par défaut
+        
+        console.log('Rôle de l\'utilisateur pour redirection:', data.user.role);
+        
+        // Définir le chemin de redirection en fonction du rôle
+        switch (data.user.role) {
+          case 'Admin':
+            redirectPath = '/admin';
+            break;
+          case 'Pilote':
+            redirectPath = '/pilote/dashboard';
+            break;
+          case 'Etudiant':
+            redirectPath = '/dashboard';
+            break;
+          case 'Entreprise':
+            redirectPath = '/entreprise/dashboard';
+            break;
+          default:
+            redirectPath = '/dashboard';
+        }
+        
+        console.log('Redirection programmée vers:', redirectPath);
+        
+        // Attendre un peu pour que l'utilisateur puisse voir le message de succès
+        setTimeout(() => {
+          console.log('Exécution de la redirection vers:', redirectPath);
+          // Utiliser router.push pour la navigation côté client
+          router.push(redirectPath);
+        }, 1500);
+      } catch (error) {
+        console.error('Erreur lors de la connexion:', error);
+        setErrorMessage(error.message || 'Erreur lors de la connexion');
       }
-      
-      // Vérifier que les données nécessaires sont présentes
-      if (!data.token || !data.user) {
-        throw new Error('Réponse du serveur incomplète');
-      }
-
-      // Adapter les données utilisateur si nécessaire
-      const userData = {
-        ...data.user,
-        id_personne: data.user.id  // Utiliser l'id comme id_personne
-      };
-      
-      // Mettre à jour le contexte d'authentification (qui gère les cookies)
-      login(userData, data.token);
-      
-      // Afficher le succès
-      setSuccessMessage(`Connexion réussie ! Bienvenue ${userData.prenom || ''}`);
-      
-      // Déterminer la redirection en fonction du rôle
-      const userRole = userData.role;
-      const redirectPath = REDIRECT_PATHS[userRole] || REDIRECT_PATHS[USER_ROLES.ETUDIANT];
-      
-      console.log('Redirection vers:', redirectPath);
-      
-      // Rediriger immédiatement
-      router.push(redirectPath);
-      
-    } catch (error) {
-      console.error('Erreur lors de la connexion:', error);
-      setErrorMessage(error.message || 'Erreur de connexion au serveur');
-      setIsLoading(false);
-    }
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name === 'email') {
-      setEmail(value);
-    } else if (name === 'password') {
-      setPassword(value);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Connexion
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {successMessage && <p className="text-center text-sm text-green-600">{successMessage}</p>}
-          {errorMessage && (
-            <div className="rounded-md bg-red-50 p-4">
-              <div className="text-sm text-red-700">{errorMessage}</div>
-            </div>
-          )}
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email"
-                value={email}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Mot de passe
-              </label>
-              <input
-                id="password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Mot de passe"
-                value={password}
-                onChange={handleChange}
-              />
-              <button type="button" className="toggle-password" onClick={togglePasswordVisibility} disabled={isLoading}>
-                <EyeIcon showPassword={showPassword} />
-              </button>
-            </div>
-          </div>
+    <div className="center-container">
+      <form className="form" onSubmit={handleSubmit}>
+        {successMessage && <p className="success-message">{successMessage}</p>}
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
 
-          <div className="flex-row">
-            <div>
-              <label htmlFor="cbx" className="cbx">
-                <input type="checkbox" id="cbx" disabled={isLoading} />
-                <div className="flip">
-                  <div className="front"></div>
-                  <div className="back">
-                    <svg viewBox="0 0 16 14" height="14" width="16">
-                      <path d="M2 8.5L6 12.5L14 1.5"></path>
-                    </svg>
-                  </div>
-                </div>
-              </label>
-              <span className="remember-me-text">Se souvenir de moi</span>
-            </div>
-            <span className="span">Mot de passe oublié ?</span>
-          </div>
-          
+        <div className="flex-column">
+          <label>Email</label>
+        </div>
+        <div className="inputForm">
+          <EmailIcon />
+          <input
+            placeholder="Entrez votre Email"
+            className="input"
+            type="text"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+
+        <div className="flex-column">
+          <label>Mot de passe</label>
+        </div>
+        <div className="inputForm">
+          <PasswordIcon />
+          <input
+            placeholder="Entrez votre mot de passe"
+            className="input"
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button type="button" className="toggle-password" onClick={togglePasswordVisibility}>
+            <EyeIcon showPassword={showPassword} />
+          </button>
+        </div>
+
+        <div className="flex-row">
           <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              {isLoading ? 'Connexion en cours...' : 'Se connecter'}
-            </button>
+            <label htmlFor="cbx" className="cbx">
+              <input type="checkbox" id="cbx" />
+              <div className="flip">
+                <div className="front"></div>
+                <div className="back">
+                  <svg viewBox="0 0 16 14" height="14" width="16">
+                    <path d="M2 8.5L6 12.5L14 1.5"></path>
+                  </svg>
+                </div>
+              </div>
+            </label>
+            <span className="remember-me-text">Se souvenir de moi</span>
           </div>
-          
-          <p className="p">Vous n'avez pas de compte ? <a href="/Contact" className="span">Nous contactez</a></p>
-        </form>
-      </div>
+          <span className="span">Mot de passe oublié ?</span>
+        </div>
+        <button className="button-submit" type="submit">Se connecter</button>
+        <p className="p">Vous n'avez pas de compte ? <a href="/Contact" className="span">Nous contactez</a></p>
+      </form>
     </div>
   );
 }

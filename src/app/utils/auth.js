@@ -1,117 +1,107 @@
 import Cookies from 'js-cookie';
-import { COOKIE_KEYS } from './constants';
 
-/**
- * Récupère le token d'authentification
- */
-export const getAuthToken = () => {
-    return Cookies.get(COOKIE_KEYS.AUTH_TOKEN);
+const TOKEN_KEY = 'authToken';
+const USER_DATA_KEY = 'userData';
+const USER_ROLE_KEY = 'userRole';
+
+export const setAuthToken = (token, rememberMe = false) => {
+    const options = {
+        secure: true,
+        sameSite: 'strict',
+        expires: rememberMe ? 7 : 1  // 7 jours si "Se souvenir de moi", sinon 1 jour
+    };
+    Cookies.set(TOKEN_KEY, token, options);
 };
 
-/**
- * Récupère les données de l'utilisateur connecté
- */
-export const getUserData = () => {
-    try {
-        const userData = Cookies.get(COOKIE_KEYS.USER_DATA);
-        if (!userData) {
-            console.log('Aucune donnée utilisateur trouvée dans les cookies');
-            return null;
-        }
-        
-        const parsedData = JSON.parse(userData);
-        console.log('Données utilisateur récupérées:', parsedData);
-        
-        // Vérifier la présence de l'id_personne
-        if (!parsedData.id_personne) {
-            console.error('id_personne manquant dans les données utilisateur stockées');
-            return null;
-        }
-        
-        return parsedData;
-    } catch (error) {
-        console.error('Erreur de parsing des données utilisateur:', error);
-        return null;
+export const getAuthToken = () => {
+    return Cookies.get(TOKEN_KEY);
+};
+
+export const setUserData = (userData, rememberMe = false) => {
+    const options = {
+        secure: true,
+        sameSite: 'strict',
+        expires: rememberMe ? 7 : 1
+    };
+    
+    // Enregistrer les données utilisateur
+    Cookies.set(USER_DATA_KEY, JSON.stringify(userData), options);
+    
+    // Enregistrer le rôle séparément pour un accès plus facile
+    if (userData && userData.role) {
+        Cookies.set(USER_ROLE_KEY, userData.role, options);
     }
 };
 
-/**
- * Récupère le rôle de l'utilisateur connecté
- */
-export const getUserRole = () => {
-    return Cookies.get(COOKIE_KEYS.USER_ROLE) || null;
+export const getUserData = () => {
+    const userData = Cookies.get(USER_DATA_KEY);
+    return userData ? JSON.parse(userData) : null;
 };
 
-/**
- * Vérifie si un utilisateur est authentifié
- */
+export const getUserRole = () => {
+    return Cookies.get(USER_ROLE_KEY) || null;
+};
+
 export const isAuthenticated = () => {
     const token = getAuthToken();
     const userData = getUserData();
     return !!(token && userData);
 };
 
-/**
- * Vérifie si l'utilisateur a un rôle spécifique
- */
 export const hasRole = (requiredRole) => {
     const userRole = getUserRole();
     if (!userRole) return false;
     
-    // Si admin, accès à tout
-    if (userRole === 'Admin') return true;
+    // Si le role requis est 'Admin', vérifier si l'utilisateur est admin
+    if (requiredRole === 'Admin') {
+        return userRole === 'Admin';
+    }
     
-    // Pour les autres rôles, vérifier l'égalité
+    // Si le role requis est 'Pilote', vérifier si l'utilisateur est pilote ou admin
+    if (requiredRole === 'Pilote') {
+        return userRole === 'Pilote' || userRole === 'Admin';
+    }
+    
+    // Pour les autres roles, vérifier l'égalité
     return userRole === requiredRole;
 };
 
-/**
- * Déconnecte l'utilisateur
- */
 export const logout = () => {
-    console.log('Déconnexion en cours...');
+    // Supprimer tous les cookies avec différentes options pour s'assurer de leur suppression
+    Cookies.remove(TOKEN_KEY);
+    Cookies.remove(USER_DATA_KEY);
+    Cookies.remove(USER_ROLE_KEY);
     
-    // Supprimer les cookies avec les mêmes options que lors de la définition
-    const cookieOptions = { 
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict'
-    };
+    // Supprimer également avec des options spécifiques (domaine et chemin)
+    Cookies.remove(TOKEN_KEY, { path: '/' });
+    Cookies.remove(USER_DATA_KEY, { path: '/' });
+    Cookies.remove(USER_ROLE_KEY, { path: '/' });
     
-    Cookies.remove(COOKIE_KEYS.AUTH_TOKEN, cookieOptions);
-    Cookies.remove(COOKIE_KEYS.USER_DATA, cookieOptions);
-    Cookies.remove(COOKIE_KEYS.USER_ROLE, cookieOptions);
-    
-    // Vérifier que les cookies ont bien été supprimés
-    console.log('Vérification après suppression:');
-    console.log('Token:', Cookies.get(COOKIE_KEYS.AUTH_TOKEN) ? 'existe encore' : 'supprimé');
-    console.log('UserData:', Cookies.get(COOKIE_KEYS.USER_DATA) ? 'existe encore' : 'supprimé');
-    console.log('UserRole:', Cookies.get(COOKIE_KEYS.USER_ROLE) ? 'existe encore' : 'supprimé');
+    // Nettoyer le stockage local au cas où
+    if (typeof window !== 'undefined') {
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(USER_DATA_KEY);
+        localStorage.removeItem(USER_ROLE_KEY);
+        
+        // Forcer le navigateur à effectuer une redirection complète plutôt qu'une navigation SPA
+        window.location.href = '/login';
+    }
 };
 
 // Fonction pour vérifier si le token est toujours valide avec le backend
 export const verifyToken = async () => {
     try {
         const token = getAuthToken();
-        if (!token) {
-            console.log('Token non trouvé dans les cookies');
-            return false;
-        }
+        if (!token) return false;
 
         const response = await fetch('http://20.19.36.142:8000/api/verify-token', {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
+                'Authorization': `Bearer ${token}`
             }
         });
 
-        if (!response.ok) {
-            console.log('Token invalide selon le serveur');
-            return false;
-        }
-
-        return true;
+        return response.ok;
     } catch (error) {
         console.error('Erreur lors de la vérification du token:', error);
         return false;

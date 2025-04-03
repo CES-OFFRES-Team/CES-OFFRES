@@ -1,19 +1,14 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
-import { useAuth } from '../../contexts/AuthContext';
 import AuthNav from '../../components/AuthNav';
-import { useRouter } from 'next/navigation';
 
-export default function Navigation({ onNavigate }) {
-    const { user } = useAuth();
-    const router = useRouter();
-
-    const handleNavigation = (path) => {
-        router.push(path);
-        if (onNavigate) onNavigate();
-    };
+export default function Navigation() {
+    const handleClickEntreprises = () => { };
+    const handleClickPilotes = () => { };
+    const handleClickEtudiants = () => { };
+    const handleClickOffres = () => { };
+    const handleClickSupport = () => { };
 
     return (
         <aside className="sidebar">
@@ -23,63 +18,68 @@ export default function Navigation({ onNavigate }) {
 
             <ul className="nav-list primary-nav">
                 <li className="nav-item">
-                    <Link href="/admin/entreprises" className="nav-link" onClick={() => handleNavigation('/admin/entreprises')}>
-                        <span className="material-symbols-rounded">
+                    <a href="/admin/entreprises" className="nav-link">
+                        <span
+                            className="material-symbols-rounded"
+                            onClick={handleClickEntreprises}
+                        >
                             business
                         </span>
                         <span className="nav-label">Entreprises</span>
-                    </Link>
+                    </a>
                 </li>
                 <li className="nav-item">
-                    <Link href="/admin/pilotes" className="nav-link" onClick={() => handleNavigation('/admin/pilotes')}>
-                        <span className="material-symbols-rounded">
+                    <a href="/admin/pilotes" className="nav-link">
+                        <span
+                            className="material-symbols-rounded"
+                            onClick={handleClickPilotes}
+                        >
                             group
                         </span>
                         <span className="nav-label">Pilotes</span>
-                    </Link>
+                    </a>
                 </li>
 
                 <li className="nav-item">
-                    <Link href="/admin/Etudiants" className="nav-link" onClick={() => handleNavigation('/admin/Etudiants')}>
-                        <span className="material-symbols-rounded">
+                    <a href="/admin/Etudiants" className="nav-link">
+                        <span
+                            className="material-symbols-rounded"
+                            onClick={handleClickEtudiants}
+                        >
                             school
                         </span>
                         <span className="nav-label">Étudiants</span>
-                    </Link>
+                    </a>
                 </li>
 
                 <li className="nav-item">
-                    <Link href="/admin/offres" className="nav-link" onClick={() => handleNavigation('/admin/offres')}>
-                        <span className="material-symbols-rounded">
+                    <a href="/admin/offres" className="nav-link">
+                        <span
+                            className="material-symbols-rounded"
+                            onClick={handleClickOffres}
+                        >
                             work
                         </span>
                         <span className="nav-label">Offres</span>
-                    </Link>
+                    </a>
+
                 </li>
-                
                 <li className="nav-item">
-                    <Link href="/admin/support" className="nav-link" onClick={() => handleNavigation('/admin/support')}>
-                        <span className="material-symbols-rounded">
+                    <a href="/admin/support" className="nav-link">
+                        <span
+                            className="material-symbols-rounded"
+                            onClick={handleClickSupport}
+                        >
                             support_agent
                         </span>
                         <span className="nav-label">Support</span>
-                    </Link>
+                    </a>
                 </li>
-                
-                {user?.role === 'Admin' && (
-                    <li className="nav-item">
-                        <Link href="/etudiant/dashboard" className="nav-link" onClick={() => handleNavigation('/etudiant/dashboard')}>
-                            <span className="material-symbols-rounded">
-                                switch_account
-                            </span>
-                            <span className="nav-label">Espace Étudiant</span>
-                        </Link>
-                    </li>
-                )}
+
             </ul>
 
             <ul className="nav-list secondary-nav">
-                <AuthNav onNavigate={onNavigate} />
+                <AuthNav />
             </ul>
         </aside>
     );

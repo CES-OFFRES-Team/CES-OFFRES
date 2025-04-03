@@ -3,7 +3,6 @@ import { Inter } from 'next/font/google'
 import Navigation from './components/Navigation'
 import Footer from './components/Footer'
 import ScrollToTop from './components/ScrollToTop';
-import { AuthProvider } from './contexts/AuthContext';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,16 +19,10 @@ export default function RootLayout({ children }) {
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
       </head>
       <body>
-        <AuthProvider>
-          <div className="flex flex-col min-h-screen">
-            <Navigation />
-            <main className="flex-grow">
-              {children}
-            </main>
-            <ScrollToTop />
-            <Footer />
-          </div>
-        </AuthProvider>
+        <Navigation />
+        <main>{children}</main>
+        <ScrollToTop />
+        <Footer />
       </body>
     </html>
   );

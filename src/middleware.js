@@ -1,61 +1,114 @@
 import { NextResponse } from 'next/server';
-import { COOKIE_KEYS, USER_ROLES } from './app/utils/constants';
-
-// Chemins publics qui ne nécessitent pas d'authentification
-const publicPaths = ['/Login', '/Contact', '/'];
 
 export function middleware(request) {
-  const { pathname } = request.nextUrl;
-  
-  // Vérifier si le chemin est public
-  if (publicPaths.includes(pathname)) {
+  // Récupérer le token et les données utilisateur depuis les cookies
+  const userData = request.cookies.get('userData');
+  const authToken = request.cookies.get('authToken');
+  const userRole = request.cookies.get('userRole');
+
+  // Si l'utilisateur n'est pas connecté, rediriger vers la page de connexion
+  if (!authToken) {
+    // Ne pas rediriger si on est déjà sur la page de connexion ou la page d'accueil
+    if (request.nextUrl.pathname === '/Login' || request.nextUrl.pathname === '/') {
+      return NextResponse.next();
+    }
+    return NextResponse.redirect(new URL('/Login', request.url));
+  }
+
+  // Si les données utilisateur sont disponibles, les parser
+  let user = null;
+  if (userData) {
+    try {
+      user = JSON.parse(userData.value);
+    } catch (e) {
+      console.error('Erreur lors du parsing des données utilisateur:', e);
+      return NextResponse.redirect(new URL('/Login', request.url));
+    }
+  }
+
+  // Récupérer le rôle directement du cookie dédié
+  const role = userRole ? userRole.value : (user ? user.role : null);
+
+  if (!role) {
+    console.error('Rôle non trouvé dans les cookies ou les données utilisateur');
+    return NextResponse.redirect(new URL('/Login', request.url));
+  }
+
+  // Vérifier les routes protégées
+  const path = request.nextUrl.pathname;
+
+  // Protection des routes admin
+  if (path.startsWith('/admin')) {
+    if (role !== 'Admin') {
+      console.log('Accès refusé: rôle non admin', role);
+      // Rediriger vers la page appropriée en fonction du rôle
+      if (role === 'Pilote') {
+        return NextResponse.redirect(new URL('/pilote/dashboard', request.url));
+      } else if (role === 'Etudiant') {
+        return NextResponse.redirect(new URL('/dashboard', request.url));
+      } else if (role === 'Entreprise') {
+        return NextResponse.redirect(new URL('/entreprise/dashboard', request.url));
+      }
+      return NextResponse.redirect(new URL('/Login', request.url));
+    }
     return NextResponse.next();
   }
 
-  // Récupérer le token d'authentification
-  const token = request.cookies.get(COOKIE_KEYS.AUTH_TOKEN);
-  const userData = request.cookies.get(COOKIE_KEYS.USER_DATA);
-  const userRole = request.cookies.get(COOKIE_KEYS.USER_ROLE);
-
-  // Si pas de token, rediriger vers la page de connexion
-  if (!token) {
-    console.log('Middleware: Pas de token, redirection vers /Login');
-    return NextResponse.redirect(new URL('/Login', request.url));
+  // Protection des routes pilote
+  if (path.startsWith('/pilote')) {
+    if (role !== 'Pilote' && role !== 'Admin') {
+      console.log('Accès refusé: rôle non pilote ou admin', role);
+      // Rediriger vers la page appropriée en fonction du rôle
+      if (role === 'Etudiant') {
+        return NextResponse.redirect(new URL('/dashboard', request.url));
+      } else if (role === 'Entreprise') {
+        return NextResponse.redirect(new URL('/entreprise/dashboard', request.url));
+      }
+      return NextResponse.redirect(new URL('/Login', request.url));
+    }
+    return NextResponse.next();
   }
 
-  // Vérifier les accès selon le rôle
-  if (pathname.startsWith('/admin') && userRole?.value !== USER_ROLES.ADMIN) {
-    console.log('Middleware: Accès admin refusé, redirection vers /Login');
-    return NextResponse.redirect(new URL('/Login', request.url));
+  // Protection des routes dashboard (pour les étudiants)
+  if (path === '/dashboard' || path.startsWith('/dashboard/')) {
+    if (role !== 'Etudiant' && role !== 'Admin') {
+      console.log('Accès refusé: rôle non étudiant ou admin', role);
+      // Rediriger vers la page appropriée en fonction du rôle
+      if (role === 'Pilote') {
+        return NextResponse.redirect(new URL('/pilote/dashboard', request.url));
+      } else if (role === 'Entreprise') {
+        return NextResponse.redirect(new URL('/entreprise/dashboard', request.url));
+      }
+      return NextResponse.redirect(new URL('/Login', request.url));
+    }
+    return NextResponse.next();
   }
-
-  if (pathname.startsWith('/etudiant') && userRole?.value !== USER_ROLES.ETUDIANT) {
-    console.log('Middleware: Accès étudiant refusé, redirection vers /Login');
-    return NextResponse.redirect(new URL('/Login', request.url));
-  }
-
-  if (pathname.startsWith('/pilote') && userRole?.value !== USER_ROLES.PILOTE) {
-    console.log('Middleware: Accès pilote refusé, redirection vers /Login');
-    return NextResponse.redirect(new URL('/Login', request.url));
-  }
-
-  if (pathname.startsWith('/entreprise') && userRole?.value !== USER_ROLES.ENTREPRISE) {
-    console.log('Middleware: Accès entreprise refusé, redirection vers /Login');
-    return NextResponse.redirect(new URL('/Login', request.url));
+  
+  // Protection des routes entreprise
+  if (path.startsWith('/entreprise')) {
+    if (role !== 'Entreprise' && role !== 'Admin') {
+      console.log('Accès refusé: rôle non entreprise ou admin', role);
+      // Rediriger vers la page appropriée en fonction du rôle
+      if (role === 'Pilote') {
+        return NextResponse.redirect(new URL('/pilote/dashboard', request.url));
+      } else if (role === 'Etudiant') {
+        return NextResponse.redirect(new URL('/dashboard', request.url));
+      }
+      return NextResponse.redirect(new URL('/Login', request.url));
+    }
+    return NextResponse.next();
   }
 
   return NextResponse.next();
 }
 
+// Configurer les chemins sur lesquels le middleware doit s'exécuter
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
-  ],
+    '/admin/:path*',
+    '/pilote/:path*',
+    '/dashboard/:path*',
+    '/dashboard',
+    '/entreprise/:path*'
+  ]
 }; 

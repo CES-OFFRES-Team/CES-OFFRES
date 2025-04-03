@@ -30,15 +30,4 @@ class BaseController {
 
         return $data;
     }
-
-    protected function getUserData() {
-        // Pour le test, on simule un utilisateur connecté
-        return [
-            'id' => 5,
-            'nom' => 'Test',
-            'prenom' => 'User',
-            'email' => 'test@example.com',
-            'role' => 'Etudiant'
-        ];
-    }
 } 
