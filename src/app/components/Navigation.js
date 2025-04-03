@@ -2,42 +2,25 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '../contexts/AuthContext';
+import { USER_ROLES } from '../utils/constants';
 
 export default function Navigation() {
     const [isOpen, setIsOpen] = useState(false);
     const [isMaximized, setIsMaximized] = useState(false);
-    const [isAdmin, setIsAdmin] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const router = useRouter();
+    const { user, logout } = useAuth();
 
     const handleLogout = () => {
-        // Mettre à jour l'état local immédiatement
-        setIsLoggedIn(false),  // Changed semicolon to comma
-        setIsAdmin(false);     // Keep semicolon for last statement
-        
-        // Supprimer les cookies
-        Cookies.remove('authToken');
-        Cookies.remove('isAdmin');
-        
-        // Rediriger vers la page d'accueil
-        router.push('/');
+        logout();
+        window.location.reload();
+        setTimeout(() => {
+            router.push('/Login');
+        }, 100);
     };
 
     useEffect(() => {
-        // Vérifier si l'utilisateur est connecté et admin
-        const userData = Cookies.get('userData');
-        if (userData) {
-            try {
-                const user = JSON.parse(userData);
-                setIsAdmin(user.role === 'Admin');
-                setIsLoggedIn(true);
-            } catch (e) {
-                console.error('Erreur lors du parsing des données utilisateur:', e);
-            }
-        }
-
         const checkWindowState = () => {
             // Méthode 1: Vérifier si la fenêtre occupe tout l'écran disponible
             const method1 = window.outerWidth >= window.screen.availWidth && 
@@ -87,7 +70,6 @@ export default function Navigation() {
 
     return (
         <>
-            {/* Le menu burger est toujours dans le DOM mais caché en CSS si maximisé */}
             <button 
                 className={`menu-toggle ${isOpen ? 'active' : ''} ${isMaximized ? 'hidden' : ''}`}
                 onClick={() => setIsOpen(!isOpen)}
@@ -126,48 +108,52 @@ export default function Navigation() {
                 <nav className="sidebar-nav">
                     <ul className="primary-nav">
                         <li className="nav-item">
-                            <Link href={isAdmin ? "/admin" : "/"} className="nav-link">
-                                <i className={`fa-solid ${isAdmin ? "fa-gauge-high" : "fa-house"}`}></i>
-                                <span className="nav-label">{isAdmin ? "Dashboard" : "Accueil"}</span>
+                            <Link 
+                                href={user?.role === USER_ROLES.ADMIN ? "/admin" : "/"} 
+                                className="nav-link"
+                                onClick={() => setIsOpen(false)}
+                            >
+                                <i className={`fa-solid ${user?.role === USER_ROLES.ADMIN ? "fa-gauge-high" : "fa-house"}`}></i>
+                                <span className="nav-label">{user?.role === USER_ROLES.ADMIN ? "Dashboard" : "Accueil"}</span>
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link href="/Offres" className="nav-link">
+                            <Link href="/Offres" className="nav-link" onClick={() => setIsOpen(false)}>
                                 <i className="fa-solid fa-briefcase"></i>
                                 <span className="nav-label">Offres</span>
                             </Link>
                         </li>
-                        {isAdmin && (
+                        {user?.role === USER_ROLES.ADMIN && (
                             <>
                                 <li className="nav-item">
-                                    <Link href="/admin/entreprises" className="nav-link">
+                                    <Link href="/admin/entreprises" className="nav-link" onClick={() => setIsOpen(false)}>
                                         <i className="fa-solid fa-building"></i>
                                         <span className="nav-label">Entreprises</span>
                                     </Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link href="/admin/Etudiants" className="nav-link">
+                                    <Link href="/admin/Etudiants" className="nav-link" onClick={() => setIsOpen(false)}>
                                         <i className="fa-solid fa-user-graduate"></i>
                                         <span className="nav-label">Étudiants</span>
                                     </Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link href="/admin/pilotes" className="nav-link">
+                                    <Link href="/admin/pilotes" className="nav-link" onClick={() => setIsOpen(false)}>
                                         <i className="fa-solid fa-user-tie"></i>
                                         <span className="nav-label">Pilotes</span>
                                     </Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link href="/admin/support" className="nav-link">
+                                    <Link href="/admin/support" className="nav-link" onClick={() => setIsOpen(false)}>
                                         <i className="fa-solid fa-headset"></i>
                                         <span className="nav-label">Support</span>
                                     </Link>
                                 </li>
                             </>
                         )}
-                        {!isAdmin && (
+                        {!user?.role === USER_ROLES.ADMIN && (
                             <li className="nav-item">
-                                <Link href="/Contact" className="nav-link">
+                                <Link href="/Contact" className="nav-link" onClick={() => setIsOpen(false)}>
                                     <i className="fa-solid fa-envelope"></i>
                                     <span className="nav-label">Contact</span>
                                 </Link>
@@ -176,7 +162,7 @@ export default function Navigation() {
                     </ul>
                     <ul className="secondary-nav">
                         <li className="nav-item">
-                            {isLoggedIn ? (
+                            {user ? (
                                 <button 
                                     onClick={handleLogout}
                                     className="nav-link deconnexion-button"
@@ -185,7 +171,7 @@ export default function Navigation() {
                                     <span className="nav-label">Déconnexion</span>
                                 </button>
                             ) : (
-                                <Link href="/Login" className="nav-link">
+                                <Link href="/Login" className="nav-link" onClick={() => setIsOpen(false)}>
                                     <i className="fa-solid fa-right-to-bracket"></i>
                                     <span className="nav-label">Connexion</span>
                                 </Link>
