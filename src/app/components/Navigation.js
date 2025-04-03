@@ -14,8 +14,10 @@ export default function Navigation() {
 
     const handleLogout = () => {
         logout();
-        router.refresh();
-        router.push('/Login');
+        window.location.reload();
+        setTimeout(() => {
+            router.push('/Login');
+        }, 100);
     };
 
     useEffect(() => {
