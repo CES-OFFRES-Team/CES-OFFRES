@@ -12,12 +12,18 @@ export function middleware(request) {
     return NextResponse.next();
   }
   
+  // Log pour le débogage
+  console.log('Middleware - URL:', request.nextUrl.pathname);
+  console.log('Middleware - Token:', authToken?.value);
+  
   // Vérification basique du token
   if (!authToken || !authToken.value || authToken.value.trim() === '') {
+    console.log('Middleware - Redirection vers login (pas de token)');
     return NextResponse.redirect(new URL('/Login', request.url));
   }
   
   // Pour toutes les autres routes, permettre l'accès
+  console.log('Middleware - Accès autorisé');
   return NextResponse.next();
 }
 
