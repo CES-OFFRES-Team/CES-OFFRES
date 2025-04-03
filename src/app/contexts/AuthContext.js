@@ -29,11 +29,11 @@ export function AuthProvider({ children }) {
     console.log('Données à stocker:', userData);
     console.log('Token à stocker:', token);
     
-    // Vérifier la présence de l'id_personne
-    if (!userData.id_personne) {
-      console.error('id_personne manquant dans les données utilisateur');
-      return;
-    }
+    // S'assurer que l'ID est présent d'une manière ou d'une autre
+    const userDataWithId = {
+      ...userData,
+      id_personne: userData.id_personne || userData.id || null
+    };
     
     // Définir les cookies
     const cookieOptions = { 
@@ -44,11 +44,11 @@ export function AuthProvider({ children }) {
     };
     
     Cookies.set(COOKIE_KEYS.AUTH_TOKEN, token, cookieOptions);
-    Cookies.set(COOKIE_KEYS.USER_DATA, JSON.stringify(userData), cookieOptions);
+    Cookies.set(COOKIE_KEYS.USER_DATA, JSON.stringify(userDataWithId), cookieOptions);
     Cookies.set(COOKIE_KEYS.USER_ROLE, userData.role, cookieOptions);
     
     // Mettre à jour l'état
-    setUser(userData);
+    setUser(userDataWithId);
   };
   
   const handleLogout = () => {

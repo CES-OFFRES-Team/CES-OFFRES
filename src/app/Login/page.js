@@ -85,18 +85,24 @@ export default function LoginPage() {
       }
       
       // Vérifier que les données nécessaires sont présentes
-      if (!data.token || !data.user || !data.user.id_personne) {
+      if (!data.token || !data.user) {
         throw new Error('Réponse du serveur incomplète');
       }
+
+      // Adapter les données utilisateur si nécessaire
+      const userData = {
+        ...data.user,
+        id_personne: data.user.id  // Utiliser l'id comme id_personne
+      };
       
       // Mettre à jour le contexte d'authentification (qui gère les cookies)
-      login(data.user, data.token);
+      login(userData, data.token);
       
       // Afficher le succès
-      setSuccessMessage(`Connexion réussie ! Bienvenue ${data.user.prenom}`);
+      setSuccessMessage(`Connexion réussie ! Bienvenue ${userData.prenom || ''}`);
       
       // Déterminer la redirection en fonction du rôle
-      const userRole = data.user.role;
+      const userRole = userData.role;
       const redirectPath = REDIRECT_PATHS[userRole] || REDIRECT_PATHS[USER_ROLES.ETUDIANT];
       
       console.log('Redirection vers:', redirectPath);
