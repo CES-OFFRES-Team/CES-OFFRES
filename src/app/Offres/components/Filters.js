@@ -2,6 +2,8 @@ import React from 'react';
 import styles from '../Offres.module.css';
 import ThemeInput from './ThemeInput';
 import TagInput from './TagInput';
+import DurationFilter from './DurationFilter';
+import DateRangeFilter from './DateRangeFilter';
 
 const Filters = ({ offres = [], entreprises = [], onFilterChange, filtres }) => {
     const villesDisponibles = React.useMemo(() => {
@@ -55,6 +57,14 @@ const Filters = ({ offres = [], entreprises = [], onFilterChange, filtres }) => 
                         }}
                     />
                 </div>
+
+                <DateRangeFilter
+                    periode={filtres.periode}
+                    onChange={(newPeriode) => onFilterChange({
+                        ...filtres,
+                        periode: newPeriode
+                    })}
+                />
             </div>
 
             <div className={styles.filterActions}>
@@ -63,7 +73,8 @@ const Filters = ({ offres = [], entreprises = [], onFilterChange, filtres }) => 
                     onClick={() => onFilterChange({ 
                         entreprises: [], 
                         villes: [], 
-                        themes: [] 
+                        themes: [],
+                        periode: { debut: '', fin: '' }
                     })}
                 >
                     Réinitialiser
