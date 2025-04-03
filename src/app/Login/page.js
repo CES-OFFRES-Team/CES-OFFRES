@@ -95,8 +95,22 @@ export default function LoginPage() {
         id_personne: data.user.id  // Utiliser l'id comme id_personne
       };
       
+      // Log des données avant le stockage
+      console.log('Données à stocker:', {
+        userData,
+        token: data.token
+      });
+      
       // Mettre à jour le contexte d'authentification (qui gère les cookies)
       login(userData, data.token);
+      
+      // Vérifier que les données ont été correctement stockées
+      const storedToken = Cookies.get(COOKIE_KEYS.AUTH_TOKEN);
+      const storedUserData = Cookies.get(COOKIE_KEYS.USER_DATA);
+      console.log('Données stockées:', {
+        token: storedToken,
+        userData: storedUserData
+      });
       
       // Afficher le succès
       setSuccessMessage(`Connexion réussie ! Bienvenue ${userData.prenom || ''}`);

@@ -21,15 +21,20 @@ export default function WishList() {
             setLoading(true);
             const userData = getUserData();
             const token = getAuthToken();
-            console.log('Données utilisateur:', userData); // Log pour déboguer
-            console.log('Token:', token); // Log pour déboguer
+            
+            // Logs détaillés pour le débogage
+            console.log('Données utilisateur complètes:', userData);
+            console.log('Token récupéré:', token);
+            console.log('ID utilisateur:', userData?.id_personne);
 
             if (!userData || !userData.id_personne) {
-                setError('Utilisateur non authentifié');
+                console.error('Données utilisateur invalides:', userData);
+                setError('Utilisateur non authentifié ou ID manquant');
                 return;
             }
 
             if (!token) {
+                console.error('Token manquant');
                 setError('Token d\'authentification manquant');
                 return;
             }
@@ -42,7 +47,9 @@ export default function WishList() {
                 }
             });
 
-            console.log('Statut de la réponse:', response.status); // Log pour déboguer
+            // Log de la réponse complète
+            console.log('Statut de la réponse:', response.status);
+            console.log('Headers de la réponse:', Object.fromEntries(response.headers.entries()));
 
             if (!response.ok) {
                 const errorText = await response.text();
