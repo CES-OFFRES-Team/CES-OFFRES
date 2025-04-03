@@ -15,33 +15,40 @@ class JWTUtils {
     public function verifyToken($token) {
         try {
             if (empty($token)) {
+                error_log("Token vide");
                 return false;
             }
 
             // Diviser le token en ses composants (header, payload, signature)
             $tokenParts = explode('.', $token);
             if (count($tokenParts) != 3) {
+                error_log("Format de token invalide");
                 return false;
             }
 
             list($header, $payload, $signature) = $tokenParts;
 
             // Décoder le payload
-            $decodedPayload = json_decode(base64_decode($payload));
+            $decodedPayload = json_decode($this->base64UrlDecode($payload));
             if (!$decodedPayload) {
+                error_log("Impossible de décoder le payload");
                 return false;
             }
 
             // Vérifier si le token a expiré
             if (isset($decodedPayload->exp) && $decodedPayload->exp < time()) {
+                error_log("Token expiré");
                 return false;
             }
 
             // Vérifier la signature
-            $expectedSignature = hash_hmac('sha256', "$header.$payload", $this->secretKey, true);
+            $expectedSignature = hash_hmac('sha256', $header . '.' . $payload, $this->secretKey, true);
             $expectedSignature = $this->base64UrlEncode($expectedSignature);
 
             if ($signature !== $expectedSignature) {
+                error_log("Signature invalide");
+                error_log("Attendu: " . $expectedSignature);
+                error_log("Reçu: " . $signature);
                 return false;
             }
 
@@ -50,6 +57,7 @@ class JWTUtils {
             $stmt->execute([$decodedPayload->id]);
             
             if (!$stmt->fetch()) {
+                error_log("Utilisateur non trouvé en base de données");
                 return false;
             }
 
@@ -62,9 +70,15 @@ class JWTUtils {
     }
 
     private function base64UrlEncode($data) {
-        $base64 = base64_encode($data);
-        $base64Url = strtr($base64, '+/', '-_');
-        return rtrim($base64Url, '=');
+        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+    }
+
+    private function base64UrlDecode($data) {
+        $pad = strlen($data) % 4;
+        if ($pad) {
+            $data .= str_repeat('=', 4 - $pad);
+        }
+        return base64_decode(strtr($data, '-_', '+/'));
     }
 
     public function generateToken($userId, $role) {
@@ -81,7 +95,7 @@ class JWTUtils {
         $base64UrlPayload = $this->base64UrlEncode($payload);
 
         $signature = hash_hmac('sha256', 
-            "$base64UrlHeader.$base64UrlPayload", 
+            $base64UrlHeader . '.' . $base64UrlPayload, 
             $this->secretKey, 
             true
         );
