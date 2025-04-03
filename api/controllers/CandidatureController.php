@@ -16,22 +16,23 @@ class CandidatureController {
             }
             $this->candidature = new Candidature($this->db);
             
-            // Définir le chemin d'upload
-            $this->upload_directory = dirname(__DIR__) . '/uploads/';
+            // Définir le chemin d'upload avec le bon séparateur de chemin
+            $this->upload_directory = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR;
             
-            // Créer les dossiers nécessaires
-            if (!file_exists($this->upload_directory)) {
-                mkdir($this->upload_directory, 0777, true);
-            }
+            error_log("[DEBUG] Chemin d'upload: " . $this->upload_directory);
             
-            if (!file_exists($this->upload_directory . 'cv')) {
-                mkdir($this->upload_directory . 'cv', 0777, true);
+            // Créer les dossiers nécessaires avec les bons droits
+            foreach (['', 'cv', 'lettres'] as $dir) {
+                $path = $this->upload_directory . $dir;
+                if (!file_exists($path)) {
+                    if (!mkdir($path, 0777, true)) {
+                        error_log("[ERROR] Impossible de créer le dossier: " . $path);
+                        throw new Exception("Erreur lors de la création du dossier " . $dir);
+                    }
+                }
+                // S'assurer que les permissions sont correctes
+                chmod($path, 0777);
             }
-            
-            if (!file_exists($this->upload_directory . 'lettres')) {
-                mkdir($this->upload_directory . 'lettres', 0777, true);
-            }
-
         } catch (Exception $e) {
             error_log("[ERROR] Erreur dans le constructeur: " . $e->getMessage());
             throw $e;
@@ -64,9 +65,15 @@ class CandidatureController {
 
     private function createCandidature() {
         try {
+            error_log("[DEBUG] Début de createCandidature");
+            error_log("[DEBUG] FILES reçus: " . print_r($_FILES, true));
+            error_log("[DEBUG] POST reçu: " . print_r($_POST, true));
+
             // Vérifier si des fichiers ont été envoyés
-            if (!isset($_FILES['cv'])) {
-                throw new Exception("Le CV est requis");
+            if (!isset($_FILES['cv']) || $_FILES['cv']['error'] !== UPLOAD_ERR_OK) {
+                $error = isset($_FILES['cv']) ? $_FILES['cv']['error'] : 'Aucun fichier';
+                error_log("[ERROR] Erreur upload CV: " . $error);
+                throw new Exception("Erreur lors de l'upload du CV: " . $this->getUploadErrorMessage($error));
             }
 
             // Vérifier les données requises
@@ -88,9 +95,13 @@ class CandidatureController {
             }
 
             $cv_filename = uniqid('cv_') . '.pdf';
-            $cv_path = $this->upload_directory . 'cv/' . $cv_filename;
+            $cv_path = 'uploads/cv/' . $cv_filename; // Chemin relatif pour la BD
+            $cv_full_path = $this->upload_directory . 'cv' . DIRECTORY_SEPARATOR . $cv_filename; // Chemin complet pour l'upload
             
-            if (!move_uploaded_file($_FILES['cv']['tmp_name'], $cv_path)) {
+            error_log("[DEBUG] Tentative d'upload du CV vers: " . $cv_full_path);
+            
+            if (!move_uploaded_file($_FILES['cv']['tmp_name'], $cv_full_path)) {
+                error_log("[ERROR] Erreur move_uploaded_file. Permissions du dossier: " . substr(sprintf('%o', fileperms($this->upload_directory . 'cv')), -4));
                 throw new Exception("Erreur lors de l'upload du CV");
             }
 
@@ -98,8 +109,11 @@ class CandidatureController {
             $lettre_path = null;
             if (isset($_POST['lettre_motivation']) && !empty($_POST['lettre_motivation'])) {
                 $lettre_filename = uniqid('lettre_') . '.txt';
-                $lettre_path = $this->upload_directory . 'lettres/' . $lettre_filename;
-                if (!file_put_contents($lettre_path, $_POST['lettre_motivation'])) {
+                $lettre_path = 'uploads/lettres/' . $lettre_filename; // Chemin relatif pour la BD
+                $lettre_full_path = $this->upload_directory . 'lettres' . DIRECTORY_SEPARATOR . $lettre_filename;
+                
+                if (!file_put_contents($lettre_full_path, $_POST['lettre_motivation'])) {
+                    error_log("[ERROR] Erreur lors de l'écriture de la lettre de motivation");
                     throw new Exception("Erreur lors de l'enregistrement de la lettre de motivation");
                 }
             }
@@ -112,6 +126,8 @@ class CandidatureController {
                 'lettre_path' => $lettre_path,
                 'statut' => 'En attente'
             ];
+
+            error_log("[DEBUG] Données de candidature: " . print_r($candidatureData, true));
 
             $id = $this->candidature->create($candidatureData);
 
@@ -133,6 +149,27 @@ class CandidatureController {
                 'status' => 'error',
                 'message' => $e->getMessage()
             ]);
+        }
+    }
+
+    private function getUploadErrorMessage($code) {
+        switch ($code) {
+            case UPLOAD_ERR_INI_SIZE:
+                return 'Le fichier dépasse la taille maximale autorisée par PHP';
+            case UPLOAD_ERR_FORM_SIZE:
+                return 'Le fichier dépasse la taille maximale autorisée par le formulaire';
+            case UPLOAD_ERR_PARTIAL:
+                return 'Le fichier n\'a été que partiellement téléchargé';
+            case UPLOAD_ERR_NO_FILE:
+                return 'Aucun fichier n\'a été téléchargé';
+            case UPLOAD_ERR_NO_TMP_DIR:
+                return 'Le dossier temporaire est manquant';
+            case UPLOAD_ERR_CANT_WRITE:
+                return 'Échec de l\'écriture du fichier sur le disque';
+            case UPLOAD_ERR_EXTENSION:
+                return 'Une extension PHP a arrêté l\'upload du fichier';
+            default:
+                return 'Erreur inconnue lors de l\'upload';
         }
     }
 

@@ -27,6 +27,7 @@ export default function PostulerForm({ params }) {
         cv: null,
         lettreMotivation: '',
     });
+    const [errorDetails, setErrorDetails] = useState(null);
 
     useEffect(() => {
         // Récupérer les informations de l'utilisateur
@@ -90,6 +91,7 @@ export default function PostulerForm({ params }) {
         e.preventDefault();
         setLoading(true);
         setError(null);
+        setErrorDetails(null);
 
         try {
             // Vérifier si l'utilisateur est connecté
@@ -132,20 +134,28 @@ export default function PostulerForm({ params }) {
             });
 
             // Vérifier la réponse
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Réponse serveur:', errorText);
-                throw new Error("Erreur lors de l'envoi de la candidature");
-            }
+            const responseText = await response.text();
+            console.log('Réponse brute:', responseText);
 
             let data;
             try {
-                const responseText = await response.text();
                 data = JSON.parse(responseText);
-                console.log('Réponse serveur:', data);
             } catch (e) {
-                console.error('Erreur de parsing JSON:', e);
+                setErrorDetails({
+                    message: "Erreur de parsing JSON",
+                    response: responseText,
+                    error: e.message
+                });
                 throw new Error("Format de réponse invalide du serveur");
+            }
+
+            if (!response.ok || data.status === 'error') {
+                setErrorDetails({
+                    message: data.message || "Erreur serveur",
+                    status: response.status,
+                    response: data
+                });
+                throw new Error(data.message || "Erreur lors de l'envoi de la candidature");
             }
 
             if (data.status === 'success') {
@@ -178,8 +188,62 @@ export default function PostulerForm({ params }) {
     if (error) {
         return (
             <div className="error-container">
+                <h2 className="error-title">Erreur</h2>
                 <p className="error-message">{error}</p>
+                
+                {errorDetails && (
+                    <div className="error-details">
+                        <h3>Détails techniques :</h3>
+                        <pre className="error-technical">
+                            {JSON.stringify(errorDetails, null, 2)}
+                        </pre>
+                    </div>
+                )}
+                
                 <button onClick={handleGoBack} className="btn btn-primary">Retour</button>
+                
+                <style jsx>{`
+                    .error-container {
+                        padding: 2rem;
+                        max-width: 800px;
+                        margin: 2rem auto;
+                        background: #fff;
+                        border-radius: 8px;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    }
+                    .error-title {
+                        color: #dc3545;
+                        margin-bottom: 1rem;
+                    }
+                    .error-message {
+                        color: #721c24;
+                        background-color: #f8d7da;
+                        border: 1px solid #f5c6cb;
+                        padding: 1rem;
+                        border-radius: 4px;
+                        margin-bottom: 1rem;
+                    }
+                    .error-details {
+                        margin-top: 1.5rem;
+                        padding: 1rem;
+                        background: #f8f9fa;
+                        border: 1px solid #dee2e6;
+                        border-radius: 4px;
+                    }
+                    .error-technical {
+                        background: #272822;
+                        color: #f8f8f2;
+                        padding: 1rem;
+                        border-radius: 4px;
+                        overflow-x: auto;
+                        font-family: monospace;
+                        white-space: pre-wrap;
+                        margin-top: 0.5rem;
+                    }
+                    .btn {
+                        margin-top: 1rem;
+                    }
+                `}</style>
             </div>
         );
     }
