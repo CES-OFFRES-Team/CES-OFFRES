@@ -16,28 +16,50 @@ class CandidatureController {
             }
             $this->candidature = new Candidature($this->db);
             
-            // Définir le chemin d'upload avec le bon séparateur de chemin
-            $this->upload_directory = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR;
-            error_log("[DEBUG] Chemin d'upload configuré: " . $this->upload_directory);
+            // Définir le chemin d'upload de manière absolue
+            $this->upload_directory = realpath(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'uploads';
+            error_log("[DEBUG] Chemin d'upload absolu: " . $this->upload_directory);
 
-            // Créer les dossiers nécessaires avec les bons droits
-            foreach (['', 'cv', 'lettres'] as $dir) {
-                $path = $this->upload_directory . $dir;
-                if (!file_exists($path)) {
-                    if (!@mkdir($path, 0777, true)) {
-                        error_log("[ERROR] Impossible de créer le dossier: " . $path);
-                        throw new Exception("Erreur lors de la création du dossier " . $dir);
-                    }
-                    error_log("[DEBUG] Dossier créé: " . $path);
-                }
-                if (!is_writable($path)) {
-                    error_log("[ERROR] Le dossier n'est pas accessible en écriture: " . $path);
-                    throw new Exception("Le dossier " . $dir . " n'est pas accessible en écriture");
+            // Vérifier si le dossier principal existe
+            if (!file_exists($this->upload_directory)) {
+                error_log("[DEBUG] Tentative de création du dossier principal: " . $this->upload_directory);
+                if (!@mkdir($this->upload_directory, 0755, true)) {
+                    error_log("[ERROR] Erreur lors de la création du dossier principal: " . error_get_last()['message']);
+                    throw new Exception("Impossible de créer le dossier d'upload");
                 }
             }
+
+            // Créer les sous-dossiers
+            $subdirs = ['cv', 'lettres'];
+            foreach ($subdirs as $dir) {
+                $path = $this->upload_directory . DIRECTORY_SEPARATOR . $dir;
+                error_log("[DEBUG] Vérification/création du dossier: " . $path);
+                
+                if (!file_exists($path)) {
+                    error_log("[DEBUG] Tentative de création du sous-dossier: " . $path);
+                    if (!@mkdir($path, 0755, true)) {
+                        $error = error_get_last();
+                        error_log("[ERROR] Erreur création sous-dossier: " . ($error ? $error['message'] : 'Erreur inconnue'));
+                        throw new Exception("Impossible de créer le sous-dossier " . $dir);
+                    }
+                }
+
+                // Vérifier les permissions
+                if (!is_writable($path)) {
+                    error_log("[DEBUG] Tentative de modification des permissions: " . $path);
+                    if (!@chmod($path, 0755)) {
+                        error_log("[ERROR] Impossible de modifier les permissions du dossier: " . $path);
+                        throw new Exception("Permissions insuffisantes pour le dossier " . $dir);
+                    }
+                }
+            }
+
+            error_log("[DEBUG] Configuration des dossiers terminée avec succès");
+
         } catch (Exception $e) {
-            error_log("[ERROR] Erreur dans le constructeur: " . $e->getMessage());
-            throw $e;
+            error_log("[ERROR] Exception dans le constructeur: " . $e->getMessage());
+            error_log("[ERROR] Trace complète: " . $e->getTraceAsString());
+            throw new Exception("Erreur d'initialisation: " . $e->getMessage());
         }
     }
 
@@ -97,62 +119,71 @@ class CandidatureController {
             }
 
             $cv_filename = uniqid('cv_') . '.pdf';
-            $cv_path = 'uploads/cv/' . $cv_filename; // Chemin relatif pour la BD
-            $cv_full_path = $this->upload_directory . 'cv' . DIRECTORY_SEPARATOR . $cv_filename;
+            $cv_dir = $this->upload_directory . DIRECTORY_SEPARATOR . 'cv';
+            $cv_full_path = $cv_dir . DIRECTORY_SEPARATOR . $cv_filename;
+            $cv_relative_path = 'uploads/cv/' . $cv_filename;
 
-            error_log("[DEBUG] Tentative d'upload du CV vers: " . $cv_full_path);
+            error_log("[DEBUG] Tentative d'upload du CV");
+            error_log("[DEBUG] Chemin complet: " . $cv_full_path);
+            error_log("[DEBUG] Permissions du dossier: " . substr(sprintf('%o', fileperms($cv_dir)), -4));
             
+            if (!is_writable($cv_dir)) {
+                error_log("[ERROR] Le dossier CV n'est pas accessible en écriture");
+                throw new Exception("Le dossier de destination n'est pas accessible en écriture");
+            }
+
             if (!@move_uploaded_file($_FILES['cv']['tmp_name'], $cv_full_path)) {
-                error_log("[ERROR] Erreur move_uploaded_file. Permissions du dossier: " . substr(sprintf('%o', fileperms($this->upload_directory . 'cv')), -4));
-                error_log("[ERROR] Erreur PHP: " . error_get_last()['message']);
-                throw new Exception("Erreur lors de l'upload du CV");
+                $error = error_get_last();
+                error_log("[ERROR] Échec de l'upload du CV: " . ($error ? $error['message'] : 'Erreur inconnue'));
+                throw new Exception("Impossible d'uploader le CV");
             }
 
-            error_log("[DEBUG] CV uploadé avec succès: " . $cv_full_path);
-
-            // Gérer la lettre de motivation
-            $lettre_path = null;
-            if (isset($_POST['lettre_motivation']) && !empty($_POST['lettre_motivation'])) {
-                $lettre_filename = uniqid('lettre_') . '.txt';
-                $lettre_path = 'uploads/lettres/' . $lettre_filename;
-                $lettre_full_path = $this->upload_directory . 'lettres' . DIRECTORY_SEPARATOR . $lettre_filename;
-                
-                if (!@file_put_contents($lettre_full_path, $_POST['lettre_motivation'])) {
-                    error_log("[ERROR] Erreur lors de l'écriture de la lettre. PHP Error: " . error_get_last()['message']);
-                    throw new Exception("Erreur lors de l'enregistrement de la lettre de motivation");
-                }
-                error_log("[DEBUG] Lettre de motivation enregistrée: " . $lettre_full_path);
-            }
+            error_log("[DEBUG] CV uploadé avec succès");
 
             // Créer la candidature
             $candidatureData = [
                 'id_personne' => $_POST['id_personne'],
                 'id_stage' => $_POST['id_stage'],
-                'cv_path' => $cv_path,
-                'lettre_path' => $lettre_path,
+                'cv_path' => $cv_relative_path,
+                'lettre_path' => null,
                 'statut' => 'En attente'
             ];
 
-            error_log("[DEBUG] Tentative de création de la candidature avec les données: " . print_r($candidatureData, true));
+            // Gérer la lettre de motivation si présente
+            if (isset($_POST['lettre_motivation']) && !empty($_POST['lettre_motivation'])) {
+                $lettre_filename = uniqid('lettre_') . '.txt';
+                $lettre_dir = $this->upload_directory . DIRECTORY_SEPARATOR . 'lettres';
+                $lettre_full_path = $lettre_dir . DIRECTORY_SEPARATOR . $lettre_filename;
+                $lettre_relative_path = 'uploads/lettres/' . $lettre_filename;
 
-            $id = $this->candidature->create($candidatureData);
+                if (!@file_put_contents($lettre_full_path, $_POST['lettre_motivation'])) {
+                    error_log("[ERROR] Échec de l'écriture de la lettre de motivation");
+                    throw new Exception("Impossible d'enregistrer la lettre de motivation");
+                }
 
-            if ($id) {
-                error_log("[DEBUG] Candidature créée avec succès, ID: " . $id);
-                return json_encode([
-                    'status' => 'success',
-                    'message' => 'Candidature créée avec succès',
-                    'data' => ['id' => $id]
-                ]);
+                $candidatureData['lettre_path'] = $lettre_relative_path;
+                error_log("[DEBUG] Lettre de motivation enregistrée");
             }
 
-            throw new Exception("Erreur lors de la création de la candidature dans la base de données");
+            error_log("[DEBUG] Tentative de création de la candidature dans la BD");
+            $id = $this->candidature->create($candidatureData);
+
+            if (!$id) {
+                throw new Exception("Échec de la création de la candidature dans la base de données");
+            }
+
+            error_log("[DEBUG] Candidature créée avec succès, ID: " . $id);
+            return json_encode([
+                'status' => 'success',
+                'message' => 'Candidature créée avec succès',
+                'data' => ['id' => $id]
+            ]);
 
         } catch (Exception $e) {
             error_log("[ERROR] Exception dans createCandidature: " . $e->getMessage());
             error_log("[ERROR] Trace: " . $e->getTraceAsString());
             
-            // Supprimer les fichiers uploadés en cas d'erreur
+            // Nettoyer les fichiers en cas d'erreur
             if (isset($cv_full_path) && file_exists($cv_full_path)) {
                 @unlink($cv_full_path);
             }
@@ -165,7 +196,8 @@ class CandidatureController {
                 'message' => $e->getMessage(),
                 'debug_info' => [
                     'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString()
+                    'trace' => $e->getTraceAsString(),
+                    'upload_dir' => $this->upload_directory
                 ]
             ]);
         }
