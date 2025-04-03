@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import './login.css';
 import Cookies from 'js-cookie';
 import { setAuthToken, setUserData } from '../utils/auth';
+import { useRouter } from 'next/navigation';
 
 const EmailIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 32 32" height="20">
@@ -106,6 +107,7 @@ const loginUser = async (email, password) => {
 };
 
 export default function LoginPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -133,18 +135,26 @@ export default function LoginPage() {
         setSuccessMessage(`Connexion réussie ! Bienvenue ${data.user.prenom} ${data.user.nom}`);
         
         // Redirection en fonction du rôle
-        let redirectPath = '/dashboard';
+        let redirectPath = '/dashboard';  // Chemin de repli par défaut
+        
+        console.log('Rôle de l\'utilisateur pour redirection:', data.user.role);
+        
         if (data.user.role === 'Admin') {
           redirectPath = '/admin';
         } else if (data.user.role === 'Pilote') {
           redirectPath = '/pilote/dashboard';
         } else if (data.user.role === 'Etudiant') {
           redirectPath = '/dashboard';
+        } else if (data.user.role === 'Entreprise') {
+          redirectPath = '/entreprise/dashboard';
         }
+        
+        console.log('Redirection programmée vers:', redirectPath);
         
         // Attendre un peu pour que l'utilisateur puisse voir le message de succès
         setTimeout(() => {
-          window.location.href = redirectPath;
+          console.log('Exécution de la redirection vers:', redirectPath);
+          router.push(redirectPath);
         }, 1500);
       } catch (error) {
         setErrorMessage(error.message);
