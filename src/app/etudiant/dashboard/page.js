@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { getUserData } from '../../utils/auth';
+import Link from 'next/link';
 import './dashboard.css';
 
 export default function EtudiantDashboard() {
@@ -155,6 +156,20 @@ export default function EtudiantDashboard() {
                                 <div className="card-stat-label">Offres disponibles</div>
                             </div>
                         </div>
+                    </div>
+
+                    <div className="dashboard-card wishlist-card">
+                        <h3>Ma Wishlist</h3>
+                        <p>Consultez les offres que vous avez sauvegardées pour postuler plus tard</p>
+                        <div className="card-stats">
+                            <div className="card-stat">
+                                <div className="card-stat-number">{stats.offresEnregistrees}</div>
+                                <div className="card-stat-label">Offres sauvegardées</div>
+                            </div>
+                        </div>
+                        <Link href="/etudiant/wishlist" className="action-button">
+                            Voir ma Wishlist
+                        </Link>
                     </div>
                 </div>
             </div>

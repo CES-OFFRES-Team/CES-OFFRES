@@ -1,0 +1,101 @@
+.wishlist-container {
+    padding: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+h1 {
+    text-align: center;
+    color: #2d79f3;
+    margin-bottom: 2rem;
+}
+
+.wishlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.offre-card {
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+    transition: transform 0.2s ease;
+}
+
+.offre-card:hover {
+    transform: translateY(-5px);
+}
+
+.offre-title {
+    font-size: 1.4rem;
+    color: #1e3a8a;
+    margin-bottom: 0.5rem;
+}
+
+.offre-company {
+    color: #4b5563;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+}
+
+.offre-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #374151;
+}
+
+.offre-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-outline {
+    border: 1px solid #2d79f3;
+    color: #2d79f3;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-outline:hover {
+    background-color: #e0e7ff;
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+}
+
+.pagination-controls button {
+    padding: 0.4rem 0.8rem;
+    border: none;
+    background-color: #d1d5db;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.pagination-controls button.active {
+    background-color: #2d79f3;
+    color: white;
+}
