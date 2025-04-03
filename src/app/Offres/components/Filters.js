@@ -1,12 +1,12 @@
 import React from 'react';
 import styles from '../Offres.module.css';
 
-const Filters = ({ offres = [], onFilterChange }) => {  // Adding default empty array
+const Filters = ({ offres = [], entreprises = [], onFilterChange, filtres }) => {
     // Extraire les entreprises uniques
-    const entreprises = [...new Set(offres.map(offre => offre.nom_entreprise))];
+    const nomsEntreprises = [...new Set(offres.map(offre => offre.nom_entreprise))].filter(Boolean);
     
-    // Extraire les villes uniques
-    const villes = [...new Set(offres.map(offre => offre.ville))];
+    // Extraire les villes uniques des entreprises
+    const villes = [...new Set(entreprises.map(e => e.ville))].filter(Boolean);
 
     return (
         <div className={styles.filtersContainer}>
@@ -15,11 +15,20 @@ const Filters = ({ offres = [], onFilterChange }) => {  // Adding default empty 
                     <label className={styles.filterLabel}>Entreprise</label>
                     <select 
                         className={styles.filterSelect}
-                        onChange={(e) => onFilterChange({ entreprise: e.target.value, ville: '' })}
+                        value={filtres?.entreprise || ''}
+                        onChange={(e) => onFilterChange({ 
+                            ...filtres, 
+                            entreprise: e.target.value 
+                        })}
                     >
-                        <option value="">Toutes les entreprises</option>
-                        {entreprises.map(entreprise => (
-                            <option key={entreprise} value={entreprise}>
+                        <option key="all-entreprises" value="">
+                            Toutes les entreprises
+                        </option>
+                        {nomsEntreprises.map((entreprise, index) => (
+                            <option 
+                                key={`entreprise-${index}-${entreprise}`} 
+                                value={entreprise}
+                            >
                                 {entreprise}
                             </option>
                         ))}
@@ -30,11 +39,20 @@ const Filters = ({ offres = [], onFilterChange }) => {  // Adding default empty 
                     <label className={styles.filterLabel}>Ville</label>
                     <select 
                         className={styles.filterSelect}
-                        onChange={(e) => onFilterChange({ entreprise: '', ville: e.target.value })}
+                        value={filtres?.ville || ''}
+                        onChange={(e) => onFilterChange({ 
+                            ...filtres, 
+                            ville: e.target.value 
+                        })}
                     >
-                        <option value="">Toutes les villes</option>
-                        {villes.map(ville => (
-                            <option key={ville} value={ville}>
+                        <option key="all-villes" value="">
+                            Toutes les villes
+                        </option>
+                        {villes.map((ville, index) => (
+                            <option 
+                                key={`ville-${index}-${ville}`} 
+                                value={ville}
+                            >
                                 {ville}
                             </option>
                         ))}
@@ -45,7 +63,10 @@ const Filters = ({ offres = [], onFilterChange }) => {  // Adding default empty 
             <div className={styles.filterActions}>
                 <button 
                     className={styles.resetButton}
-                    onClick={() => onFilterChange({ entreprise: '', ville: '' })}
+                    onClick={() => onFilterChange({ 
+                        entreprise: '', 
+                        ville: '' 
+                    })}
                 >
                     Réinitialiser
                 </button>

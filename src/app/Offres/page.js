@@ -66,6 +66,7 @@ const OffreCard = ({ offre, onFavorite, isFavorite }) => {
 
 export default function Offres() {
     const [offres, setOffres] = useState([]);
+    const [entreprises, setEntreprises] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [filtres, setFiltres] = useState({
@@ -75,45 +76,63 @@ export default function Offres() {
     const [favoris, setFavoris] = useState([]);
 
     useEffect(() => {
-        const fetchOffres = async () => {
+        const fetchData = async () => {
             try {
                 setIsLoading(true);
-                const response = await fetch('http://20.19.36.142/api/offres');
                 
-                if (!response.ok) {
-                    throw new Error(`Erreur HTTP: ${response.status}`);
+                // Récupérer les offres et les entreprises en parallèle
+                const [offresResponse, entreprisesResponse] = await Promise.all([
+                    fetch('http://20.19.36.142/api/offres'),
+                    fetch('http://20.19.36.142/api/entreprises')
+                ]);
+
+                if (!offresResponse.ok || !entreprisesResponse.ok) {
+                    throw new Error('Erreur lors de la récupération des données');
                 }
 
-                const data = await response.json();
-                console.log('Données API:', data); // Debug
+                const offresResult = await offresResponse.json();
+                const entreprisesResult = await entreprisesResponse.json();
 
-                // Vérifier si les données sont dans la propriété "data"
-                const offresData = data.data || data;
-                
-                if (Array.isArray(offresData) && offresData.length > 0) {
-                    setOffres(offresData);
-                    setError(null);
-                    console.log('Offres chargées:', offresData.length); // Debug
-                } else {
-                    console.error('Structure de données:', data); // Debug
-                    throw new Error('Format de données incorrect');
-                }
+                // Debug logs
+                console.log('Données offres brutes:', offresResult);
+                console.log('Données entreprises brutes:', entreprisesResult);
+
+                // S'assurer que nous avons des tableaux
+                const offresArray = Array.isArray(offresResult) ? offresResult : offresResult.data || [];
+                const entreprisesArray = Array.isArray(entreprisesResult) ? entreprisesResult : entreprisesResult.data || [];
+
+                // Créer un map des entreprises pour un accès rapide
+                const entreprisesMap = new Map();
+                entreprisesArray.forEach(entreprise => {
+                    if (entreprise && entreprise.id_entreprise) {
+                        entreprisesMap.set(entreprise.id_entreprise, entreprise);
+                    }
+                });
+
+                // Enrichir les offres avec les données d'entreprise
+                const offresEnrichies = offresArray.map(offre => {
+                    const entrepriseDetails = entreprisesMap.get(offre.id_entreprise) || {};
+                    return {
+                        ...offre,
+                        entrepriseDetails
+                    };
+                });
+
+                setOffres(offresEnrichies);
+                setEntreprises(entreprisesArray);
+                setError(null);
 
             } catch (err) {
                 console.error('Erreur détaillée:', err);
-                setError(`Erreur de chargement: ${err.message}`);
+                setError('Erreur lors du chargement des données');
+                setOffres([]);
+                setEntreprises([]);
             } finally {
                 setIsLoading(false);
             }
         };
 
-        fetchOffres();
-
-        // Charger les favoris depuis le localStorage
-        const savedFavoris = localStorage.getItem('favoris');
-        if (savedFavoris) {
-            setFavoris(JSON.parse(savedFavoris));
-        }
+        fetchData();
     }, []);
 
     const handleFiltreChange = (newFiltres) => {
@@ -122,11 +141,13 @@ export default function Offres() {
 
     const filtrerOffres = () => {
         return offres.filter(offre => {
+            const entreprise = offre.entrepriseDetails;
+            
             const matchEntreprise = !filtres.entreprise || 
                 offre.nom_entreprise === filtres.entreprise;
-            
+                
             const matchVille = !filtres.ville || 
-                offre.ville === filtres.ville;
+                (entreprise && entreprise.ville === filtres.ville);
 
             return matchEntreprise && matchVille;
         });
@@ -153,7 +174,9 @@ export default function Offres() {
             {!isLoading && !error && (
                 <Filters 
                     offres={offres}
+                    entreprises={entreprises}
                     onFilterChange={setFiltres}
+                    filtres={filtres}
                 />
             )}
 
