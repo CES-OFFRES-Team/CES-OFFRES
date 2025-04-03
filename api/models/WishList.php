@@ -34,33 +34,12 @@ class WishList {
 
     public function getWishList($idPersonne) {
         try {
-            $query = "
-                SELECT 
-                    s.id_stage,
-                    s.titre,
-                    s.description,
-                    s.date_debut,
-                    s.date_fin,
-                    s.salaire,
-                    s.type_stage,
-                    s.niveau_etude,
-                    s.competences_requises,
-                    s.localisation,
-                    e.id_entreprise,
-                    e.nom as nom_entreprise,
-                    e.secteur,
-                    e.description as description_entreprise,
-                    e.telephone,
-                    e.email,
-                    e.site_web,
-                    e.adresse,
-                    wl.date_ajout
-                FROM ajouter_wish_list wl
-                JOIN stage s ON wl.id_stage = s.id_stage
-                JOIN entreprise e ON s.id_entreprise = e.id_entreprise
-                WHERE wl.id_personne = ?
-                ORDER BY wl.date_ajout DESC
-            ";
+            $query = "SELECT s.*, e.nom_entreprise, e.email, e.téléphone, e.site_web, e.localisation 
+                     FROM Offres_de_stage s 
+                     INNER JOIN ajouter_wish_list w ON s.id_stage = w.id_stage 
+                     LEFT JOIN Entreprises e ON s.id_entreprise = e.id_entreprise 
+                     WHERE w.id_personne = ? 
+                     ORDER BY w.date_ajout DESC";
             $stmt = $this->db->prepare($query);
             $stmt->execute([$idPersonne]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);

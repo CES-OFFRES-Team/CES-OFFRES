@@ -76,7 +76,8 @@ try {
 // Afficher la structure de la table
 echo "<h2>Structure de la table ajouter_wish_list</h2>";
 try {
-    $db = Database::getInstance()->getConnection();
+    $database = new Database();
+    $db = $database->getConnection();
     $query = "DESCRIBE ajouter_wish_list";
     $stmt = $db->prepare($query);
     $stmt->execute();
@@ -90,7 +91,8 @@ try {
 // Afficher quelques exemples de données
 echo "<h2>Exemples de données dans la table ajouter_wish_list</h2>";
 try {
-    $db = Database::getInstance()->getConnection();
+    $database = new Database();
+    $db = $database->getConnection();
     $query = "SELECT * FROM ajouter_wish_list LIMIT 5";
     $stmt = $db->prepare($query);
     $stmt->execute();
