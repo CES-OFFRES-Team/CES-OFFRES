@@ -14,6 +14,7 @@ export default function Navigation() {
 
     const handleLogout = () => {
         logout();
+        router.refresh();
         router.push('/Login');
     };
 
