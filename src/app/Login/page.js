@@ -64,7 +64,7 @@ export default function LoginPage() {
     
     try {
       // Effectuer la requête de connexion
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch('http://20.19.36.142:8000/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
