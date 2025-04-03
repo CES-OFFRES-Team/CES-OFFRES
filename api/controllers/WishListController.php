@@ -2,7 +2,6 @@
 
 require_once __DIR__ . '/../models/WishList.php';
 require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../config/jwt.php';
 
 class WishListController {
     private $wishListModel;
@@ -12,47 +11,6 @@ class WishListController {
         $database = new Database();
         $this->db = $database->getConnection();
         $this->wishListModel = new WishList($this->db);
-    }
-
-    private function getAuthorizationHeader() {
-        $headers = null;
-        if (isset($_SERVER['Authorization'])) {
-            $headers = trim($_SERVER["Authorization"]);
-        } else if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-            $headers = trim($_SERVER["HTTP_AUTHORIZATION"]);
-        } elseif (function_exists('apache_request_headers')) {
-            $requestHeaders = apache_request_headers();
-            $requestHeaders = array_combine(array_map('ucwords', array_keys($requestHeaders)), array_values($requestHeaders));
-            if (isset($requestHeaders['Authorization'])) {
-                $headers = trim($requestHeaders['Authorization']);
-            }
-        }
-        return $headers;
-    }
-
-    private function getBearerToken() {
-        $headers = $this->getAuthorizationHeader();
-        if (!empty($headers)) {
-            if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
-                return $matches[1];
-            }
-        }
-        return null;
-    }
-
-    private function validateToken() {
-        $token = $this->getBearerToken();
-        if (!$token) {
-            return null;
-        }
-
-        try {
-            $jwt = \Firebase\JWT\JWT::decode($token, JWT_SECRET, array('HS256'));
-            return (array) $jwt;
-        } catch (Exception $e) {
-            error_log("Erreur de validation du token: " . $e->getMessage());
-            return null;
-        }
     }
 
     public function handleRequest($method, $action = null, $id = null) {
@@ -68,25 +26,15 @@ class WishListController {
         }
 
         try {
-            // Valider le token et récupérer les données utilisateur
-            $userData = $this->validateToken();
-            if (!$userData) {
-                http_response_code(401);
-                return json_encode(['error' => 'Non authentifié']);
-            }
-
-            error_log("Action demandée: " . $action);
-            error_log("Données utilisateur: " . print_r($userData, true));
-
             switch ($action) {
                 case 'getWishList':
-                    return $this->getWishList($userData['id']);
+                    return $this->getWishList();
                 case 'addToWishList':
-                    return $this->addToWishList($userData['id']);
+                    return $this->addToWishList();
                 case 'removeFromWishList':
-                    return $this->removeFromWishList($userData['id'], $id);
+                    return $this->removeFromWishList($id);
                 case 'checkWishListStatus':
-                    return $this->checkWishListStatus($userData['id'], $id);
+                    return $this->checkWishListStatus($id);
                 default:
                     http_response_code(400);
                     return json_encode(['error' => 'Action non supportée']);
@@ -98,14 +46,19 @@ class WishListController {
         }
     }
 
-    private function getWishList($userId) {
+    private function getWishList() {
         try {
-            error_log("Récupération de la wishlist pour l'utilisateur: " . $userId);
-            
-            $wishList = $this->wishListModel->getWishList($userId);
-            $count = $this->wishListModel->getWishListCount($userId);
+            // Pour le test, on simule un utilisateur connecté
+            $userData = [
+                'id' => 5,
+                'nom' => 'Test',
+                'prenom' => 'User',
+                'email' => 'test@example.com',
+                'role' => 'Etudiant'
+            ];
 
-            error_log("Nombre d'éléments trouvés: " . $count);
+            $wishList = $this->wishListModel->getWishList($userData['id']);
+            $count = $this->wishListModel->getWishListCount($userData['id']);
 
             return json_encode([
                 'count' => $count,
@@ -118,20 +71,28 @@ class WishListController {
         }
     }
 
-    private function addToWishList($userId) {
+    private function addToWishList() {
         try {
+            $userData = [
+                'id' => 5,
+                'nom' => 'Test',
+                'prenom' => 'User',
+                'email' => 'test@example.com',
+                'role' => 'Etudiant'
+            ];
+
             $data = json_decode(file_get_contents('php://input'), true);
             if (!isset($data['idStage'])) {
                 http_response_code(400);
                 return json_encode(['error' => 'ID du stage requis']);
             }
 
-            if ($this->wishListModel->isInWishList($userId, $data['idStage'])) {
+            if ($this->wishListModel->isInWishList($userData['id'], $data['idStage'])) {
                 http_response_code(400);
                 return json_encode(['error' => 'Ce stage est déjà dans votre wishlist']);
             }
 
-            $this->wishListModel->addToWishList($userId, $data['idStage']);
+            $this->wishListModel->addToWishList($userData['id'], $data['idStage']);
             http_response_code(201);
             return json_encode(['message' => 'Stage ajouté à la wishlist avec succès']);
         } catch (Exception $e) {
@@ -141,14 +102,22 @@ class WishListController {
         }
     }
 
-    private function removeFromWishList($userId, $idStage) {
+    private function removeFromWishList($idStage) {
         try {
+            $userData = [
+                'id' => 5,
+                'nom' => 'Test',
+                'prenom' => 'User',
+                'email' => 'test@example.com',
+                'role' => 'Etudiant'
+            ];
+
             if (!$idStage) {
                 http_response_code(400);
                 return json_encode(['error' => 'ID du stage requis']);
             }
 
-            $this->wishListModel->removeFromWishList($userId, $idStage);
+            $this->wishListModel->removeFromWishList($userData['id'], $idStage);
             return json_encode(['message' => 'Stage retiré de la wishlist avec succès']);
         } catch (Exception $e) {
             error_log("Erreur dans removeFromWishList: " . $e->getMessage());
@@ -157,14 +126,22 @@ class WishListController {
         }
     }
 
-    private function checkWishListStatus($userId, $idStage) {
+    private function checkWishListStatus($idStage) {
         try {
+            $userData = [
+                'id' => 5,
+                'nom' => 'Test',
+                'prenom' => 'User',
+                'email' => 'test@example.com',
+                'role' => 'Etudiant'
+            ];
+
             if (!$idStage) {
                 http_response_code(400);
                 return json_encode(['error' => 'ID du stage requis']);
             }
 
-            $isInWishList = $this->wishListModel->isInWishList($userId, $idStage);
+            $isInWishList = $this->wishListModel->isInWishList($userData['id'], $idStage);
             return json_encode(['isInWishList' => $isInWishList]);
         } catch (Exception $e) {
             error_log("Erreur dans checkWishListStatus: " . $e->getMessage());

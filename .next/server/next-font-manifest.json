@@ -1,39 +1,9 @@
 {
   "app": {
-    "[project]/src/app/About/page": [
-      "static/media/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw-s.p.7b3669ea.woff2"
-    ],
-    "[project]/src/app/Contact/page": [
-      "static/media/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw-s.p.7b3669ea.woff2"
-    ],
-    "[project]/src/app/FAQ/page": [
-      "static/media/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw-s.p.7b3669ea.woff2"
-    ],
-    "[project]/src/app/Login/page": [
-      "static/media/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw-s.p.7b3669ea.woff2"
-    ],
     "[project]/src/app/Offres/page": [
       "static/media/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw-s.p.7b3669ea.woff2"
     ],
-    "[project]/src/app/Offres/postuler/[id]/page": [
-      "static/media/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw-s.p.7b3669ea.woff2"
-    ],
-    "[project]/src/app/PolitiqueDeConfidentialite/page": [
-      "static/media/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw-s.p.7b3669ea.woff2"
-    ],
-    "[project]/src/app/_not-found/page": [
-      "static/media/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw-s.p.7b3669ea.woff2"
-    ],
-    "[project]/src/app/faq/page": [
-      "static/media/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw-s.p.7b3669ea.woff2"
-    ],
-    "[project]/src/app/mentions-legales/page": [
-      "static/media/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw-s.p.7b3669ea.woff2"
-    ],
     "[project]/src/app/page": [
-      "static/media/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw-s.p.7b3669ea.woff2"
-    ],
-    "[project]/src/app/politique-confidentialite/page": [
       "static/media/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw-s.p.7b3669ea.woff2"
     ]
   },

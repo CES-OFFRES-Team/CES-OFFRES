@@ -1,15 +1,5 @@
 {
-  "/About/page": "app/About/page.js",
-  "/Contact/page": "app/Contact/page.js",
-  "/FAQ/page": "app/FAQ/page.js",
-  "/Login/page": "app/Login/page.js",
   "/Offres/page": "app/Offres/page.js",
-  "/Offres/postuler/[id]/page": "app/Offres/postuler/[id]/page.js",
-  "/PolitiqueDeConfidentialite/page": "app/PolitiqueDeConfidentialite/page.js",
-  "/_not-found/page": "app/_not-found/page.js",
-  "/faq/page": "app/faq/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/mentions-legales/page": "app/mentions-legales/page.js",
-  "/page": "app/page.js",
-  "/politique-confidentialite/page": "app/politique-confidentialite/page.js"
+  "/page": "app/page.js"
 }

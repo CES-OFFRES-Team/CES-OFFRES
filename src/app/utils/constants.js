@@ -23,4 +23,3 @@ export const REDIRECT_PATHS = {
   [USER_ROLES.PILOTE]: '/pilote/dashboard',
   [USER_ROLES.ENTREPRISE]: '/entreprise/dashboard'
 }; 
-
