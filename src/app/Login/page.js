@@ -106,12 +106,6 @@ export default function LoginPage() {
       Cookies.set('userData', JSON.stringify(userData), cookieOptions);
       Cookies.set('userRole', userData.role, cookieOptions);
       
-      // Vérifier que les cookies ont bien été enregistrés
-      const token = Cookies.get('authToken');
-      if (!token) {
-        throw new Error('Erreur lors de l\'enregistrement du token');
-      }
-      
       // Afficher le succès
       setSuccessMessage(`Connexion réussie ! Bienvenue ${userData.prenom}`);
       
