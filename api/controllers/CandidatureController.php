@@ -18,20 +18,22 @@ class CandidatureController {
             
             // Définir le chemin d'upload avec le bon séparateur de chemin
             $this->upload_directory = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR;
-            
-            error_log("[DEBUG] Chemin d'upload: " . $this->upload_directory);
-            
+            error_log("[DEBUG] Chemin d'upload configuré: " . $this->upload_directory);
+
             // Créer les dossiers nécessaires avec les bons droits
             foreach (['', 'cv', 'lettres'] as $dir) {
                 $path = $this->upload_directory . $dir;
                 if (!file_exists($path)) {
-                    if (!mkdir($path, 0777, true)) {
+                    if (!@mkdir($path, 0777, true)) {
                         error_log("[ERROR] Impossible de créer le dossier: " . $path);
                         throw new Exception("Erreur lors de la création du dossier " . $dir);
                     }
+                    error_log("[DEBUG] Dossier créé: " . $path);
                 }
-                // S'assurer que les permissions sont correctes
-                chmod($path, 0777);
+                if (!is_writable($path)) {
+                    error_log("[ERROR] Le dossier n'est pas accessible en écriture: " . $path);
+                    throw new Exception("Le dossier " . $dir . " n'est pas accessible en écriture");
+                }
             }
         } catch (Exception $e) {
             error_log("[ERROR] Erreur dans le constructeur: " . $e->getMessage());
@@ -66,8 +68,8 @@ class CandidatureController {
     private function createCandidature() {
         try {
             error_log("[DEBUG] Début de createCandidature");
-            error_log("[DEBUG] FILES reçus: " . print_r($_FILES, true));
             error_log("[DEBUG] POST reçu: " . print_r($_POST, true));
+            error_log("[DEBUG] FILES reçu: " . print_r($_FILES, true));
 
             // Vérifier si des fichiers ont été envoyés
             if (!isset($_FILES['cv']) || $_FILES['cv']['error'] !== UPLOAD_ERR_OK) {
@@ -96,26 +98,30 @@ class CandidatureController {
 
             $cv_filename = uniqid('cv_') . '.pdf';
             $cv_path = 'uploads/cv/' . $cv_filename; // Chemin relatif pour la BD
-            $cv_full_path = $this->upload_directory . 'cv' . DIRECTORY_SEPARATOR . $cv_filename; // Chemin complet pour l'upload
-            
+            $cv_full_path = $this->upload_directory . 'cv' . DIRECTORY_SEPARATOR . $cv_filename;
+
             error_log("[DEBUG] Tentative d'upload du CV vers: " . $cv_full_path);
             
-            if (!move_uploaded_file($_FILES['cv']['tmp_name'], $cv_full_path)) {
+            if (!@move_uploaded_file($_FILES['cv']['tmp_name'], $cv_full_path)) {
                 error_log("[ERROR] Erreur move_uploaded_file. Permissions du dossier: " . substr(sprintf('%o', fileperms($this->upload_directory . 'cv')), -4));
+                error_log("[ERROR] Erreur PHP: " . error_get_last()['message']);
                 throw new Exception("Erreur lors de l'upload du CV");
             }
+
+            error_log("[DEBUG] CV uploadé avec succès: " . $cv_full_path);
 
             // Gérer la lettre de motivation
             $lettre_path = null;
             if (isset($_POST['lettre_motivation']) && !empty($_POST['lettre_motivation'])) {
                 $lettre_filename = uniqid('lettre_') . '.txt';
-                $lettre_path = 'uploads/lettres/' . $lettre_filename; // Chemin relatif pour la BD
+                $lettre_path = 'uploads/lettres/' . $lettre_filename;
                 $lettre_full_path = $this->upload_directory . 'lettres' . DIRECTORY_SEPARATOR . $lettre_filename;
                 
-                if (!file_put_contents($lettre_full_path, $_POST['lettre_motivation'])) {
-                    error_log("[ERROR] Erreur lors de l'écriture de la lettre de motivation");
+                if (!@file_put_contents($lettre_full_path, $_POST['lettre_motivation'])) {
+                    error_log("[ERROR] Erreur lors de l'écriture de la lettre. PHP Error: " . error_get_last()['message']);
                     throw new Exception("Erreur lors de l'enregistrement de la lettre de motivation");
                 }
+                error_log("[DEBUG] Lettre de motivation enregistrée: " . $lettre_full_path);
             }
 
             // Créer la candidature
@@ -127,12 +133,12 @@ class CandidatureController {
                 'statut' => 'En attente'
             ];
 
-            error_log("[DEBUG] Données de candidature: " . print_r($candidatureData, true));
+            error_log("[DEBUG] Tentative de création de la candidature avec les données: " . print_r($candidatureData, true));
 
             $id = $this->candidature->create($candidatureData);
 
             if ($id) {
-                http_response_code(201);
+                error_log("[DEBUG] Candidature créée avec succès, ID: " . $id);
                 return json_encode([
                     'status' => 'success',
                     'message' => 'Candidature créée avec succès',
@@ -140,14 +146,27 @@ class CandidatureController {
                 ]);
             }
 
-            throw new Exception("Erreur lors de la création de la candidature");
+            throw new Exception("Erreur lors de la création de la candidature dans la base de données");
 
         } catch (Exception $e) {
             error_log("[ERROR] Exception dans createCandidature: " . $e->getMessage());
-            http_response_code(400);
+            error_log("[ERROR] Trace: " . $e->getTraceAsString());
+            
+            // Supprimer les fichiers uploadés en cas d'erreur
+            if (isset($cv_full_path) && file_exists($cv_full_path)) {
+                @unlink($cv_full_path);
+            }
+            if (isset($lettre_full_path) && file_exists($lettre_full_path)) {
+                @unlink($lettre_full_path);
+            }
+
             return json_encode([
                 'status' => 'error',
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
+                'debug_info' => [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]
             ]);
         }
     }
