@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import './wishlist.css';
 import { HiPhone, HiMail, HiTrash, HiGlobeAlt, HiLocationMarker } from 'react-icons/hi';
-import { getUserData } from '../../utils/auth';
+import { getUserData, getAuthToken } from '../../utils/auth';
 
 export default function WishList() {
     const [favoris, setFavoris] = useState([]);
@@ -20,17 +20,24 @@ export default function WishList() {
         try {
             setLoading(true);
             const userData = getUserData();
+            const token = getAuthToken();
             console.log('Données utilisateur:', userData); // Log pour déboguer
+            console.log('Token:', token); // Log pour déboguer
 
-            if (!userData || !userData.id) {
+            if (!userData || !userData.id_personne) {
                 setError('Utilisateur non authentifié');
+                return;
+            }
+
+            if (!token) {
+                setError('Token d\'authentification manquant');
                 return;
             }
 
             const response = await fetch(`http://20.19.36.142:8000/api/wishlist/list`, {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${userData.token}`,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             });
@@ -77,11 +84,15 @@ export default function WishList() {
 
     const retirerFavori = async (idStage) => {
         try {
-            const userData = getUserData();
+            const token = getAuthToken();
+            if (!token) {
+                throw new Error('Token d\'authentification manquant');
+            }
+
             const response = await fetch(`http://20.19.36.142:8000/api/wishlist/remove/${idStage}`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': `Bearer ${userData.token}`
+                    'Authorization': `Bearer ${token}`
                 }
             });
 
