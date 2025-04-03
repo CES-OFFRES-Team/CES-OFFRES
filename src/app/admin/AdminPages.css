@@ -2,30 +2,48 @@
     max-width: 1400px;
     margin: 0 auto;
     padding: clamp(1rem, 3vw, 2rem);
+    min-height: calc(100vh - 80px);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
 }
 
 .offres-header {
     text-align: center;
-    margin-bottom: clamp(2rem, 5vw, 4rem);
     background: linear-gradient(135deg, #1a365d 0%, #2563eb 100%);
-    padding: clamp(2rem, 5vw, 4rem);
+    padding: clamp(2rem, 4vw, 3rem);
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(37, 99, 235, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.offres-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+    pointer-events: none;
 }
 
 .offres-header h1 {
     font-size: clamp(1.8rem, 4vw, 2.5rem);
     color: white;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
     font-weight: 700;
     letter-spacing: -0.5px;
+    position: relative;
 }
 
 .offres-header p {
     color: rgba(255, 255, 255, 0.9);
-    font-size: clamp(1rem, 2vw, 1.2rem);
+    font-size: clamp(1rem, 1.5vw, 1.1rem);
     max-width: 600px;
     margin: 0 auto;
+    position: relative;
 }
 
 .filter-input {
@@ -37,31 +55,38 @@
     font-size: 1rem;
     background: white;
     transition: all 0.3s ease;
-    margin: 2rem auto;
+    margin: -1.5rem auto 0;
     display: block;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 2;
 }
 
 .filter-input:focus {
     outline: none;
     border-color: #2563eb;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+    box-shadow: 0 4px 20px rgba(37, 99, 235, 0.15);
+    transform: translateY(-2px);
 }
 
 .offres-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: clamp(1rem, 3vw, 2rem);
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: clamp(1.25rem, 2.5vw, 2rem);
     padding: 0.5rem;
+    align-items: start;
 }
 
 .offre-card {
     background: white;
     border-radius: 16px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    padding: clamp(1.5rem, 3vw, 2rem);
+    padding: clamp(1.5rem, 2.5vw, 2rem);
     transition: all 0.3s ease;
     border: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .offre-card:hover {
@@ -71,7 +96,7 @@
 }
 
 .offre-header {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
 }
 
 .offre-title {
@@ -79,21 +104,26 @@
     font-weight: 600;
     color: #1a365d;
     margin-bottom: 0.5rem;
+    line-height: 1.3;
 }
 
 .offre-company {
     color: #64748b;
     font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .offre-content {
-    margin: 1.5rem 0;
+    margin: 1.25rem 0;
+    flex-grow: 1;
 }
 
 .offre-details {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.875rem;
 }
 
 .detail-item {
@@ -102,40 +132,54 @@
     gap: 0.75rem;
     color: #64748b;
     font-size: 0.95rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.detail-item:hover {
+    background: rgba(37, 99, 235, 0.05);
 }
 
 .detail-item svg {
     color: #2563eb;
     font-size: 1.25rem;
+    flex-shrink: 0;
 }
 
 .offre-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
     border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .btn {
-    padding: 0.75rem 1.5rem;
+    padding: 0.75rem 1.25rem;
     border-radius: 10px;
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     transition: all 0.3s ease;
     cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
 }
 
 .btn-primary {
     background: #2563eb;
     color: white;
     border: none;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
 }
 
 .btn-primary:hover {
     background: #1d4ed8;
     transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
 }
 
 .btn-outline {
@@ -145,23 +189,25 @@
 }
 
 .btn-outline:hover {
-    background: #2563eb;
-    color: white;
+    background: rgba(37, 99, 235, 0.05);
     transform: translateY(-2px);
 }
 
 .loading, .error-message {
     text-align: center;
-    padding: 4rem 2rem;
+    padding: 3rem 2rem;
     background: white;
     border-radius: 16px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     margin: 2rem auto;
     max-width: 600px;
+    width: 100%;
 }
 
 .error-message {
     color: #dc2626;
+    border: 1px solid rgba(220, 38, 38, 0.2);
+    background: rgba(220, 38, 38, 0.05);
 }
 
 /* Modal styles */
@@ -177,6 +223,7 @@
     align-items: center;
     padding: 1rem;
     z-index: 1000;
+    backdrop-filter: blur(4px);
 }
 
 .modal-content {
@@ -186,6 +233,7 @@
     width: 100%;
     max-width: 500px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    position: relative;
 }
 
 .modal-content h2 {
@@ -193,10 +241,12 @@
     font-size: 1.5rem;
     margin-bottom: 1.5rem;
     font-weight: 600;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
 }
 
 .form-group label {
@@ -204,21 +254,24 @@
     margin-bottom: 0.5rem;
     color: #1a365d;
     font-weight: 500;
+    font-size: 0.95rem;
 }
 
 .form-group input {
     width: 100%;
-    padding: 0.75rem 1rem;
+    padding: 0.875rem 1rem;
     border: 2px solid rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-    font-size: 1rem;
+    font-size: 0.95rem;
     transition: all 0.3s ease;
+    background: #f8fafc;
 }
 
 .form-group input:focus {
     outline: none;
     border-color: #2563eb;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    background: white;
 }
 
 .modal-actions {
@@ -226,10 +279,17 @@
     justify-content: flex-end;
     gap: 1rem;
     margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .trash-icon {
     color: #dc2626;
+    transition: all 0.3s ease;
+}
+
+.trash-icon:hover {
+    color: #ef4444;
 }
 
 @media (max-width: 768px) {
@@ -241,5 +301,14 @@
         margin: 1rem;
         max-height: calc(100vh - 2rem);
         overflow-y: auto;
+    }
+
+    .offre-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
     }
 } 
