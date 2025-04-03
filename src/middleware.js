@@ -2,7 +2,15 @@ import { NextResponse } from 'next/server';
 import { COOKIE_KEYS, USER_ROLES } from './app/utils/constants';
 
 // Chemins publics qui ne nécessitent pas d'authentification
-const publicPaths = ['/Login', '/Contact', '/'];
+const publicPaths = [
+  '/Login', 
+  '/Contact', 
+  '/',
+  '/mentions-legales',
+  '/politique-confidentialite',
+  '/Contact',
+  '/About',
+];
 
 export function middleware(request) {
   const { pathname } = request.nextUrl;
