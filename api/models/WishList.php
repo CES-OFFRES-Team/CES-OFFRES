@@ -33,18 +33,29 @@ class WishList {
 
     public function getWishList($idPersonne) {
         try {
-            $query = "SELECT o.id_stage, o.titre, o.description, o.remuneration, 
-                            o.date_publication, o.date_debut, o.date_fin,
-                            e.id_entreprise, e.nom_entreprise, e.adresse, 
-                            e.email, e.telephone, e.moyenne_eval, e.description as description_entreprise,
-                            w.date_ajout
-                     FROM ajouter_wish_list w
-                     INNER JOIN Offres_de_stage o ON w.id_stage = o.id_stage 
-                     LEFT JOIN Entreprises e ON o.id_entreprise = e.id_entreprise 
-                     WHERE w.id_personne = ?";
+            $query = "SELECT w.*, 
+                      o.titre as titre_stage,
+                      o.description,
+                      o.remuneration as salaire,
+                      o.type_stage,
+                      o.niveau_etude,
+                      e.nom_entreprise,
+                      e.email,
+                      e.telephone,
+                      e.site_web,
+                      e.localisation
+                      FROM ajouter_wish_list w
+                      LEFT JOIN Offres_de_stage o ON w.id_stage = o.id_stage
+                      LEFT JOIN Entreprises e ON o.id_entreprise = e.id_entreprise
+                      WHERE w.id_personne = ?
+                      ORDER BY w.date_ajout DESC";
+            
+            error_log("Exécution de la requête getWishList pour l'utilisateur " . $idPersonne);
             $stmt = $this->db->prepare($query);
             $stmt->execute([$idPersonne]);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            error_log("Nombre de résultats trouvés : " . count($result));
+            return $result;
         } catch (PDOException $e) {
             error_log("Erreur dans getWishList: " . $e->getMessage() . "\nRequête: " . $query);
             throw $e;
