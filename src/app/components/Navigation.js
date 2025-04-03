@@ -10,34 +10,12 @@ export default function Navigation() {
     const [isOpen, setIsOpen] = useState(false);
     const [isMaximized, setIsMaximized] = useState(false);
     const router = useRouter();
-    const { user, logout, loading } = useAuth();
+    const { user, logout } = useAuth();
 
-    const handleLogout = async () => {
-        try {
-            console.log('Déconnexion en cours...');
-            await logout();
-            console.log('Déconnexion réussie');
-        } catch (error) {
-            console.error('Erreur lors de la déconnexion:', error);
-        }
+    const handleLogout = () => {
+        logout();
+        router.push('/Login');
     };
-
-    const handleNavigation = (path) => {
-        if (!loading) {
-            router.push(path);
-            router.refresh();
-            setIsOpen(false);
-        }
-    };
-
-    // Si en cours de chargement, afficher un indicateur
-    if (loading) {
-        return (
-            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-white bg-opacity-75 z-50">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
-            </div>
-        );
-    }
 
     useEffect(() => {
         const checkWindowState = () => {
@@ -130,14 +108,14 @@ export default function Navigation() {
                             <Link 
                                 href={user?.role === USER_ROLES.ADMIN ? "/admin" : "/"} 
                                 className="nav-link"
-                                onClick={() => handleNavigation(user?.role === USER_ROLES.ADMIN ? "/admin" : "/")}
+                                onClick={() => setIsOpen(false)}
                             >
                                 <i className={`fa-solid ${user?.role === USER_ROLES.ADMIN ? "fa-gauge-high" : "fa-house"}`}></i>
                                 <span className="nav-label">{user?.role === USER_ROLES.ADMIN ? "Dashboard" : "Accueil"}</span>
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link href="/Offres" className="nav-link" onClick={() => handleNavigation('/Offres')}>
+                            <Link href="/Offres" className="nav-link" onClick={() => setIsOpen(false)}>
                                 <i className="fa-solid fa-briefcase"></i>
                                 <span className="nav-label">Offres</span>
                             </Link>
@@ -145,25 +123,25 @@ export default function Navigation() {
                         {user?.role === USER_ROLES.ADMIN && (
                             <>
                                 <li className="nav-item">
-                                    <Link href="/admin/entreprises" className="nav-link" onClick={() => handleNavigation('/admin/entreprises')}>
+                                    <Link href="/admin/entreprises" className="nav-link" onClick={() => setIsOpen(false)}>
                                         <i className="fa-solid fa-building"></i>
                                         <span className="nav-label">Entreprises</span>
                                     </Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link href="/admin/Etudiants" className="nav-link" onClick={() => handleNavigation('/admin/Etudiants')}>
+                                    <Link href="/admin/Etudiants" className="nav-link" onClick={() => setIsOpen(false)}>
                                         <i className="fa-solid fa-user-graduate"></i>
                                         <span className="nav-label">Étudiants</span>
                                     </Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link href="/admin/pilotes" className="nav-link" onClick={() => handleNavigation('/admin/pilotes')}>
+                                    <Link href="/admin/pilotes" className="nav-link" onClick={() => setIsOpen(false)}>
                                         <i className="fa-solid fa-user-tie"></i>
                                         <span className="nav-label">Pilotes</span>
                                     </Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link href="/admin/support" className="nav-link" onClick={() => handleNavigation('/admin/support')}>
+                                    <Link href="/admin/support" className="nav-link" onClick={() => setIsOpen(false)}>
                                         <i className="fa-solid fa-headset"></i>
                                         <span className="nav-label">Support</span>
                                     </Link>
@@ -172,7 +150,7 @@ export default function Navigation() {
                         )}
                         {!user?.role === USER_ROLES.ADMIN && (
                             <li className="nav-item">
-                                <Link href="/Contact" className="nav-link" onClick={() => handleNavigation('/Contact')}>
+                                <Link href="/Contact" className="nav-link" onClick={() => setIsOpen(false)}>
                                     <i className="fa-solid fa-envelope"></i>
                                     <span className="nav-label">Contact</span>
                                 </Link>
@@ -190,7 +168,7 @@ export default function Navigation() {
                                     <span className="nav-label">Déconnexion</span>
                                 </button>
                             ) : (
-                                <Link href="/Login" className="nav-link" onClick={() => handleNavigation('/Login')}>
+                                <Link href="/Login" className="nav-link" onClick={() => setIsOpen(false)}>
                                     <i className="fa-solid fa-right-to-bracket"></i>
                                     <span className="nav-label">Connexion</span>
                                 </Link>
