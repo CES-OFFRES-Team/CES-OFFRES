@@ -161,7 +161,7 @@ export default function AdminPilotesPage() {
     const handleSaveModification = async (id, formData) => {
         try {
             const token = Cookies.get('authToken');
-            const response = await fetch(`http://20.19.36.142:8000/api/users/${id}`, {
+            const response = await fetch(`http://20.19.36.142:8000/api/users/users/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
