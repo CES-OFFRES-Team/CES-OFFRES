@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { HiLocationMarker, HiCalendar, HiClock, HiBriefcase, HiTrash, HiPlus, HiRefresh, HiSearch, HiCurrencyEuro } from 'react-icons/hi';
 import OffreModal from './OffreModal';
-import './Offres.module.css';
 
 const API_URL = 'http://20.19.36.142:8000/api';
 
@@ -73,7 +72,7 @@ const OffreCard = ({ offre, onModify, onDelete }) => {
     );
 };
 
-export default function AdminOffresPage() {
+export default function OffresPage() {
     const [offres, setOffres] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -82,179 +81,178 @@ export default function AdminOffresPage() {
     const [success, setSuccess] = useState('');
     const [isLoading, setIsLoading] = useState(true);
 
+    useEffect(() => {
+        fetchOffres();
+    }, []);
+
     const fetchOffres = async () => {
         try {
-            setIsLoading(true);
             const response = await fetch(`${API_URL}/offres`);
-            if (!response.ok) {
-                throw new Error('Erreur lors de la récupération des offres');
-            }
-            const result = await response.json();
-            console.log('Données reçues de l\'API:', result);
-            
-            if (result.status === 'success' && Array.isArray(result.data)) {
-                setOffres(result.data);
-                setError('');
-            } else {
-                throw new Error('Format de données invalide');
-            }
-        } catch (err) {
-            setError(err.message);
-            console.error('Erreur:', err);
-            setOffres([]); // Initialiser avec un tableau vide en cas d'erreur
+            if (!response.ok) throw new Error('Erreur lors de la récupération des offres');
+            const data = await response.json();
+            setOffres(data);
+        } catch (error) {
+            console.error('Erreur:', error);
         } finally {
             setIsLoading(false);
         }
     };
 
-    useEffect(() => {
-        fetchOffres();
-    }, []);
-
-    const handleCreate = () => {
-        setSelectedOffre(null);
-        setIsModalOpen(true);
-    };
-
-    const handleModify = (offre) => {
-        setSelectedOffre(offre);
-        setIsModalOpen(true);
-    };
-
     const handleDelete = async (id) => {
-        if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette offre ?')) {
-            return;
-        }
-
+        if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette offre ?')) return;
+        
         try {
             const response = await fetch(`${API_URL}/offres/${id}`, {
                 method: 'DELETE',
             });
-
-            if (!response.ok) {
-                throw new Error('Erreur lors de la suppression de l\'offre');
-            }
-
-            setOffres(offres.filter(offre => offre.id_stage !== id));
-            setSuccess('Offre supprimée avec succès');
-            setTimeout(() => setSuccess(''), 3000);
-        } catch (err) {
-            setError(err.message);
-            console.error('Erreur:', err);
+            if (!response.ok) throw new Error('Erreur lors de la suppression');
+            setOffres(offres.filter(offre => offre.id !== id));
+        } catch (error) {
+            console.error('Erreur:', error);
         }
     };
 
-    const handleSubmit = async (formData) => {
+    const handleEdit = (offre) => {
+        setSelectedOffre(offre);
+        setIsModalOpen(true);
+    };
+
+    const handleAdd = () => {
+        setSelectedOffre(null);
+        setIsModalOpen(true);
+    };
+
+    const handleModalClose = () => {
+        setIsModalOpen(false);
+        setSelectedOffre(null);
+    };
+
+    const handleModalSave = async (offreData) => {
         try {
-            const url = selectedOffre 
-                ? `${API_URL}/offres/${selectedOffre.id_stage}`
-                : `${API_URL}/offres`;
-            
-            const method = selectedOffre ? 'PUT' : 'POST';
-
-            console.log('Envoi de la requête:', {
-                url,
-                method,
-                formData
-            });
-
-            const response = await fetch(url, {
-                method,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-
-            const result = await response.json();
-            console.log('Réponse reçue:', result);
-
-            if (!response.ok || result.status === 'error') {
-                throw new Error(result.message || 'Erreur lors de l\'enregistrement de l\'offre');
-            }
-            
-            if (result.status === 'success') {
-                if (selectedOffre) {
-                    setOffres(offres.map(offre => 
-                        offre.id_stage === selectedOffre.id_stage ? { ...offre, ...result.data } : offre
-                    ));
-                } else {
-                    setOffres([...offres, result.data]);
-                }
-
-                setIsModalOpen(false);
-                setSuccess(selectedOffre ? 'Offre modifiée avec succès' : 'Offre créée avec succès');
-                setTimeout(() => setSuccess(''), 3000);
+            if (selectedOffre) {
+                // Mise à jour
+                const response = await fetch(`${API_URL}/offres/${selectedOffre.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(offreData),
+                });
+                if (!response.ok) throw new Error('Erreur lors de la mise à jour');
+                setOffres(offres.map(offre => 
+                    offre.id === selectedOffre.id ? { ...offre, ...offreData } : offre
+                ));
             } else {
-                throw new Error(result.message || 'Erreur lors de l\'enregistrement');
+                // Création
+                const response = await fetch(`${API_URL}/offres`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(offreData),
+                });
+                if (!response.ok) throw new Error('Erreur lors de la création');
+                const newOffre = await response.json();
+                setOffres([...offres, newOffre]);
             }
-        } catch (err) {
-            setError(err.message);
-            console.error('Erreur:', err);
+            handleModalClose();
+        } catch (error) {
+            console.error('Erreur:', error);
         }
     };
 
-    // Vérifier que offres est un tableau avant d'appliquer filter
-    const filteredOffres = Array.isArray(offres) ? offres.filter(offre =>
-        (offre.titre?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-        (offre.nom_entreprise?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-        (offre.description?.toLowerCase() || '').includes(searchTerm.toLowerCase())
-    ) : [];
+    const filteredOffres = offres.filter(offre =>
+        offre.titre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        offre.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        offre.entreprise.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    if (isLoading) {
+        return <div>Chargement...</div>;
+    }
 
     return (
-        <div className="offres-container">
-            <div className="offres-header">
-                <h1>Gestion des Offres</h1>
-                <div className="actions-container">
-                    <div className="search-container">
-                        <HiSearch className="search-icon" />
-                        <input
-                            type="text"
-                            placeholder="Rechercher une offre..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="filter-input"
-                        />
-                    </div>
-                    <button className="btn btn-primary" onClick={handleCreate}>
-                        <HiPlus />
-                        Nouvelle Offre
-                    </button>
-                </div>
+        <div className="p-6">
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-2xl font-bold">Gestion des Offres</h1>
+                <button
+                    onClick={handleAdd}
+                    className="bg-blue-500 text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-600"
+                >
+                    <HiPlus className="w-5 h-5" />
+                    Ajouter une offre
+                </button>
             </div>
 
-            {error && <div className="alert alert-error">{error}</div>}
-            {success && <div className="alert alert-success">{success}</div>}
+            <div className="flex gap-4 mb-6">
+                <div className="flex-1 relative">
+                    <HiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                        type="text"
+                        placeholder="Rechercher une offre..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                </div>
+                <button
+                    onClick={fetchOffres}
+                    className="bg-gray-100 px-4 py-2 rounded flex items-center gap-2 hover:bg-gray-200"
+                >
+                    <HiRefresh className="w-5 h-5" />
+                    Actualiser
+                </button>
+            </div>
 
-            {isLoading ? (
-                <div className="loading-container">
-                    <div className="loader"></div>
-                    <p>Chargement des offres...</p>
-                </div>
-            ) : (
-                <div className="offres-grid">
-                    {filteredOffres.length === 0 ? (
-                        <div className="no-data-message">
-                            {searchTerm ? 'Aucune offre ne correspond à votre recherche' : 'Aucune offre disponible'}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredOffres.map(offre => (
+                    <div key={offre.id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                        <div className="flex justify-between items-start mb-4">
+                            <h2 className="text-xl font-semibold">{offre.titre}</h2>
+                            <button
+                                onClick={() => handleDelete(offre.id)}
+                                className="text-red-500 hover:text-red-700"
+                            >
+                                <HiTrash className="w-5 h-5" />
+                            </button>
                         </div>
-                    ) : (
-                        filteredOffres.map(offre => (
-                            <OffreCard
-                                key={offre.id_stage}
-                                offre={offre}
-                                onModify={handleModify}
-                                onDelete={handleDelete}
-                            />
-                        ))
-                    )}
-                </div>
-            )}
+
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-2 text-gray-600">
+                                <HiLocationMarker className="w-5 h-5" />
+                                <span>{offre.localisation}</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-gray-600">
+                                <HiCalendar className="w-5 h-5" />
+                                <span>{offre.date_publication}</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-gray-600">
+                                <HiClock className="w-5 h-5" />
+                                <span>{offre.type_contrat}</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-gray-600">
+                                <HiBriefcase className="w-5 h-5" />
+                                <span>{offre.entreprise}</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-gray-600">
+                                <HiCurrencyEuro className="w-5 h-5" />
+                                <span>{offre.salaire}</span>
+                            </div>
+                        </div>
+
+                        <div className="mt-4 pt-4 border-t">
+                            <button
+                                onClick={() => handleEdit(offre)}
+                                className="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200"
+                            >
+                                Modifier
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
 
             {isModalOpen && (
                 <OffreModal
                     offre={selectedOffre}
-                    onClose={() => setIsModalOpen(false)}
-                    onSubmit={handleSubmit}
+                    onClose={handleModalClose}
+                    onSave={handleModalSave}
                 />
             )}
         </div>
