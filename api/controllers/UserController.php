@@ -21,10 +21,11 @@ class UserController {
         // Récupérer l'URL complète
         $requestUri = $_SERVER['REQUEST_URI'];
         
-        // Vérifier si l'URL contient /etudiants ou /pilotes
+        // Vérifier les différents endpoints
         $isEtudiantsEndpoint = strpos($requestUri, '/etudiants') !== false;
         $isPilotesEndpoint = strpos($requestUri, '/pilotes') !== false;
         $isLoginEndpoint = strpos($requestUri, '/login') !== false;
+        $isVerifyTokenEndpoint = strpos($requestUri, '/verify-token') !== false;
 
         // Vérifier si c'est une requête avec un ID
         if (preg_match('/\/users\/(\d+)/', $requestUri, $matches)) {
@@ -47,6 +48,9 @@ class UserController {
                 }
                 if ($isPilotesEndpoint) {
                     return $this->getPilotes();
+                }
+                if ($isVerifyTokenEndpoint) {
+                    return $this->verifyToken();
                 }
                 return $this->getUsers();
             case 'POST':

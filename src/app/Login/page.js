@@ -88,15 +88,17 @@ const loginUser = async (email, password) => {
         // S'assurer que les champs essentiels sont présents
         const userData = {
             id_personne: data.user.id_personne || data.user.id, // Essayer les deux formats possibles
-            nom: data.user.nom || '',
-            prenom: data.user.prenom || '',
-            email: data.user.email || email,
-            role: data.user.role || 'Etudiant'
+            nom: data.user.nom || data.user.nom_personne || '',
+            prenom: data.user.prenom || data.user.prenom_personne || '',
+            email: data.user.email || data.user.email_personne || email,
+            role: data.user.role || 'Etudiant' // Valeur par défaut si le rôle est manquant
         };
 
+        // Logs détaillés pour déboguer
+        console.log('Rôle récupéré de l\'API:', data.user.role);
         console.log('Données utilisateur finales:', userData);
 
-        // Mettre à jour les données avec les valeurs par défaut si nécessaire
+        // Mettre à jour les données avec les valeurs normalisées
         data.user = userData;
 
         return data;
@@ -127,9 +129,17 @@ export default function LoginPage() {
       try {
         const data = await loginUser(email, password);
         
+        // Vérifier si on a bien un token dans la réponse
+        if (!data.token) {
+          throw new Error('Token manquant dans la réponse du serveur');
+        }
+        
+        // Vérifier le "Se souvenir de moi"
+        const rememberMe = document.getElementById('cbx')?.checked || false;
+        
         // Sauvegarder le token et les données utilisateur avec les fonctions de auth.js
-        setAuthToken(data.token);
-        setUserData(data.user);
+        setAuthToken(data.token, rememberMe);
+        setUserData(data.user, rememberMe);
         
         // Afficher le message de succès
         setSuccessMessage(`Connexion réussie ! Bienvenue ${data.user.prenom} ${data.user.nom}`);
@@ -139,14 +149,22 @@ export default function LoginPage() {
         
         console.log('Rôle de l\'utilisateur pour redirection:', data.user.role);
         
-        if (data.user.role === 'Admin') {
-          redirectPath = '/admin';
-        } else if (data.user.role === 'Pilote') {
-          redirectPath = '/pilote/dashboard';
-        } else if (data.user.role === 'Etudiant') {
-          redirectPath = '/dashboard';
-        } else if (data.user.role === 'Entreprise') {
-          redirectPath = '/entreprise/dashboard';
+        // Définir le chemin de redirection en fonction du rôle
+        switch (data.user.role) {
+          case 'Admin':
+            redirectPath = '/admin';
+            break;
+          case 'Pilote':
+            redirectPath = '/pilote/dashboard';
+            break;
+          case 'Etudiant':
+            redirectPath = '/dashboard';
+            break;
+          case 'Entreprise':
+            redirectPath = '/entreprise/dashboard';
+            break;
+          default:
+            redirectPath = '/dashboard';
         }
         
         console.log('Redirection programmée vers:', redirectPath);
@@ -154,10 +172,12 @@ export default function LoginPage() {
         // Attendre un peu pour que l'utilisateur puisse voir le message de succès
         setTimeout(() => {
           console.log('Exécution de la redirection vers:', redirectPath);
+          // Utiliser router.push pour la navigation côté client
           router.push(redirectPath);
         }, 1500);
       } catch (error) {
-        setErrorMessage(error.message);
+        console.error('Erreur lors de la connexion:', error);
+        setErrorMessage(error.message || 'Erreur lors de la connexion');
       }
     }
   };

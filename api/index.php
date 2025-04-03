@@ -43,6 +43,7 @@ try {
         case '/users/etudiants':
         case '/users/pilotes':
         case '/login':
+        case '/verify-token':
             $controller = new UserController();
             echo $controller->handleRequest($method);
             break;

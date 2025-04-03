@@ -78,7 +78,7 @@ export default function Dashboard() {
     };
 
     return (
-        <ProtectedRoute>
+        <ProtectedRoute requiredRole="Etudiant">
             <div className="dashboard-container">
                 <nav className="dashboard-nav">
                     <div className="nav-brand">CES OFFRES</div>
