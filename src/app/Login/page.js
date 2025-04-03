@@ -102,14 +102,13 @@ export default function LoginPage() {
         expires: rememberMe ? 7 : 1, 
         secure: false, // Désactiver secure pour le développement local
         sameSite: 'lax', // Utiliser lax au lieu de strict
-        path: '/',
-        domain: window.location.hostname
+        path: '/'
       };
       
       // Enregistrer les données dans les cookies
-      document.cookie = `authToken=${data.token}; path=/; max-age=${rememberMe ? 7 * 24 * 60 * 60 : 24 * 60 * 60}`;
-      document.cookie = `userData=${JSON.stringify(userData)}; path=/; max-age=${rememberMe ? 7 * 24 * 60 * 60 : 24 * 60 * 60}`;
-      document.cookie = `userRole=${userData.role}; path=/; max-age=${rememberMe ? 7 * 24 * 60 * 60 : 24 * 60 * 60}`;
+      Cookies.set('authToken', data.token, cookieOptions);
+      Cookies.set('userData', JSON.stringify(userData), cookieOptions);
+      Cookies.set('userRole', userData.role, cookieOptions);
       
       console.log('Cookies définis:', document.cookie);
       

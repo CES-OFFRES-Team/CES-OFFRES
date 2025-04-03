@@ -59,22 +59,28 @@ export const hasRole = (requiredRole) => {
  * Déconnecte l'utilisateur
  */
 export const logout = () => {
-    // Supprimer tous les cookies avec différentes options
+    console.log('Déconnexion en cours...');
+    
+    // Supprimer les cookies avec différentes options
     const options = [
-        {}, // Options par défaut
-        { path: '/' }, // Spécifier le path
-        { domain: window.location.hostname }, // Spécifier le domaine
-        { path: '/', domain: window.location.hostname } // Les deux
+        { path: '/' },
+        { path: '/', domain: window.location.hostname }
     ];
     
-    // Essayer toutes les combinaisons pour s'assurer que les cookies sont supprimés
+    // Supprimer les cookies
     options.forEach(opt => {
         Cookies.remove(TOKEN_KEY, opt);
         Cookies.remove(USER_DATA_KEY, opt);
         Cookies.remove(USER_ROLE_KEY, opt);
     });
     
-    // Redirection vers la page de login avec une redirection complète du navigateur
+    // Vérifier que les cookies ont bien été supprimés
+    console.log('Vérification après suppression:');
+    console.log('Token:', Cookies.get(TOKEN_KEY) ? 'existe encore' : 'supprimé');
+    console.log('UserData:', Cookies.get(USER_DATA_KEY) ? 'existe encore' : 'supprimé');
+    console.log('UserRole:', Cookies.get(USER_ROLE_KEY) ? 'existe encore' : 'supprimé');
+    
+    // Rediriger vers la page de login
     window.location.href = '/Login';
 };
 
