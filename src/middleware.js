@@ -45,7 +45,7 @@ export function middleware(request) {
       if (role === 'Pilote') {
         return NextResponse.redirect(new URL('/pilote/dashboard', request.url));
       } else if (role === 'Etudiant') {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
+        return NextResponse.redirect(new URL('/etudiant/dashboard', request.url));
       } else if (role === 'Entreprise') {
         return NextResponse.redirect(new URL('/entreprise/dashboard', request.url));
       }
@@ -60,7 +60,7 @@ export function middleware(request) {
       console.log('Accès refusé: rôle non pilote ou admin', role);
       // Rediriger vers la page appropriée en fonction du rôle
       if (role === 'Etudiant') {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
+        return NextResponse.redirect(new URL('/etudiant/dashboard', request.url));
       } else if (role === 'Entreprise') {
         return NextResponse.redirect(new URL('/entreprise/dashboard', request.url));
       }
@@ -69,8 +69,8 @@ export function middleware(request) {
     return NextResponse.next();
   }
 
-  // Protection des routes dashboard (pour les étudiants)
-  if (path === '/dashboard' || path.startsWith('/dashboard/')) {
+  // Protection des routes étudiant
+  if (path.startsWith('/etudiant')) {
     if (role !== 'Etudiant' && role !== 'Admin') {
       console.log('Accès refusé: rôle non étudiant ou admin', role);
       // Rediriger vers la page appropriée en fonction du rôle
@@ -84,6 +84,11 @@ export function middleware(request) {
     return NextResponse.next();
   }
   
+  // Protection des routes dashboard (ancien chemin, à rediriger)
+  if (path === '/dashboard' || path.startsWith('/dashboard/')) {
+    return NextResponse.redirect(new URL('/etudiant/dashboard', request.url));
+  }
+  
   // Protection des routes entreprise
   if (path.startsWith('/entreprise')) {
     if (role !== 'Entreprise' && role !== 'Admin') {
@@ -92,7 +97,7 @@ export function middleware(request) {
       if (role === 'Pilote') {
         return NextResponse.redirect(new URL('/pilote/dashboard', request.url));
       } else if (role === 'Etudiant') {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
+        return NextResponse.redirect(new URL('/etudiant/dashboard', request.url));
       }
       return NextResponse.redirect(new URL('/Login', request.url));
     }
@@ -109,6 +114,7 @@ export const config = {
     '/pilote/:path*',
     '/dashboard/:path*',
     '/dashboard',
-    '/entreprise/:path*'
+    '/entreprise/:path*',
+    '/etudiant/:path*'
   ]
 }; 

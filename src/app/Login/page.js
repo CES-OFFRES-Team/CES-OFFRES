@@ -145,7 +145,7 @@ export default function LoginPage() {
         setSuccessMessage(`Connexion réussie ! Bienvenue ${data.user.prenom} ${data.user.nom}`);
         
         // Redirection en fonction du rôle
-        let redirectPath = '/dashboard';  // Chemin de repli par défaut
+        let redirectPath = '/etudiant/dashboard';  // Par défaut, considérer comme étudiant
         
         console.log('Rôle de l\'utilisateur pour redirection:', data.user.role);
         
@@ -158,13 +158,13 @@ export default function LoginPage() {
             redirectPath = '/pilote/dashboard';
             break;
           case 'Etudiant':
-            redirectPath = '/dashboard';
+            redirectPath = '/etudiant/dashboard';
             break;
           case 'Entreprise':
             redirectPath = '/entreprise/dashboard';
             break;
           default:
-            redirectPath = '/dashboard';
+            redirectPath = '/etudiant/dashboard'; // Par défaut, considérer comme étudiant
         }
         
         console.log('Redirection programmée vers:', redirectPath);
