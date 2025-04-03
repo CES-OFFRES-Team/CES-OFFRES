@@ -14,7 +14,21 @@ export const getAuthToken = () => {
 export const getUserData = () => {
     try {
         const userData = Cookies.get(COOKIE_KEYS.USER_DATA);
-        return userData ? JSON.parse(userData) : null;
+        if (!userData) {
+            console.log('Aucune donnée utilisateur trouvée dans les cookies');
+            return null;
+        }
+        
+        const parsedData = JSON.parse(userData);
+        console.log('Données utilisateur récupérées:', parsedData);
+        
+        // Vérifier la présence de l'id_personne
+        if (!parsedData.id_personne) {
+            console.error('id_personne manquant dans les données utilisateur stockées');
+            return null;
+        }
+        
+        return parsedData;
     } catch (error) {
         console.error('Erreur de parsing des données utilisateur:', error);
         return null;

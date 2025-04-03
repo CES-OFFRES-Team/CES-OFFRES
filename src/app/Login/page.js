@@ -75,13 +75,17 @@ export default function LoginPage() {
       // Récupérer les données
       const data = await response.json();
       
+      // Log des données reçues
+      console.log('Données reçues du serveur:', data);
+      console.log('Données utilisateur:', data.user);
+      
       // Vérifier la réponse
       if (!response.ok || data.status === 'error') {
         throw new Error(data.message || 'Identifiants incorrects');
       }
       
       // Vérifier que les données nécessaires sont présentes
-      if (!data.token || !data.user) {
+      if (!data.token || !data.user || !data.user.id_personne) {
         throw new Error('Réponse du serveur incomplète');
       }
       

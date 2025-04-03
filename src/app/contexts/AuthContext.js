@@ -16,6 +16,8 @@ export function AuthProvider({ children }) {
     const token = getAuthToken();
     
     if (userData && token) {
+      // Log des données utilisateur au chargement
+      console.log('Données utilisateur chargées:', userData);
       setUser(userData);
     }
     
@@ -23,6 +25,16 @@ export function AuthProvider({ children }) {
   }, []);
   
   const login = (userData, token) => {
+    // Log des données avant stockage
+    console.log('Données à stocker:', userData);
+    console.log('Token à stocker:', token);
+    
+    // Vérifier la présence de l'id_personne
+    if (!userData.id_personne) {
+      console.error('id_personne manquant dans les données utilisateur');
+      return;
+    }
+    
     // Définir les cookies
     const cookieOptions = { 
       expires: 7, 
