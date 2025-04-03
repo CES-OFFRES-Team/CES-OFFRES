@@ -80,7 +80,6 @@ export default function Offres() {
             try {
                 setIsLoading(true);
                 
-                // Récupérer les offres et les entreprises en parallèle
                 const [offresResponse, entreprisesResponse] = await Promise.all([
                     fetch('http://20.19.36.142/api/offres'),
                     fetch('http://20.19.36.142/api/entreprises')
@@ -93,40 +92,44 @@ export default function Offres() {
                 const offresResult = await offresResponse.json();
                 const entreprisesResult = await entreprisesResponse.json();
 
-                // Debug logs
-                console.log('Données offres brutes:', offresResult);
-                console.log('Données entreprises brutes:', entreprisesResult);
+                // Extract city from address
+                const extractCity = (address) => {
+                    if (!address) return null;
+                    const match = address.match(/(\d{5})\s+([^,]+)$/);
+                    return match ? match[2].trim() : null;
+                };
 
-                // S'assurer que nous avons des tableaux
-                const offresArray = Array.isArray(offresResult) ? offresResult : offresResult.data || [];
-                const entreprisesArray = Array.isArray(entreprisesResult) ? entreprisesResult : entreprisesResult.data || [];
+                // Access the data property and process enterprises
+                const entreprisesArray = entreprisesResult.data || [];
+                const processedEntreprises = entreprisesArray.map(entreprise => ({
+                    ...entreprise,
+                    ville: extractCity(entreprise.adresse)
+                }));
 
-                // Créer un map des entreprises pour un accès rapide
-                const entreprisesMap = new Map();
-                entreprisesArray.forEach(entreprise => {
-                    if (entreprise && entreprise.id_entreprise) {
-                        entreprisesMap.set(entreprise.id_entreprise, entreprise);
+                // Create enterprises map
+                const entreprisesMap = new Map(
+                    processedEntreprises.map(e => [e.id_entreprise, e])
+                );
+
+                // Access the data property for offers and enrich them
+                const offresArray = offresResult.data || [];
+                const offresEnrichies = offresArray.map(offre => ({
+                    ...offre,
+                    entrepriseDetails: {
+                        ...entreprisesMap.get(offre.id_entreprise),
+                        ville: entreprisesMap.get(offre.id_entreprise)?.ville
                     }
-                });
+                }));
 
-                // Enrichir les offres avec les données d'entreprise
-                const offresEnrichies = offresArray.map(offre => {
-                    const entrepriseDetails = entreprisesMap.get(offre.id_entreprise) || {};
-                    return {
-                        ...offre,
-                        entrepriseDetails
-                    };
-                });
+                console.log('Processed enterprises:', processedEntreprises);
+                console.log('Enriched offers:', offresEnrichies);
 
                 setOffres(offresEnrichies);
-                setEntreprises(entreprisesArray);
-                setError(null);
+                setEntreprises(processedEntreprises);
 
             } catch (err) {
                 console.error('Erreur détaillée:', err);
                 setError('Erreur lors du chargement des données');
-                setOffres([]);
-                setEntreprises([]);
             } finally {
                 setIsLoading(false);
             }
