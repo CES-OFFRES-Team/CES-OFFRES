@@ -1,120 +1,95 @@
 import { NextResponse } from 'next/server';
 
 export function middleware(request) {
-  // Récupérer le token et les données utilisateur depuis les cookies
-  const userData = request.cookies.get('userData');
+  // Récupérer les cookies
   const authToken = request.cookies.get('authToken');
   const userRole = request.cookies.get('userRole');
-
+  
+  // Chemins publics qui ne nécessitent pas d'authentification
+  const publicPaths = ['/', '/Login', '/Contact', '/Register'];
+  
+  // Vérifier si l'utilisateur est sur un chemin public
+  if (publicPaths.includes(request.nextUrl.pathname)) {
+    return NextResponse.next();
+  }
+  
   // Si l'utilisateur n'est pas connecté, rediriger vers la page de connexion
   if (!authToken) {
-    // Ne pas rediriger si on est déjà sur la page de connexion ou la page d'accueil
-    if (request.nextUrl.pathname === '/Login' || request.nextUrl.pathname === '/') {
-      return NextResponse.next();
-    }
     return NextResponse.redirect(new URL('/Login', request.url));
   }
-
-  // Si les données utilisateur sont disponibles, les parser
-  let user = null;
-  if (userData) {
-    try {
-      user = JSON.parse(userData.value);
-    } catch (e) {
-      console.error('Erreur lors du parsing des données utilisateur:', e);
-      return NextResponse.redirect(new URL('/Login', request.url));
-    }
-  }
-
-  // Récupérer le rôle directement du cookie dédié
-  const role = userRole ? userRole.value : (user ? user.role : null);
-
+  
+  // Récupérer le rôle de l'utilisateur
+  const role = userRole?.value;
+  
+  // Si aucun rôle n'est trouvé, rediriger vers la connexion
   if (!role) {
-    console.error('Rôle non trouvé dans les cookies ou les données utilisateur');
+    console.error('Rôle non trouvé, redirection vers login');
     return NextResponse.redirect(new URL('/Login', request.url));
   }
-
-  // Vérifier les routes protégées
+  
+  // Vérifier les accès selon le rôle
   const path = request.nextUrl.pathname;
-
-  // Protection des routes admin
+  
+  // Routes admin - accessibles uniquement aux administrateurs
   if (path.startsWith('/admin')) {
     if (role !== 'Admin') {
-      console.log('Accès refusé: rôle non admin', role);
-      // Rediriger vers la page appropriée en fonction du rôle
-      if (role === 'Pilote') {
-        return NextResponse.redirect(new URL('/pilote/dashboard', request.url));
-      } else if (role === 'Etudiant') {
-        return NextResponse.redirect(new URL('/etudiant/dashboard', request.url));
-      } else if (role === 'Entreprise') {
-        return NextResponse.redirect(new URL('/entreprise/dashboard', request.url));
-      }
-      return NextResponse.redirect(new URL('/Login', request.url));
-    }
-    return NextResponse.next();
-  }
-
-  // Protection des routes pilote
-  if (path.startsWith('/pilote')) {
-    if (role !== 'Pilote' && role !== 'Admin') {
-      console.log('Accès refusé: rôle non pilote ou admin', role);
-      // Rediriger vers la page appropriée en fonction du rôle
-      if (role === 'Etudiant') {
-        return NextResponse.redirect(new URL('/etudiant/dashboard', request.url));
-      } else if (role === 'Entreprise') {
-        return NextResponse.redirect(new URL('/entreprise/dashboard', request.url));
-      }
-      return NextResponse.redirect(new URL('/Login', request.url));
-    }
-    return NextResponse.next();
-  }
-
-  // Protection des routes étudiant
-  if (path.startsWith('/etudiant')) {
-    if (role !== 'Etudiant' && role !== 'Admin') {
-      console.log('Accès refusé: rôle non étudiant ou admin', role);
-      // Rediriger vers la page appropriée en fonction du rôle
-      if (role === 'Pilote') {
-        return NextResponse.redirect(new URL('/pilote/dashboard', request.url));
-      } else if (role === 'Entreprise') {
-        return NextResponse.redirect(new URL('/entreprise/dashboard', request.url));
-      }
-      return NextResponse.redirect(new URL('/Login', request.url));
+      return redirectToRoleDashboard(role, request.url);
     }
     return NextResponse.next();
   }
   
-  // Protection des routes dashboard (ancien chemin, à rediriger)
+  // Routes étudiant - accessibles aux étudiants et administrateurs
+  if (path.startsWith('/etudiant')) {
+    if (role !== 'Etudiant' && role !== 'Admin') {
+      return redirectToRoleDashboard(role, request.url);
+    }
+    return NextResponse.next();
+  }
+  
+  // Routes pilote - accessibles aux pilotes et administrateurs
+  if (path.startsWith('/pilote')) {
+    if (role !== 'Pilote' && role !== 'Admin') {
+      return redirectToRoleDashboard(role, request.url);
+    }
+    return NextResponse.next();
+  }
+  
+  // Routes entreprise - accessibles aux entreprises et administrateurs
+  if (path.startsWith('/entreprise')) {
+    if (role !== 'Entreprise' && role !== 'Admin') {
+      return redirectToRoleDashboard(role, request.url);
+    }
+    return NextResponse.next();
+  }
+  
+  // Ancienne route dashboard - rediriger vers le nouveau dashboard étudiant
   if (path === '/dashboard' || path.startsWith('/dashboard/')) {
     return NextResponse.redirect(new URL('/etudiant/dashboard', request.url));
   }
   
-  // Protection des routes entreprise
-  if (path.startsWith('/entreprise')) {
-    if (role !== 'Entreprise' && role !== 'Admin') {
-      console.log('Accès refusé: rôle non entreprise ou admin', role);
-      // Rediriger vers la page appropriée en fonction du rôle
-      if (role === 'Pilote') {
-        return NextResponse.redirect(new URL('/pilote/dashboard', request.url));
-      } else if (role === 'Etudiant') {
-        return NextResponse.redirect(new URL('/etudiant/dashboard', request.url));
-      }
-      return NextResponse.redirect(new URL('/Login', request.url));
-    }
-    return NextResponse.next();
-  }
-
+  // Pour toutes les autres routes, permettre l'accès
   return NextResponse.next();
 }
 
-// Configurer les chemins sur lesquels le middleware doit s'exécuter
+// Fonction pour rediriger l'utilisateur vers son dashboard en fonction du rôle
+function redirectToRoleDashboard(role, baseUrl) {
+  switch (role) {
+    case 'Admin':
+      return NextResponse.redirect(new URL('/admin', baseUrl));
+    case 'Pilote':
+      return NextResponse.redirect(new URL('/pilote/dashboard', baseUrl));
+    case 'Etudiant':
+      return NextResponse.redirect(new URL('/etudiant/dashboard', baseUrl));
+    case 'Entreprise':
+      return NextResponse.redirect(new URL('/entreprise/dashboard', baseUrl));
+    default:
+      return NextResponse.redirect(new URL('/Login', baseUrl));
+  }
+}
+
+// Configuration des routes à traiter par le middleware
 export const config = {
   matcher: [
-    '/admin/:path*',
-    '/pilote/:path*',
-    '/dashboard/:path*',
-    '/dashboard',
-    '/entreprise/:path*',
-    '/etudiant/:path*'
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ]
 }; 

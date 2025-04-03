@@ -1,9 +1,8 @@
 "use client";
 import React, { useState } from 'react';
 import './login.css';
-import Cookies from 'js-cookie';
-import { setAuthToken, setUserData } from '../utils/auth';
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 const EmailIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 32 32" height="20">
@@ -33,81 +32,6 @@ const EyeIcon = ({ showPassword }) => (
   )
 );
 
-const loginUser = async (email, password) => {
-    try {
-        console.log('Tentative de connexion avec:', { email });
-        
-        const response = await fetch('http://20.19.36.142:8000/api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        });
-
-        console.log('Status de la réponse:', response.status);
-        
-        // Vérifier si la réponse est vide
-        const text = await response.text();
-        console.log('Réponse brute du serveur:', text);
-
-        if (!text) {
-            throw new Error('Réponse vide du serveur');
-        }
-
-        // Essayer de parser le JSON
-        let data;
-        try {
-            data = JSON.parse(text);
-        } catch (e) {
-            console.error('Erreur de parsing JSON:', e);
-            throw new Error('Réponse invalide du serveur');
-        }
-
-        console.log('Données parsées:', data);
-
-        if (!response.ok) {
-            throw new Error(data.error || data.message || 'Erreur lors de la connexion');
-        }
-
-        // Vérifier la structure de la réponse
-        if (!data.user) {
-            console.error('Structure de la réponse incorrecte:', data);
-            throw new Error('Format de réponse incorrect');
-        }
-
-        // Afficher la structure complète des données utilisateur
-        console.log('Structure complète des données utilisateur:', data.user);
-
-        // Vérifier si l'utilisateur a un ID
-        if (!data.user.id_personne && !data.user.id) {
-            console.error('Aucun ID trouvé dans les données utilisateur:', data.user);
-            throw new Error('ID utilisateur non trouvé dans la réponse');
-        }
-
-        // S'assurer que les champs essentiels sont présents
-        const userData = {
-            id_personne: data.user.id_personne || data.user.id, // Essayer les deux formats possibles
-            nom: data.user.nom || data.user.nom_personne || '',
-            prenom: data.user.prenom || data.user.prenom_personne || '',
-            email: data.user.email || data.user.email_personne || email,
-            role: data.user.role || 'Etudiant' // Valeur par défaut si le rôle est manquant
-        };
-
-        // Logs détaillés pour déboguer
-        console.log('Rôle récupéré de l\'API:', data.user.role);
-        console.log('Données utilisateur finales:', userData);
-
-        // Mettre à jour les données avec les valeurs normalisées
-        data.user = userData;
-
-        return data;
-    } catch (error) {
-        console.error('Erreur complète:', error);
-        throw new Error(error.message || 'Erreur de connexion au serveur');
-    }
-};
-
 export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
@@ -115,70 +39,91 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Réinitialiser les messages
     setErrorMessage('');
     setSuccessMessage('');
-
-    if (email === '' || password === '') {
+    
+    // Vérifier les champs
+    if (!email || !password) {
       setErrorMessage('Veuillez remplir tous les champs.');
-    } else {
-      try {
-        const data = await loginUser(email, password);
-        
-        // Vérifier si on a bien un token dans la réponse
-        if (!data.token) {
-          throw new Error('Token manquant dans la réponse du serveur');
-        }
-        
-        // Vérifier le "Se souvenir de moi"
-        const rememberMe = document.getElementById('cbx')?.checked || false;
-        
-        // Sauvegarder le token et les données utilisateur avec les fonctions de auth.js
-        setAuthToken(data.token, rememberMe);
-        setUserData(data.user, rememberMe);
-        
-        // Afficher le message de succès
-        setSuccessMessage(`Connexion réussie ! Bienvenue ${data.user.prenom} ${data.user.nom}`);
-        
-        // Redirection en fonction du rôle
-        let redirectPath = '/etudiant/dashboard';  // Par défaut, considérer comme étudiant
-        
-        console.log('Rôle de l\'utilisateur pour redirection:', data.user.role);
-        
-        // Définir le chemin de redirection en fonction du rôle
-        switch (data.user.role) {
-          case 'Admin':
-            redirectPath = '/admin';
-            break;
-          case 'Pilote':
-            redirectPath = '/pilote/dashboard';
-            break;
-          case 'Etudiant':
-            redirectPath = '/etudiant/dashboard';
-            break;
-          case 'Entreprise':
-            redirectPath = '/entreprise/dashboard';
-            break;
-          default:
-            redirectPath = '/etudiant/dashboard'; // Par défaut, considérer comme étudiant
-        }
-        
-        console.log('Redirection programmée vers:', redirectPath);
-        
-        // Attendre un peu pour que l'utilisateur puisse voir le message de succès
-        setTimeout(() => {
-          console.log('Exécution de la redirection vers:', redirectPath);
-          // Utiliser router.push pour la navigation côté client
-          router.push(redirectPath);
-        }, 1500);
-      } catch (error) {
-        console.error('Erreur lors de la connexion:', error);
-        setErrorMessage(error.message || 'Erreur lors de la connexion');
+      return;
+    }
+    
+    // Activer le chargement
+    setIsLoading(true);
+    
+    try {
+      // Effectuer la requête de connexion
+      const response = await fetch('http://20.19.36.142:8000/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      
+      // Récupérer les données
+      const data = await response.json();
+      
+      // Vérifier la réponse
+      if (!response.ok || data.status === 'error') {
+        throw new Error(data.message || 'Identifiants incorrects');
       }
+      
+      // Vérifier que les données nécessaires sont présentes
+      if (!data.token || !data.user) {
+        throw new Error('Réponse du serveur incomplète');
+      }
+      
+      // Formater les données utilisateur
+      const userData = {
+        id: data.user.id_personne || data.user.id || 0,
+        nom: data.user.nom || data.user.nom_personne || '',
+        prenom: data.user.prenom || data.user.prenom_personne || '',
+        email: data.user.email || data.user.email_personne || email,
+        role: data.user.role || 'Etudiant'
+      };
+      
+      // Vérifier "Se souvenir de moi"
+      const rememberMe = document.getElementById('cbx')?.checked || false;
+      const cookieOptions = { 
+        expires: rememberMe ? 7 : 1, 
+        secure: true,
+        sameSite: 'strict'
+      };
+      
+      // Enregistrer les données dans les cookies
+      Cookies.set('authToken', data.token, cookieOptions);
+      Cookies.set('userData', JSON.stringify(userData), cookieOptions);
+      Cookies.set('userRole', userData.role, cookieOptions);
+      
+      // Afficher le succès
+      setSuccessMessage(`Connexion réussie ! Bienvenue ${userData.prenom}`);
+      
+      // Déterminer la redirection en fonction du rôle
+      let redirectPath;
+      switch (userData.role) {
+        case 'Admin': redirectPath = '/admin'; break;
+        case 'Pilote': redirectPath = '/pilote/dashboard'; break;
+        case 'Etudiant': redirectPath = '/etudiant/dashboard'; break;
+        case 'Entreprise': redirectPath = '/entreprise/dashboard'; break;
+        default: redirectPath = '/etudiant/dashboard';
+      }
+      
+      // Rediriger après un court délai
+      setTimeout(() => {
+        window.location.href = redirectPath; // Utiliser une redirection complète
+      }, 500);
+      
+    } catch (error) {
+      setErrorMessage(error.message || 'Erreur de connexion');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -199,6 +144,7 @@ export default function LoginPage() {
             type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            disabled={isLoading}
           />
         </div>
 
@@ -213,8 +159,9 @@ export default function LoginPage() {
             type={showPassword ? "text" : "password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            disabled={isLoading}
           />
-          <button type="button" className="toggle-password" onClick={togglePasswordVisibility}>
+          <button type="button" className="toggle-password" onClick={togglePasswordVisibility} disabled={isLoading}>
             <EyeIcon showPassword={showPassword} />
           </button>
         </div>
@@ -222,7 +169,7 @@ export default function LoginPage() {
         <div className="flex-row">
           <div>
             <label htmlFor="cbx" className="cbx">
-              <input type="checkbox" id="cbx" />
+              <input type="checkbox" id="cbx" disabled={isLoading} />
               <div className="flip">
                 <div className="front"></div>
                 <div className="back">
@@ -236,7 +183,15 @@ export default function LoginPage() {
           </div>
           <span className="span">Mot de passe oublié ?</span>
         </div>
-        <button className="button-submit" type="submit">Se connecter</button>
+        
+        <button 
+          className="button-submit" 
+          type="submit" 
+          disabled={isLoading}
+        >
+          {isLoading ? 'Connexion en cours...' : 'Se connecter'}
+        </button>
+        
         <p className="p">Vous n'avez pas de compte ? <a href="/Contact" className="span">Nous contactez</a></p>
       </form>
     </div>

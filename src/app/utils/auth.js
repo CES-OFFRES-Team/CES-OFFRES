@@ -1,91 +1,81 @@
 import Cookies from 'js-cookie';
 
+// Clés pour les cookies
 const TOKEN_KEY = 'authToken';
 const USER_DATA_KEY = 'userData';
 const USER_ROLE_KEY = 'userRole';
 
-export const setAuthToken = (token, rememberMe = false) => {
-    const options = {
-        secure: true,
-        sameSite: 'strict',
-        expires: rememberMe ? 7 : 1  // 7 jours si "Se souvenir de moi", sinon 1 jour
-    };
-    Cookies.set(TOKEN_KEY, token, options);
-};
-
+/**
+ * Récupère le token d'authentification
+ */
 export const getAuthToken = () => {
     return Cookies.get(TOKEN_KEY);
 };
 
-export const setUserData = (userData, rememberMe = false) => {
-    const options = {
-        secure: true,
-        sameSite: 'strict',
-        expires: rememberMe ? 7 : 1
-    };
-    
-    // Enregistrer les données utilisateur
-    Cookies.set(USER_DATA_KEY, JSON.stringify(userData), options);
-    
-    // Enregistrer le rôle séparément pour un accès plus facile
-    if (userData && userData.role) {
-        Cookies.set(USER_ROLE_KEY, userData.role, options);
+/**
+ * Récupère les données de l'utilisateur connecté
+ */
+export const getUserData = () => {
+    try {
+        const userData = Cookies.get(USER_DATA_KEY);
+        return userData ? JSON.parse(userData) : null;
+    } catch (error) {
+        console.error('Erreur de parsing des données utilisateur:', error);
+        return null;
     }
 };
 
-export const getUserData = () => {
-    const userData = Cookies.get(USER_DATA_KEY);
-    return userData ? JSON.parse(userData) : null;
-};
-
+/**
+ * Récupère le rôle de l'utilisateur connecté
+ */
 export const getUserRole = () => {
     return Cookies.get(USER_ROLE_KEY) || null;
 };
 
+/**
+ * Vérifie si un utilisateur est authentifié
+ */
 export const isAuthenticated = () => {
     const token = getAuthToken();
     const userData = getUserData();
     return !!(token && userData);
 };
 
+/**
+ * Vérifie si l'utilisateur a un rôle spécifique
+ */
 export const hasRole = (requiredRole) => {
     const userRole = getUserRole();
     if (!userRole) return false;
     
-    // Si le role requis est 'Admin', vérifier si l'utilisateur est admin
-    if (requiredRole === 'Admin') {
-        return userRole === 'Admin';
-    }
+    // Si admin, accès à tout
+    if (userRole === 'Admin') return true;
     
-    // Si le role requis est 'Pilote', vérifier si l'utilisateur est pilote ou admin
-    if (requiredRole === 'Pilote') {
-        return userRole === 'Pilote' || userRole === 'Admin';
-    }
-    
-    // Pour les autres roles, vérifier l'égalité
+    // Pour les autres rôles, vérifier l'égalité
     return userRole === requiredRole;
 };
 
+/**
+ * Déconnecte l'utilisateur
+ */
 export const logout = () => {
-    // Supprimer tous les cookies avec différentes options pour s'assurer de leur suppression
-    Cookies.remove(TOKEN_KEY);
-    Cookies.remove(USER_DATA_KEY);
-    Cookies.remove(USER_ROLE_KEY);
+    // Supprimer tous les cookies avec différentes options
+    const options = [
+        {}, // Options par défaut
+        { path: '/' }, // Spécifier le path
+        { domain: window.location.hostname }, // Spécifier le domaine
+        { path: '/', domain: window.location.hostname } // Les deux
+    ];
     
-    // Supprimer également avec des options spécifiques (domaine et chemin)
-    Cookies.remove(TOKEN_KEY, { path: '/' });
-    Cookies.remove(USER_DATA_KEY, { path: '/' });
-    Cookies.remove(USER_ROLE_KEY, { path: '/' });
+    // Essayer toutes les combinaisons pour s'assurer que les cookies sont supprimés
+    options.forEach(opt => {
+        Cookies.remove(TOKEN_KEY, opt);
+        Cookies.remove(USER_DATA_KEY, opt);
+        Cookies.remove(USER_ROLE_KEY, opt);
+    });
     
-    // Nettoyer le stockage local au cas où
-    if (typeof window !== 'undefined') {
-        localStorage.removeItem(TOKEN_KEY);
-        localStorage.removeItem(USER_DATA_KEY);
-        localStorage.removeItem(USER_ROLE_KEY);
-        
-        // Forcer le navigateur à effectuer une redirection complète plutôt qu'une navigation SPA
-        window.location.href = '/login';
-    }
+    // Redirection vers la page de login avec une redirection complète du navigateur
+    window.location.href = '/Login';
 };
 
 // Fonction pour vérifier si le token est toujours valide avec le backend
