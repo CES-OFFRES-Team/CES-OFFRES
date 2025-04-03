@@ -19,8 +19,6 @@ export default function AuthNav() {
         return '/pilote/dashboard';
       case 'Etudiant':
         return '/etudiant/dashboard';
-      case 'Entreprise':
-        return '/entreprise/dashboard';
       default:
         return '/Login';
     }

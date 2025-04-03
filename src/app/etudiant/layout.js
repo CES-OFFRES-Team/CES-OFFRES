@@ -13,7 +13,10 @@ export default function EtudiantLayout({ children }) {
     const userRole = getUserRole();
 
     const handleLogout = () => {
+        console.log('Déconnexion en cours...');
         logout();
+        console.log('Redirection vers la page de connexion...');
+        router.push('/Login');
     };
 
     return (

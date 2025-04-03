@@ -59,22 +59,29 @@ export const hasRole = (requiredRole) => {
  * Déconnecte l'utilisateur
  */
 export const logout = () => {
-    // Supprimer tous les cookies avec différentes options
-    const options = [
-        {}, // Options par défaut
-        { path: '/' }, // Spécifier le path
-        { domain: window.location.hostname }, // Spécifier le domaine
-        { path: '/', domain: window.location.hostname } // Les deux
-    ];
+    console.log('Suppression des cookies...');
     
-    // Essayer toutes les combinaisons pour s'assurer que les cookies sont supprimés
-    options.forEach(opt => {
-        Cookies.remove(TOKEN_KEY, opt);
-        Cookies.remove(USER_DATA_KEY, opt);
-        Cookies.remove(USER_ROLE_KEY, opt);
-    });
+    // Supprimer tous les cookies liés à l'authentification
+    Cookies.remove('authToken', { path: '/' });
+    Cookies.remove('userData', { path: '/' });
+    Cookies.remove('userRole', { path: '/' });
     
-    // Redirection vers la page de login avec une redirection complète du navigateur
+    // Supprimer avec différentes options pour s'assurer qu'ils sont bien supprimés
+    Cookies.remove('authToken', { path: '/', domain: window.location.hostname });
+    Cookies.remove('userData', { path: '/', domain: window.location.hostname });
+    Cookies.remove('userRole', { path: '/', domain: window.location.hostname });
+    
+    // Vérifier que les cookies ont bien été supprimés
+    const token = Cookies.get('authToken');
+    const userData = Cookies.get('userData');
+    const userRole = Cookies.get('userRole');
+    
+    console.log('Vérification après suppression:');
+    console.log('Token:', token ? 'existe encore' : 'supprimé');
+    console.log('UserData:', userData ? 'existe encore' : 'supprimé');
+    console.log('UserRole:', userRole ? 'existe encore' : 'supprimé');
+    
+    // Rediriger vers la page de connexion
     window.location.href = '/Login';
 };
 
