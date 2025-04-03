@@ -1,14 +1,22 @@
-/* Imports must be first */
+/* Base styles */
 @import './base/_variables.css';
 @import './base/_reset.css';
 @import './base/_typography.css';
-@import './components/_sidebar.css';
+
+/* Components - buttons first */
 @import './components/_buttons.css';
+
+/* Other components */
+@import './components/_sidebar.css';
 @import './components/_forms.css';
 @import './components/_scrollToTop.css';
 @import './components/_popup.css';
+
+/* Layout */
 @import './layout/_header.css';
 @import './layout/_footer.css';
+
+/* Pages last */
 @import './pages/_home.css';
 @import './pages/_auth.css';
 @import './utils/_animations.css';

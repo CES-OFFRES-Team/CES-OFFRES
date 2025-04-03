@@ -1,0 +1,322 @@
+.offresContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #f8fafc;
+}
+
+/* Header Section */
+.offresHeader {
+    text-align: center;
+    margin-bottom: 3rem;
+    background: linear-gradient(135deg, #151A2D 0%, #1f2642 100%);
+    padding: 4rem 2rem;
+    color: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(21, 26, 45, 0.1);
+}
+
+.offresHeader h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+}
+
+.offresHeader p {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Section Filtres */
+.filtersContainer {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(21, 26, 45, 0.1);
+    padding: 2.5rem;
+    margin: 2rem 0;
+    border: 1px solid rgba(21, 26, 45, 0.05);
+}
+
+.filtersGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 colonnes fixes */
+    gap: 2rem;
+    align-items: start;
+}
+
+.filterGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.filterLabel {
+    font-weight: 600;
+    color: #151A2D;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.filterSelect {
+    padding: 0.875rem 1rem;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    background-color: white;
+    color: #151A2D;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+}
+
+.filterSelect:hover {
+    border-color: #151A2D;
+}
+
+.filterSelect:focus {
+    outline: none;
+    border-color: #151A2D;
+    box-shadow: 0 0 0 3px rgba(21, 26, 45, 0.1);
+}
+
+.filterCheckbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.filterCheckbox input[type="checkbox"] {
+    width: 1.2rem;
+    height: 1.2rem;
+    border: 2px solid #151A2D;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.filterCheckbox label {
+    color: #4a5568;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.filterActions {
+    display: flex;
+    justify-content: center; /* Centré comme la page d'accueil */
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.resetButton {
+    padding: 0.875rem 2rem;
+    border: 2px solid #151A2D;
+    background-color: transparent;
+    color: #151A2D;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: 0.5px;
+}
+
+.resetButton:hover {
+    background-color: #151A2D;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(21, 26, 45, 0.2);
+}
+
+.applyButton {
+    padding: 0.875rem 2rem;
+    background-color: #151A2D;
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 6px rgba(21, 26, 45, 0.1);
+}
+
+.applyButton:hover {
+    background-color: #1f2642;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(21, 26, 45, 0.2);
+}
+
+/* Offres Grid */
+.offresGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+/* Offre Card */
+.offreCard {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(21, 26, 45, 0.1);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(21, 26, 45, 0.05);
+}
+
+.offreCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(21, 26, 45, 0.15);
+}
+
+.offreHeader {
+    margin-bottom: 1rem;
+}
+
+.offreTitle {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #151A2D;
+    margin-bottom: 0.5rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.offreCompany {
+    color: #4a5568;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+}
+
+.offreDetails {
+    margin: 1.5rem 0;
+}
+
+.detailItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    color: #4a5568;
+    font-size: 0.95rem;
+}
+
+.detailItem svg {
+    color: #151A2D;
+    font-size: 1.25rem;
+}
+
+.description {
+    margin-top: 1rem;
+    line-height: 1.6;
+    color: #4a5568;
+}
+
+/* Actions */
+.offreActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 1.5rem;
+}
+
+/* Buttons */
+.actionButton {
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.primaryButton {
+    composes: actionButton;
+    background-color: #151A2D;
+    color: white;
+    border: none;
+    box-shadow: 0 2px 4px rgba(21, 26, 45, 0.1);
+}
+
+.primaryButton:hover {
+    background-color: #1f2642;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(21, 26, 45, 0.2);
+}
+
+.secondaryButton {
+    composes: actionButton;
+    background-color: transparent;
+    border: 2px solid #151A2D;
+    color: #151A2D;
+}
+
+.secondaryButton:hover {
+    background-color: #151A2D;
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* États */
+.loadingContainer {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #151A2D;
+}
+
+.errorContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    padding: 2rem;
+}
+
+.errorContent {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(21, 26, 45, 0.1);
+    padding: 2.5rem;
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+}
+
+.errorContent h2 {
+    color: #151A2D;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.errorContent p {
+    color: #4a5568;
+    margin-bottom: 1.5rem;
+}
+
+.errorContent button {
+    margin-top: 1rem;
+}
+
+.noResults {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #4a5568;
+    font-size: 1.1rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(21, 26, 45, 0.1);
+    grid-column: 1/-1;
+}

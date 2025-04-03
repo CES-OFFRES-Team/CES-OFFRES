@@ -4,9 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { HiLocationMarker, HiCalendar, HiClock, HiBriefcase, HiHeart } from 'react-icons/hi';
 import Filters from './components/Filters';
-import './Offres.css';
+import styles from './Offres.module.css';
 
-const API_URL = 'http://20.19.36.142:8000/api';
+const API_URL = 'http://20.19.36.142/api';  // Vérifiez que cette URL est correcte
 
 const formatDate = (dateString) => {
     if (!dateString) return 'Date non disponible';
@@ -25,38 +25,38 @@ const OffreCard = ({ offre, onFavorite, isFavorite }) => {
     };
 
     return (
-        <div className="offre-card">
-            <div className="offre-header">
-                <h2 className="offre-title">{offre.titre}</h2>
-                <div className="offre-company">{offre.nom_entreprise}</div>
+        <div className={styles.offreCard}>
+            <div className={styles.offreHeader}>
+                <h2 className={styles.offreTitle}>{offre.titre}</h2>
+                <div className={styles.offreCompany}>{offre.nom_entreprise}</div>
             </div>
-            <div className="offre-content">
-                <div className="offre-details">
-                    <div className="detail-item">
+            <div className={styles.offreContent}>
+                <div className={styles.offreDetails}>
+                    <div className={styles.detailItem}>
                         <HiCalendar />
                         <span>Début : {formatDate(offre.date_debut)}</span>
                     </div>
-                    <div className="detail-item">
+                    <div className={styles.detailItem}>
                         <HiCalendar />
                         <span>Fin : {formatDate(offre.date_fin)}</span>
                     </div>
-                    <div className="detail-item">
+                    <div className={styles.detailItem}>
                         <HiBriefcase />
                         <span>Rémunération : {offre.remuneration}€</span>
                     </div>
-                    <div className="detail-item description">
+                    <div className={`${styles.detailItem} ${styles.description}`}>
                         <span>{offre.description}</span>
                     </div>
                 </div>
             </div>
-            <div className="offre-actions">
+            <div className={styles.offreActions}>
                 <button 
-                    className={`btn btn-outline ${isFavorite ? 'favorite' : ''}`}
+                    className={styles.secondaryButton}
                     onClick={() => onFavorite(offre.id_stage)}
                 >
-                    <HiHeart />
+                    <HiHeart className={isFavorite ? styles.favorite : ''} />
                 </button>
-                <button className="btn btn-primary" onClick={handlePostuler}>
+                <button className={styles.primaryButton} onClick={handlePostuler}>
                     Postuler
                 </button>
             </div>
@@ -66,70 +66,90 @@ const OffreCard = ({ offre, onFavorite, isFavorite }) => {
 
 export default function Offres() {
     const [offres, setOffres] = useState([]);
+    const [entreprises, setEntreprises] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [filtres, setFiltres] = useState({
-        entreprises: [],
-        dateDebut: '',
-        dateFin: ''
+        entreprise: '',
+        ville: ''
     });
     const [favoris, setFavoris] = useState([]);
 
     useEffect(() => {
-        const fetchOffres = async () => {
+        const fetchData = async () => {
             try {
                 setIsLoading(true);
-                const response = await fetch(`${API_URL}/offres`);
-                if (!response.ok) {
-                    throw new Error('Erreur lors de la récupération des offres');
+                
+                // Récupérer les offres et les entreprises en parallèle
+                const [offresResponse, entreprisesResponse] = await Promise.all([
+                    fetch('http://20.19.36.142/api/offres'),
+                    fetch('http://20.19.36.142/api/entreprises')
+                ]);
+
+                if (!offresResponse.ok || !entreprisesResponse.ok) {
+                    throw new Error('Erreur lors de la récupération des données');
                 }
-                const result = await response.json();
-                if (result.status === 'success' && Array.isArray(result.data)) {
-                    setOffres(result.data);
-                } else {
-                    throw new Error('Format de données invalide');
-                }
+
+                const offresResult = await offresResponse.json();
+                const entreprisesResult = await entreprisesResponse.json();
+
+                // Debug logs
+                console.log('Données offres brutes:', offresResult);
+                console.log('Données entreprises brutes:', entreprisesResult);
+
+                // S'assurer que nous avons des tableaux
+                const offresArray = Array.isArray(offresResult) ? offresResult : offresResult.data || [];
+                const entreprisesArray = Array.isArray(entreprisesResult) ? entreprisesResult : entreprisesResult.data || [];
+
+                // Créer un map des entreprises pour un accès rapide
+                const entreprisesMap = new Map();
+                entreprisesArray.forEach(entreprise => {
+                    if (entreprise && entreprise.id_entreprise) {
+                        entreprisesMap.set(entreprise.id_entreprise, entreprise);
+                    }
+                });
+
+                // Enrichir les offres avec les données d'entreprise
+                const offresEnrichies = offresArray.map(offre => {
+                    const entrepriseDetails = entreprisesMap.get(offre.id_entreprise) || {};
+                    return {
+                        ...offre,
+                        entrepriseDetails
+                    };
+                });
+
+                setOffres(offresEnrichies);
+                setEntreprises(entreprisesArray);
+                setError(null);
+
             } catch (err) {
-                console.error('Erreur:', err);
-                setError(err.message);
+                console.error('Erreur détaillée:', err);
+                setError('Erreur lors du chargement des données');
+                setOffres([]);
+                setEntreprises([]);
             } finally {
                 setIsLoading(false);
             }
         };
 
-        fetchOffres();
-
-        // Charger les favoris
-        const savedFavoris = localStorage.getItem('favoris');
-        if (savedFavoris) {
-            setFavoris(JSON.parse(savedFavoris));
-        }
+        fetchData();
     }, []);
 
-    const handleFiltreChange = (type, value) => {
-        setFiltres(prev => ({
-            ...prev,
-            [type]: value
-        }));
+    const handleFiltreChange = (newFiltres) => {
+        setFiltres(newFiltres);
     };
 
     const filtrerOffres = () => {
-        if (!Array.isArray(offres)) return [];
-        
         return offres.filter(offre => {
-            // Filtre par entreprise
-            const matchEntreprise = filtres.entreprises.length === 0 || 
-                filtres.entreprises.includes(offre.nom_entreprise);
+            const entreprise = offre.entrepriseDetails;
+            
+            const matchEntreprise = !filtres.entreprise || 
+                offre.nom_entreprise === filtres.entreprise;
+                
+            const matchVille = !filtres.ville || 
+                (entreprise && entreprise.ville === filtres.ville);
 
-            // Filtre par date de début
-            const matchDateDebut = !filtres.dateDebut || 
-                new Date(offre.date_debut) >= new Date(filtres.dateDebut);
-
-            // Filtre par date de fin
-            const matchDateFin = !filtres.dateFin || 
-                new Date(offre.date_fin) <= new Date(filtres.dateFin);
-
-            return matchEntreprise && matchDateDebut && matchDateFin;
+            return matchEntreprise && matchVille;
         });
     };
 
@@ -142,45 +162,31 @@ export default function Offres() {
         localStorage.setItem('favoris', JSON.stringify(newFavoris));
     };
 
-    if (isLoading) {
-        return (
-            <div className="loading-container">
-                <div className="loader"></div>
-                <p>Chargement des offres...</p>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="error-container">
-                <p>Erreur : {error}</p>
-                <button onClick={() => window.location.reload()} className="btn btn-primary">
-                    Réessayer
-                </button>
-            </div>
-        );
-    }
-
     const offresFiltered = filtrerOffres();
 
     return (
-        <div className="offres-container">
-            <div className="offres-header">
+        <div className={styles.offresContainer}>
+            <div className={styles.offresHeader}>
                 <h1>Offres de Stage</h1>
                 <p>Trouvez le stage qui correspond à vos attentes</p>
             </div>
 
-            <Filters 
-                onFilterChange={handleFiltreChange}
-                entreprises={[...new Set(offres.map(o => o.nom_entreprise))]}
-            />
+            {!isLoading && !error && (
+                <Filters 
+                    offres={offres}
+                    entreprises={entreprises}
+                    onFilterChange={setFiltres}
+                    filtres={filtres}
+                />
+            )}
 
-            <div className="offres-grid">
-                {offresFiltered.length === 0 ? (
-                    <div className="no-results">
-                        Aucune offre ne correspond à vos critères de recherche
-                    </div>
+            <div className={styles.offresGrid}>
+                {isLoading ? (
+                    <div className={styles.loadingContainer}>Chargement...</div>
+                ) : error ? (
+                    <div className={styles.errorContainer}>{error}</div>
+                ) : offres.length === 0 ? (
+                    <div className={styles.noResults}>Aucune offre disponible</div>
                 ) : (
                     offresFiltered.map((offre) => (
                         <OffreCard
