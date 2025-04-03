@@ -26,20 +26,27 @@ export default function EtudiantLayout({ children }) {
     }, [user, loading, router]);
 
     const handleLogout = async () => {
-        console.log('Déconnexion en cours...');
-        await logout();
-        console.log('Redirection vers la page de connexion...');
-        router.push('/Login');
-        router.refresh(); // Force le rafraîchissement du router après la déconnexion
+        try {
+            console.log('Déconnexion en cours...');
+            await logout();
+            console.log('Déconnexion réussie');
+        } catch (error) {
+            console.error('Erreur lors de la déconnexion:', error);
+        }
     };
 
     // Afficher un écran de chargement pendant la vérification
-    if (loading || !user) {
+    if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-screen">
+            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-white bg-opacity-75 z-50">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
             </div>
         );
+    }
+
+    // Si l'utilisateur n'est pas connecté, ne rien afficher (la redirection sera gérée par useEffect)
+    if (!user) {
+        return null;
     }
 
     return (

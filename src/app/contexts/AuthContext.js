@@ -14,56 +14,77 @@ export function AuthProvider({ children }) {
   
   useEffect(() => {
     // Vérifier si l'utilisateur est connecté au chargement
-    const userData = getUserData();
-    const token = getAuthToken();
-    
-    if (userData && token) {
-      // Log des données utilisateur au chargement
-      console.log('Données utilisateur chargées:', userData);
-      setUser(userData);
-    }
-    
-    setLoading(false);
+    const checkAuth = () => {
+      const userData = getUserData();
+      const token = getAuthToken();
+      
+      if (userData && token) {
+        console.log('Données utilisateur chargées:', userData);
+        setUser(userData);
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
+    };
+
+    checkAuth();
   }, []);
   
   const login = async (userData, token) => {
-    // Log des données avant stockage
-    console.log('Données à stocker:', userData);
-    console.log('Token à stocker:', token);
-    
-    // S'assurer que l'ID est présent d'une manière ou d'une autre
-    const userDataWithId = {
-      ...userData,
-      id_personne: userData.id_personne || userData.id || null
-    };
-    
-    // Définir les cookies
-    const cookieOptions = { 
-      expires: 7, 
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/'
-    };
-    
-    Cookies.set(COOKIE_KEYS.AUTH_TOKEN, token, cookieOptions);
-    Cookies.set(COOKIE_KEYS.USER_DATA, JSON.stringify(userDataWithId), cookieOptions);
-    Cookies.set(COOKIE_KEYS.USER_ROLE, userData.role, cookieOptions);
-    
-    // Mettre à jour l'état
-    setUser(userDataWithId);
-    
-    // Forcer le rafraîchissement
-    router.refresh();
+    try {
+      setLoading(true);
+      console.log('Données à stocker:', userData);
+      console.log('Token à stocker:', token);
+      
+      const userDataWithId = {
+        ...userData,
+        id_personne: userData.id_personne || userData.id || null
+      };
+      
+      const cookieOptions = { 
+        expires: 7, 
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        path: '/'
+      };
+      
+      Cookies.set(COOKIE_KEYS.AUTH_TOKEN, token, cookieOptions);
+      Cookies.set(COOKIE_KEYS.USER_DATA, JSON.stringify(userDataWithId), cookieOptions);
+      Cookies.set(COOKIE_KEYS.USER_ROLE, userData.role, cookieOptions);
+      
+      setUser(userDataWithId);
+      router.refresh();
+    } catch (error) {
+      console.error('Erreur lors de la connexion:', error);
+    } finally {
+      setLoading(false);
+    }
   };
   
   const logout = async () => {
-    console.log('Déconnexion depuis le contexte...');
-    // Appeler la fonction de déconnexion de auth.js
-    authLogout();
-    // Mettre à jour l'état local
-    setUser(null);
-    // Forcer le rafraîchissement
-    router.refresh();
+    try {
+      setLoading(true);
+      console.log('Déconnexion depuis le contexte...');
+      
+      // Supprimer les cookies
+      Cookies.remove(COOKIE_KEYS.AUTH_TOKEN, { path: '/' });
+      Cookies.remove(COOKIE_KEYS.USER_DATA, { path: '/' });
+      Cookies.remove(COOKIE_KEYS.USER_ROLE, { path: '/' });
+      
+      // Réinitialiser l'état utilisateur
+      setUser(null);
+      
+      // Appeler la fonction de déconnexion de auth.js
+      authLogout();
+      
+      // Rediriger vers la page de connexion
+      router.push('/Login');
+      router.refresh();
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+    } finally {
+      setLoading(false);
+    }
   };
   
   return (

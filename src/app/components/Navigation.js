@@ -10,21 +10,34 @@ export default function Navigation() {
     const [isOpen, setIsOpen] = useState(false);
     const [isMaximized, setIsMaximized] = useState(false);
     const router = useRouter();
-    const { user, logout } = useAuth();
+    const { user, logout, loading } = useAuth();
 
     const handleLogout = async () => {
-        console.log('Déconnexion en cours...');
-        await logout();
-        console.log('Redirection vers la page de connexion...');
-        router.push('/Login');
-        router.refresh();
+        try {
+            console.log('Déconnexion en cours...');
+            await logout();
+            console.log('Déconnexion réussie');
+        } catch (error) {
+            console.error('Erreur lors de la déconnexion:', error);
+        }
     };
 
     const handleNavigation = (path) => {
-        router.push(path);
-        router.refresh();
-        setIsOpen(false);
+        if (!loading) {
+            router.push(path);
+            router.refresh();
+            setIsOpen(false);
+        }
     };
+
+    // Si en cours de chargement, afficher un indicateur
+    if (loading) {
+        return (
+            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-white bg-opacity-75 z-50">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+            </div>
+        );
+    }
 
     useEffect(() => {
         const checkWindowState = () => {
