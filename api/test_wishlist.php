@@ -21,10 +21,13 @@ function displayResult($title, $data) {
 // Test 1: Récupérer la wishlist d'un utilisateur spécifique
 echo "<h1>Test de la Wishlist</h1>";
 
-// ID de l'utilisateur à tester (à remplacer par un ID valide)
-$userId = 5; // Remplacez par un ID d'utilisateur valide
+// ID de l'utilisateur à tester
+$userId = 5;
 
 try {
+    // Simuler un token d'authentification
+    $_SERVER['HTTP_AUTHORIZATION'] = 'Bearer test_token';
+    
     // Créer une instance du contrôleur
     $controller = new WishListController();
     

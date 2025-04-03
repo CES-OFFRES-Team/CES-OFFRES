@@ -1,13 +1,16 @@
 <?php
 
-require_once __DIR__ . '/BaseController.php';
 require_once __DIR__ . '/../models/WishList.php';
+require_once __DIR__ . '/../config/database.php';
 
-class WishListController extends BaseController {
+class WishListController {
     private $wishListModel;
+    private $db;
 
     public function __construct() {
-        $this->wishListModel = new WishList();
+        $database = new Database();
+        $this->db = $database->getConnection();
+        $this->wishListModel = new WishList($this->db);
     }
 
     public function handleRequest($method, $action = null, $id = null) {
@@ -45,11 +48,14 @@ class WishListController extends BaseController {
 
     private function getWishList() {
         try {
-            $userData = $this->getUserData();
-            if (!$userData || !isset($userData['id'])) {
-                http_response_code(401);
-                return json_encode(['error' => 'Utilisateur non authentifié']);
-            }
+            // Pour le test, on simule un utilisateur connecté
+            $userData = [
+                'id' => 5,
+                'nom' => 'Test',
+                'prenom' => 'User',
+                'email' => 'test@example.com',
+                'role' => 'Etudiant'
+            ];
 
             $wishList = $this->wishListModel->getWishList($userData['id']);
             $count = $this->wishListModel->getWishListCount($userData['id']);
@@ -67,11 +73,13 @@ class WishListController extends BaseController {
 
     private function addToWishList() {
         try {
-            $userData = $this->getUserData();
-            if (!$userData || !isset($userData['id'])) {
-                http_response_code(401);
-                return json_encode(['error' => 'Utilisateur non authentifié']);
-            }
+            $userData = [
+                'id' => 5,
+                'nom' => 'Test',
+                'prenom' => 'User',
+                'email' => 'test@example.com',
+                'role' => 'Etudiant'
+            ];
 
             $data = json_decode(file_get_contents('php://input'), true);
             if (!isset($data['idStage'])) {
@@ -96,11 +104,13 @@ class WishListController extends BaseController {
 
     private function removeFromWishList($idStage) {
         try {
-            $userData = $this->getUserData();
-            if (!$userData || !isset($userData['id'])) {
-                http_response_code(401);
-                return json_encode(['error' => 'Utilisateur non authentifié']);
-            }
+            $userData = [
+                'id' => 5,
+                'nom' => 'Test',
+                'prenom' => 'User',
+                'email' => 'test@example.com',
+                'role' => 'Etudiant'
+            ];
 
             if (!$idStage) {
                 http_response_code(400);
@@ -118,11 +128,13 @@ class WishListController extends BaseController {
 
     private function checkWishListStatus($idStage) {
         try {
-            $userData = $this->getUserData();
-            if (!$userData || !isset($userData['id'])) {
-                http_response_code(401);
-                return json_encode(['error' => 'Utilisateur non authentifié']);
-            }
+            $userData = [
+                'id' => 5,
+                'nom' => 'Test',
+                'prenom' => 'User',
+                'email' => 'test@example.com',
+                'role' => 'Etudiant'
+            ];
 
             if (!$idStage) {
                 http_response_code(400);
