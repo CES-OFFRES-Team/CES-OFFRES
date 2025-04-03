@@ -1,80 +1,17 @@
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import styles from '../Offres.module.css';
 import ThemeInput from './ThemeInput';
-
-const FilterInput = ({ label, value, onChange, options, placeholder }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [searchValue, setSearchValue] = useState('');
-
-    const handleSelect = (option) => {
-        onChange(option);
-        setSearchValue('');
-        setIsOpen(false);
-    };
-
-    return (
-        <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>{label}</label>
-            <div className={styles.filterInputContainer}>
-                <input
-                    type="text"
-                    value={searchValue}
-                    onChange={(e) => setSearchValue(e.target.value)}
-                    onFocus={() => setIsOpen(true)}
-                    placeholder={value || placeholder}
-                    className={styles.filterInput}
-                />
-                {isOpen && (
-                    <div className={styles.optionsList}>
-                        <div 
-                            className={styles.optionItem}
-                            onClick={() => handleSelect('')}
-                        >
-                            Tout afficher
-                        </div>
-                        {options
-                            .filter(option => 
-                                option.toLowerCase().includes(searchValue.toLowerCase())
-                            )
-                            .map((option) => (
-                                <div
-                                    key={option}
-                                    className={styles.optionItem}
-                                    onClick={() => handleSelect(option)}
-                                >
-                                    {option}
-                                </div>
-                            ))
-                        }
-                    </div>
-                )}
-            </div>
-            {value && (
-                <div className={styles.selectedValue}>
-                    <span className={styles.themeTag}>
-                        {value}
-                        <button
-                            onClick={() => onChange('')}
-                            className={styles.removeTheme}
-                        >
-                            ×
-                        </button>
-                    </span>
-                </div>
-            )}
-        </div>
-    );
-};
+import TagInput from './TagInput';
 
 const Filters = ({ offres = [], entreprises = [], onFilterChange, filtres }) => {
-    const villesDisponibles = useMemo(() => {
+    const villesDisponibles = React.useMemo(() => {
         const villes = entreprises
             .map(e => e.ville)
             .filter(Boolean);
         return [...new Set(villes)].sort();
     }, [entreprises]);
 
-    const entreprisesDisponibles = useMemo(() => {
+    const entreprisesDisponibles = React.useMemo(() => {
         const noms = offres
             .map(offre => offre.nom_entreprise)
             .filter(Boolean);
@@ -84,26 +21,26 @@ const Filters = ({ offres = [], entreprises = [], onFilterChange, filtres }) => 
     return (
         <div className={styles.filtersContainer}>
             <div className={styles.filtersGrid}>
-                <FilterInput
-                    label="Entreprise"
-                    value={filtres.entreprise}
-                    onChange={(value) => onFilterChange({
+                <TagInput
+                    label="Entreprises"
+                    values={filtres.entreprises}
+                    onChange={(newValues) => onFilterChange({
                         ...filtres,
-                        entreprise: value
+                        entreprises: newValues
                     })}
                     options={entreprisesDisponibles}
-                    placeholder="Rechercher une entreprise"
+                    placeholder="Rechercher des entreprises"
                 />
 
-                <FilterInput
-                    label="Ville"
-                    value={filtres.ville}
-                    onChange={(value) => onFilterChange({
+                <TagInput
+                    label="Villes"
+                    values={filtres.villes}
+                    onChange={(newValues) => onFilterChange({
                         ...filtres,
-                        ville: value
+                        villes: newValues
                     })}
                     options={villesDisponibles}
-                    placeholder="Rechercher une ville"
+                    placeholder="Rechercher des villes"
                 />
 
                 <div className={styles.filterGroup}>
@@ -124,8 +61,8 @@ const Filters = ({ offres = [], entreprises = [], onFilterChange, filtres }) => 
                 <button 
                     className={styles.resetButton}
                     onClick={() => onFilterChange({ 
-                        entreprise: '', 
-                        ville: '', 
+                        entreprises: [], 
+                        villes: [], 
                         themes: [] 
                     })}
                 >

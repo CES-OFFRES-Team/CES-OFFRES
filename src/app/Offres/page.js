@@ -70,9 +70,9 @@ export default function Offres() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [filtres, setFiltres] = useState({
-        entreprise: '',
-        ville: '',
-        themes: [] // Ajout du state pour les thèmes
+        entreprises: [], // Changed from string to array
+        villes: [],     // Changed from string to array
+        themes: []
     });
     const [favoris, setFavoris] = useState([]);
 
@@ -145,13 +145,13 @@ export default function Offres() {
 
     const filtrerOffres = () => {
         return offres.filter(offre => {
-            const matchEntreprise = !filtres.entreprise || 
-                offre.nom_entreprise === filtres.entreprise;
+            const matchEntreprise = filtres.entreprises.length === 0 || 
+                filtres.entreprises.includes(offre.nom_entreprise);
                 
-            const matchVille = !filtres.ville || 
-                offre.entrepriseDetails?.ville === filtres.ville;
+            const matchVille = filtres.villes.length === 0 || 
+                filtres.villes.includes(offre.entrepriseDetails?.ville);
                 
-            const matchThemes = !filtres.themes.length || 
+            const matchThemes = filtres.themes.length === 0 || 
                 filtres.themes.some(theme => 
                     offre.description.toLowerCase().includes(theme) ||
                     offre.titre.toLowerCase().includes(theme)
