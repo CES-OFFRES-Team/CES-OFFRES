@@ -1,0 +1,267 @@
+.aboutContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+    background: linear-gradient(to bottom, #ffffff, #f8fafc);
+}
+
+.aboutHeader {
+    text-align: center;
+    margin-bottom: 5rem;
+    position: relative;
+}
+
+.aboutHeader::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: #1f2642;
+    border-radius: 2px;
+}
+
+.aboutHeader h1 {
+    color: #1f2642;
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.5px;
+}
+
+.aboutHeader p {
+    color: #4a5568;
+    font-size: 1.3rem;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.aboutSection {
+    margin-bottom: 6rem;
+    opacity: 0;
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.aboutSection h2 {
+    color: #1f2642;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 3rem;
+    text-align: center;
+    position: relative;
+}
+
+.aboutSection p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #4a5568;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 0 1rem;
+    letter-spacing: 0.2px;
+}
+
+.engagementGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2.5rem;
+    margin-top: 2rem;
+}
+
+.engagementCard {
+    background: white;
+    padding: 2.5rem 2rem;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    transition: all 0.4s ease;
+    border: 2px solid transparent;
+}
+
+.engagementCard:hover {
+    transform: translateY(-8px);
+    border-color: #1f2642;
+    box-shadow: 0 15px 35px rgba(31, 38, 66, 0.1);
+}
+
+.engagementCard i {
+    font-size: 3rem;
+    color: #1f2642;
+    margin-bottom: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.engagementCard:hover i {
+    transform: scale(1.1);
+}
+
+.engagementCard h3 {
+    color: #1f2642;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.engagementCard p {
+    color: #4a5568;
+    line-height: 1.6;
+}
+
+.stepsList {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.stepsList::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 40px;
+    bottom: 40px;
+    width: 2px;
+    background: #e2e8f0;
+}
+
+.stepItem {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    position: relative;
+    padding-left: 1rem;
+}
+
+.stepNumber {
+    background: #1f2642;
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(31, 38, 66, 0.2);
+    z-index: 1;
+}
+
+.stepContent h3 {
+    color: #1f2642;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.stepContent p {
+    color: #4a5568;
+    line-height: 1.6;
+}
+
+.helpBox {
+    background: white;
+    padding: 3rem;
+    border-radius: 16px;
+    text-align: center;
+    border: 2px solid #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+    transition: all 0.3s ease;
+}
+
+.helpBox p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #1f2642;
+    font-weight: 500;
+}
+
+.helpBox:hover {
+    border-color: #1f2642;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(31, 38, 66, 0.1);
+}
+
+.link {
+    color: #1f2642;
+    font-weight: 700;
+    text-decoration: none;
+    position: relative;
+    padding: 0 2px;
+    margin: 0 4px;
+    transition: color 0.3s ease;
+}
+
+.link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #1f2642;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.link:hover {
+    color: #2a345c;
+}
+
+.link:hover::after {
+    transform: scaleX(1);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .aboutContainer {
+        padding: 2rem 1rem;
+    }
+
+    .aboutHeader h1 {
+        font-size: 2.2rem;
+    }
+
+    .aboutHeader p {
+        font-size: 1.1rem;
+    }
+
+    .aboutSection p {
+        font-size: 1rem;
+        padding: 0;
+    }
+
+    .stepsList::before {
+        display: none;
+    }
+
+    .stepItem {
+        padding-left: 0;
+    }
+
+    .helpBox {
+        padding: 2rem;
+    }
+
+    .helpBox p {
+        font-size: 1.1rem;
+    }
+}

@@ -1,0 +1,329 @@
+.privacyContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+    background: linear-gradient(to bottom, #ffffff, #f8fafc);
+}
+
+.privacyHeader {
+    text-align: center;
+    margin-bottom: 5rem;
+    position: relative;
+}
+
+.privacyHeader::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: #1f2642;
+    border-radius: 2px;
+}
+
+.privacyHeader h1 {
+    color: #1f2642;
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.5px;
+}
+
+.privacyHeader p {
+    color: #4a5568;
+    font-size: 1.3rem;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.privacyContent {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.privacySection {
+    margin-bottom: 4rem;
+    opacity: 0;
+    animation: fadeInUp 0.6s ease forwards;
+    animation-delay: calc(var(--section-index, 0) * 0.1s);
+}
+
+.privacySection h2 {
+    color: #1f2642;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    position: relative;
+    padding-left: 1rem;
+}
+
+.privacySection h2::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 24px;
+    background: #1f2642;
+    border-radius: 2px;
+}
+
+.contentBox {
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.contentBox:hover {
+    border-color: #1f2642;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(31, 38, 66, 0.1);
+}
+
+.contentBox p {
+    color: #4a5568;
+    font-size: 1.2rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.2px;
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.contentBox .introText {
+    font-size: 1.3rem;
+    color: #1f2642;
+    text-align: center;
+    font-weight: 500;
+    margin-bottom: 2rem;
+    line-height: 2;
+}
+
+.contentBox .sectionIntro {
+    font-size: 1.2rem;
+    color: #1f2642;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    border-left: 4px solid #1f2642;
+}
+
+.dataList {
+    list-style: none;
+    padding: 0;
+    margin-top: 1rem;
+}
+
+.dataList li {
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    background: #f8fafc;
+    border-radius: 8px;
+    color: #4a5568;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.dataType {
+    color: #1f2642;
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
+
+.securityInfo {
+    margin-top: 2rem;
+}
+
+.securityInfo h3 {
+    color: #1f2642;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.securityList {
+    list-style: none;
+    padding-left: 1.5rem;
+}
+
+.securityList li {
+    color: #4a5568;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.securityList li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #1f2642;
+    font-weight: bold;
+}
+
+.rightsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-top: 2rem;
+    padding: 1rem;
+}
+
+.rightCard {
+    background: white;
+    border: 2px solid #e2e8f0;
+    padding: 2rem;
+    border-radius: 16px;
+    text-align: left;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.rightCard:hover {
+    border-color: #1f2642;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(31, 38, 66, 0.1);
+    background: #1f2642;
+}
+
+.rightCard i {
+    font-size: 1.5rem;
+    color: #1f2642;
+    background: #f8fafc;
+    padding: 1rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.rightCard:hover i {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.rightCard .rightContent {
+    flex: 1;
+}
+
+.rightCard h4 {
+    color: #1f2642;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    transition: color 0.3s ease;
+}
+
+.rightCard:hover h4 {
+    color: white;
+}
+
+.rightCard p {
+    color: #4a5568;
+    font-size: 1rem;
+    margin: 0;
+    transition: color 0.3s ease;
+}
+
+.rightCard:hover p {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.contactText {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #1f2642;
+    font-weight: 500;
+    padding: 2rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    margin-top: 2rem;
+}
+
+.link {
+    color: #1f2642;
+    font-weight: 600;
+    text-decoration: none;
+    position: relative;
+    padding-bottom: 2px;
+}
+
+.link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #1f2642;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.link:hover::after {
+    transform: scaleX(1);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .privacyContainer {
+        padding: 2rem 1rem;
+    }
+
+    .privacyHeader h1 {
+        font-size: 2.2rem;
+    }
+
+    .privacyHeader p {
+        font-size: 1.1rem;
+    }
+
+    .privacySection h2 {
+        font-size: 1.5rem;
+    }
+
+    .contentBox {
+        padding: 1.5rem;
+    }
+
+    .contentBox .introText {
+        font-size: 1.1rem;
+        line-height: 1.8;
+    }
+
+    .contentBox .sectionIntro {
+        font-size: 1.1rem;
+        padding-left: 0.75rem;
+    }
+
+    .dataList li {
+        font-size: 1rem;
+    }
+
+    .rightsGrid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .rightCard {
+        padding: 1.5rem;
+    }
+}
