@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { HiLocationMarker, HiCalendar, HiClock, HiBriefcase, HiHeart, HiOutlineEmojiSad } from 'react-icons/hi';
+import { HiLocationMarker, HiCalendar, HiClock, HiBriefcase, HiHeart, HiOutlineEmojiSad, HiChevronLeft, HiChevronRight } from 'react-icons/hi';
 import Filters from './components/Filters';
 import styles from './Offres.module.css';
 
@@ -79,6 +79,8 @@ export default function Offres() {
         }
     });
     const [favoris, setFavoris] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const offresParPage = 6;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -178,6 +180,99 @@ export default function Offres() {
     };
 
     const offresFiltered = filtrerOffres();
+    const totalPages = Math.ceil(offresFiltered.length / offresParPage);
+    
+    const indexDernierElement = currentPage * offresParPage;
+    const indexPremierElement = indexDernierElement - offresParPage;
+    const offresActuelles = offresFiltered.slice(indexPremierElement, indexDernierElement);
+
+    const paginer = (pageNumber) => {
+        setCurrentPage(pageNumber);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const renderPagination = () => {
+        const pages = [];
+        const maxPagesAffichees = 5;
+        
+        let debut = Math.max(1, currentPage - Math.floor(maxPagesAffichees / 2));
+        let fin = Math.min(totalPages, debut + maxPagesAffichees - 1);
+        
+        if (fin - debut + 1 < maxPagesAffichees) {
+            debut = Math.max(1, fin - maxPagesAffichees + 1);
+        }
+
+        // Bouton précédent
+        pages.push(
+            <button
+                key="prev"
+                onClick={() => currentPage > 1 && paginer(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`${styles.paginationButton} ${currentPage === 1 ? styles.disabled : ''}`}
+            >
+                <HiChevronLeft />
+            </button>
+        );
+
+        // Première page
+        if (debut > 1) {
+            pages.push(
+                <button
+                    key={1}
+                    onClick={() => paginer(1)}
+                    className={`${styles.paginationButton} ${currentPage === 1 ? styles.active : ''}`}
+                >
+                    1
+                </button>
+            );
+            if (debut > 2) {
+                pages.push(<span key="ellipsis1" className={styles.ellipsis}>...</span>);
+            }
+        }
+
+        // Pages numérotées
+        for (let i = debut; i <= fin; i++) {
+            pages.push(
+                <button
+                    key={i}
+                    onClick={() => paginer(i)}
+                    className={`${styles.paginationButton} ${currentPage === i ? styles.active : ''}`}
+                >
+                    {i}
+                </button>
+            );
+        }
+
+        // Dernière page
+        if (fin < totalPages) {
+            if (fin < totalPages - 1) {
+                pages.push(<span key="ellipsis2" className={styles.ellipsis}>...</span>);
+            }
+            pages.push(
+                <button
+                    key={totalPages}
+                    onClick={() => paginer(totalPages)}
+                    className={`${styles.paginationButton} ${currentPage === totalPages ? styles.active : ''}`}
+                >
+                    {totalPages}
+                </button>
+            );
+        }
+
+        // Bouton suivant
+        pages.push(
+            <button
+                key="next"
+                onClick={() => currentPage < totalPages && paginer(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={`${styles.paginationButton} ${currentPage === totalPages ? styles.disabled : ''}`}
+            >
+                <HiChevronRight />
+            </button>
+        );
+
+        return pages;
+    };
 
     return (
         <div className={styles.offresContainer}>
@@ -211,7 +306,7 @@ export default function Offres() {
                         </p>
                     </div>
                 ) : (
-                    offresFiltered.map((offre) => (
+                    offresActuelles.map((offre) => (
                         <OffreCard
                             key={offre.id_stage}
                             offre={offre}
@@ -221,6 +316,12 @@ export default function Offres() {
                     ))
                 )}
             </div>
+
+            {!isLoading && !error && offresFiltered.length > 0 && (
+                <div className={styles.pagination}>
+                    {renderPagination()}
+                </div>
+            )}
         </div>
     );
 }
