@@ -28,3 +28,24 @@
     justify-content: center;
     margin-top: 1.5rem;
 }
+
+/* Style pour la case à cocher "Se souvenir de moi" */
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 1rem 0;
+}
+
+.remember-me input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.remember-me label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    cursor: pointer;
+}

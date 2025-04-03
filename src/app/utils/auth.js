@@ -3,16 +3,26 @@ import Cookies from 'js-cookie';
 const TOKEN_KEY = 'authToken';
 const USER_DATA_KEY = 'userData';
 
-export const setAuthToken = (token) => {
-    Cookies.set(TOKEN_KEY, token, { expires: 7 }); // Token expire après 7 jours
+export const setAuthToken = (token, rememberMe = false) => {
+    const options = {
+        secure: true,
+        sameSite: 'strict',
+        expires: rememberMe ? 7 : 1  // 7 jours si "Se souvenir de moi", sinon 1 jour
+    };
+    Cookies.set(TOKEN_KEY, token, options);
 };
 
 export const getAuthToken = () => {
     return Cookies.get(TOKEN_KEY);
 };
 
-export const setUserData = (userData) => {
-    Cookies.set(USER_DATA_KEY, JSON.stringify(userData), { expires: 7 });
+export const setUserData = (userData, rememberMe = false) => {
+    const options = {
+        secure: true,
+        sameSite: 'strict',
+        expires: rememberMe ? 7 : 1
+    };
+    Cookies.set(USER_DATA_KEY, JSON.stringify(userData), options);
 };
 
 export const getUserData = () => {
@@ -50,4 +60,4 @@ export const verifyToken = async () => {
         console.error('Erreur lors de la vérification du token:', error);
         return false;
     }
-}; 
+};

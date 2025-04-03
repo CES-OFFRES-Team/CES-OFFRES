@@ -1,32 +1,25 @@
-/* Base imports */
+/* Imports must be first */
 @import './base/_variables.css';
 @import './base/_reset.css';
 @import './base/_typography.css';
-
-/* Components imports */
 @import './components/_sidebar.css';
 @import './components/_buttons.css';
 @import './components/_forms.css';
 @import './components/_scrollToTop.css';
 @import './components/_popup.css';
-
-/* Layout imports */
 @import './layout/_header.css';
 @import './layout/_footer.css';
-
-/* Pages imports */
 @import './pages/_home.css';
 @import './pages/_auth.css';
-
-/* Utils imports */
 @import './utils/_animations.css';
 @import './utils/_media-queries.css';
 
-/* Tailwind directives */
+/* Then Tailwind */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Global styles */
 :root {
     --primary: #0066cc;
     --secondary: #1a75ff;
@@ -45,4 +38,6 @@ body {
     min-height: 100vh;
     background-attachment: fixed;
 }
+
+/* All other CSS rules go here */
 

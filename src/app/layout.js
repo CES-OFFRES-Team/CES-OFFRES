@@ -1,5 +1,4 @@
 import "../styles/main.css";
-import "../styles/pages/_home.css";
 import { Inter } from 'next/font/google'
 import Navigation from './components/Navigation'
 import Footer from './components/Footer'
