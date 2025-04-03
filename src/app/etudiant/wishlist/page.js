@@ -27,25 +27,28 @@ export default function WishList() {
                 return;
             }
 
-            const response = await fetch(`http://20.19.36.142:8000/api/wishlist/list/${userData.id}`, {
+            const response = await fetch(`http://20.19.36.142:8000/api/wishlist`, {
+                method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${userData.token}`
+                    'Authorization': `Bearer ${userData.token}`,
+                    'Content-Type': 'application/json'
                 }
             });
 
             console.log('Statut de la réponse:', response.status); // Log pour déboguer
 
             if (!response.ok) {
-                throw new Error(`Erreur lors de la récupération de la wishlist (${response.status})`);
+                const errorText = await response.text();
+                console.error('Réponse complète:', errorText);
+                throw new Error(`Erreur lors de la récupération de la wishlist (${response.status}): ${errorText}`);
             }
 
             const data = await response.json();
             console.log('Données reçues:', data); // Log pour déboguer
 
-            // Transformation des données pour correspondre à la structure attendue
-            const stagesFormates = data.map(item => ({
+            const stagesFormates = Array.isArray(data) ? data.map(item => ({
                 id_stage: item.id_stage,
-                titre: item.titre_stage,
+                titre: item.titre_stage || item.titre,
                 nom_entreprise: item.nom_entreprise,
                 localisation: item.localisation || 'Non spécifiée',
                 telephone: item.telephone || 'Non spécifié',
@@ -56,7 +59,7 @@ export default function WishList() {
                 type_stage: item.type_stage || 'Non spécifié',
                 niveau_etude: item.niveau_etude || 'Non spécifié',
                 date_ajout: item.date_ajout
-            }));
+            })) : [];
 
             setFavoris(stagesFormates);
             setError(null);
