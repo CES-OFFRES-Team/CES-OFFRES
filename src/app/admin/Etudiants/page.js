@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { HiPhone, HiMail, HiUser, HiTrash } from 'react-icons/hi';
-import '../../Offres/Offres.module.css';
+import '../AdminPages.css';
 import Cookies from 'js-cookie';
 
 const ModalModifier = ({ etudiant, onClose, onSave }) => {
