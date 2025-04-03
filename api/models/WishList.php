@@ -33,21 +33,20 @@ class WishList {
 
     public function getWishList($idPersonne) {
         try {
-            $query = "SELECT s.id_stage, s.titre, s.description, s.remuneration, 
-                            s.date_publication, s.date_debut, s.date_fin,
+            $query = "SELECT o.id_stage, o.titre, o.description, o.remuneration, 
+                            o.date_publication, o.date_debut, o.date_fin,
                             e.id_entreprise, e.nom_entreprise, e.adresse, 
                             e.email, e.telephone, e.moyenne_eval, e.description as description_entreprise,
                             w.date_ajout
-                     FROM Offres_de_stage s 
-                     INNER JOIN ajouter_wish_list w ON s.id_stage = w.id_stage 
-                     LEFT JOIN Entreprises e ON s.id_entreprise = e.id_entreprise 
-                     WHERE w.id_personne = ? 
-                     ORDER BY w.date_ajout DESC";
+                     FROM ajouter_wish_list w
+                     INNER JOIN Offres_de_stage o ON w.id_stage = o.id_stage 
+                     LEFT JOIN Entreprises e ON o.id_entreprise = e.id_entreprise 
+                     WHERE w.id_personne = ?";
             $stmt = $this->db->prepare($query);
             $stmt->execute([$idPersonne]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Erreur dans getWishList: " . $e->getMessage());
+            error_log("Erreur dans getWishList: " . $e->getMessage() . "\nRequête: " . $query);
             throw $e;
         }
     }
