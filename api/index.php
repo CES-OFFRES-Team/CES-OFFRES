@@ -38,7 +38,39 @@ try {
     $base_path = strtok($path, '?');
     error_log("[DEBUG] Chemin de base: " . $base_path);
 
+    // Routes pour les utilisateurs avec ID
+    if (preg_match('/^\/users\/\d+$/', $base_path)) {
+        $controller = new UserController();
+        echo $controller->handleRequest($method);
+        return;
+    }
+
+    // Routes pour les candidatures avec ID
+    if (preg_match('/^\/candidatures\/\d+$/', $base_path)) {
+        $id = substr($base_path, strrpos($base_path, '/') + 1);
+        $controller = new CandidatureController();
+        echo $controller->handleRequest($method, $id);
+        return;
+    }
+
+    // Routes pour les entreprises avec ID
+    if (preg_match('/^\/entreprises\/\d+$/', $base_path)) {
+        $id = substr($base_path, strrpos($base_path, '/') + 1);
+        $controller = new EntrepriseController();
+        echo $controller->handleRequest($method, $id);
+        return;
+    }
+
+    // Routes pour les offres avec ID
+    if (preg_match('/^\/offres\/\d+$/', $base_path)) {
+        $id = substr($base_path, strrpos($base_path, '/') + 1);
+        $controller = new OffreController();
+        echo $controller->handleRequest($method, $id);
+        return;
+    }
+
     switch ($base_path) {
+        // Routes pour les utilisateurs
         case '/users':
         case '/users/etudiants':
         case '/users/pilotes':
@@ -48,6 +80,7 @@ try {
             echo $controller->handleRequest($method);
             break;
 
+        // Routes pour les candidatures
         case '/candidatures':
         case '/candidatures.php':  // Ajout pour la compatibilité
             error_log("[DEBUG] Route /candidatures détectée");
@@ -56,11 +89,13 @@ try {
             echo $controller->handleRequest($method, isset($query_params['id']) ? $query_params['id'] : null);
             break;
         
+        // Routes pour les entreprises
         case '/entreprises':
             $controller = new EntrepriseController();
             echo $controller->handleRequest($method, isset($query_params['id']) ? $query_params['id'] : null);
             break;
 
+        // Routes pour les offres
         case '/offres':
             $controller = new OffreController();
             echo $controller->handleRequest($method, isset($query_params['id']) ? $query_params['id'] : null);
