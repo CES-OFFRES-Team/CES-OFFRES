@@ -16,18 +16,21 @@ export default function EtudiantLayout({ children }) {
             if (!user) {
                 console.log('Utilisateur non connecté, redirection vers login');
                 router.push('/Login');
+                router.refresh(); // Force le rafraîchissement du router
             } else if (user.role !== USER_ROLES.ETUDIANT) {
                 console.log('Utilisateur non étudiant, redirection vers login');
                 router.push('/Login');
+                router.refresh(); // Force le rafraîchissement du router
             }
         }
     }, [user, loading, router]);
 
     const handleLogout = async () => {
         console.log('Déconnexion en cours...');
-        logout();
+        await logout();
         console.log('Redirection vers la page de connexion...');
         router.push('/Login');
+        router.refresh(); // Force le rafraîchissement du router après la déconnexion
     };
 
     // Afficher un écran de chargement pendant la vérification
@@ -47,13 +50,13 @@ export default function EtudiantLayout({ children }) {
                     <p className="text-sm mt-2">Connecté en tant que : {user.prenom} {user.nom}</p>
                 </div>
                 <nav className="mt-4">
-                    <Link href="/etudiant/dashboard" className="block px-4 py-2 hover:bg-gray-700">
+                    <Link href="/etudiant/dashboard" className="block px-4 py-2 hover:bg-gray-700" onClick={() => router.refresh()}>
                         <i className="fas fa-home"></i> Tableau de bord
                     </Link>
-                    <Link href="/Offres" className="block px-4 py-2 hover:bg-gray-700">
+                    <Link href="/Offres" className="block px-4 py-2 hover:bg-gray-700" onClick={() => router.refresh()}>
                         <i className="fas fa-briefcase"></i> Offres de stage
                     </Link>
-                    <Link href="/etudiant/profile" className="block px-4 py-2 hover:bg-gray-700">
+                    <Link href="/etudiant/profile" className="block px-4 py-2 hover:bg-gray-700" onClick={() => router.refresh()}>
                         <i className="fas fa-user"></i> Mon profil
                     </Link>
                     <button

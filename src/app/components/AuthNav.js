@@ -2,33 +2,42 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { logout, getUserData, getUserRole } from '../utils/auth';
+import { useAuth } from '../contexts/AuthContext';
+import { USER_ROLES } from '../utils/constants';
 
-export default function AuthNav() {
+export default function AuthNav({ onNavigate }) {
   const router = useRouter();
-  const user = getUserData();
-  const userRole = getUserRole();
+  const { user, logout } = useAuth();
 
   const getDashboardPath = () => {
     if (!user) return '/Login';
     
     switch (user.role) {
-      case 'Admin':
+      case USER_ROLES.ADMIN:
         return '/admin';
-      case 'Pilote':
+      case USER_ROLES.PILOTE:
         return '/pilote/dashboard';
-      case 'Etudiant':
+      case USER_ROLES.ETUDIANT:
         return '/etudiant/dashboard';
-      case 'Entreprise':
+      case USER_ROLES.ENTREPRISE:
         return '/entreprise/dashboard';
       default:
         return '/Login';
     }
   };
 
-  const handleLogout = () => {
-    // Utiliser la fonction logout de auth.js
-    logout();
+  const handleLogout = async () => {
+    console.log('Déconnexion en cours...');
+    await logout();
+    console.log('Redirection vers la page de connexion...');
+    router.push('/Login');
+    router.refresh();
+    if (onNavigate) onNavigate();
+  };
+
+  const handleNavigation = (path) => {
+    router.push(path);
+    if (onNavigate) onNavigate();
   };
 
   return (
@@ -43,25 +52,28 @@ export default function AuthNav() {
           <Link 
             href={getDashboardPath()} 
             className="mon-compte-button"
+            onClick={() => handleNavigation(getDashboardPath())}
           >
             <i className="fas fa-user-circle"></i>
             Mon Compte
           </Link>
           
-          {userRole === 'Admin' && (
+          {user.role === USER_ROLES.ADMIN && (
             <Link 
               href="/admin" 
               className="admin-panel-button"
+              onClick={() => handleNavigation('/admin')}
             >
               <i className="fas fa-cogs"></i>
               Panneau Admin
             </Link>
           )}
           
-          {userRole === 'Etudiant' && (
+          {user.role === USER_ROLES.ETUDIANT && (
             <Link 
               href="/etudiant/dashboard" 
               className="student-dashboard-button"
+              onClick={() => handleNavigation('/etudiant/dashboard')}
             >
               <i className="fas fa-graduation-cap"></i>
               Espace Étudiant
@@ -80,6 +92,7 @@ export default function AuthNav() {
         <Link 
           href="/Login" 
           className="connexion-button"
+          onClick={() => handleNavigation('/Login')}
         >
           <i className="fas fa-sign-in-alt"></i>
           Connexion

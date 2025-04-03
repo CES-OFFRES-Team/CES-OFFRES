@@ -16,9 +16,11 @@ export default function AdminLayout({ children }) {
             if (!user) {
                 console.log('Utilisateur non connecté, redirection vers login');
                 router.push('/Login');
+                router.refresh(); // Force le rafraîchissement du router
             } else if (user.role !== USER_ROLES.ADMIN) {
                 console.log('Utilisateur non admin, redirection vers login');
                 router.push('/Login');
+                router.refresh(); // Force le rafraîchissement du router
             }
         }
     }, [user, loading, router]);
@@ -35,7 +37,7 @@ export default function AdminLayout({ children }) {
     // Afficher le layout admin une fois l'authentification vérifiée
     return (
         <div className="admin-page">
-            <Navigation />
+            <Navigation onNavigate={() => router.refresh()} />
             <main className="admin-content">
                 {children}
             </main>
