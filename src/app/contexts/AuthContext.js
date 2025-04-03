@@ -1,14 +1,16 @@
 'use client';
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { getUserData, getAuthToken, logout } from '../utils/auth';
+import { getUserData, getAuthToken, logout as authLogout } from '../utils/auth';
 import Cookies from 'js-cookie';
 import { COOKIE_KEYS } from '../utils/constants';
+import { useRouter } from 'next/navigation';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
   
   useEffect(() => {
     // Vérifier si l'utilisateur est connecté au chargement
@@ -24,7 +26,7 @@ export function AuthProvider({ children }) {
     setLoading(false);
   }, []);
   
-  const login = (userData, token) => {
+  const login = async (userData, token) => {
     // Log des données avant stockage
     console.log('Données à stocker:', userData);
     console.log('Token à stocker:', token);
@@ -49,15 +51,23 @@ export function AuthProvider({ children }) {
     
     // Mettre à jour l'état
     setUser(userDataWithId);
+    
+    // Forcer le rafraîchissement
+    router.refresh();
   };
   
-  const handleLogout = () => {
-    logout();
+  const logout = async () => {
+    console.log('Déconnexion depuis le contexte...');
+    // Appeler la fonction de déconnexion de auth.js
+    authLogout();
+    // Mettre à jour l'état local
     setUser(null);
+    // Forcer le rafraîchissement
+    router.refresh();
   };
   
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout: handleLogout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
