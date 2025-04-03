@@ -92,6 +92,8 @@ export default function LoginPage() {
         role: data.user.role || 'Etudiant'
       };
       
+      console.log('Données utilisateur reçues:', userData);
+      
       // Vérifier "Se souvenir de moi"
       const rememberMe = document.getElementById('cbx')?.checked || false;
       const cookieOptions = { 
@@ -105,6 +107,11 @@ export default function LoginPage() {
       Cookies.set('authToken', data.token, cookieOptions);
       Cookies.set('userData', JSON.stringify(userData), cookieOptions);
       Cookies.set('userRole', userData.role, cookieOptions);
+      
+      console.log('Cookies enregistrés:', {
+        token: data.token,
+        role: userData.role
+      });
       
       // Afficher le succès
       setSuccessMessage(`Connexion réussie ! Bienvenue ${userData.prenom}`);
@@ -128,10 +135,13 @@ export default function LoginPage() {
           redirectPath = '/etudiant/dashboard';
       }
       
+      console.log('Redirection vers:', redirectPath);
+      
       // Rediriger immédiatement
       window.location.href = redirectPath;
       
     } catch (error) {
+      console.error('Erreur lors de la connexion:', error);
       setErrorMessage(error.message || 'Erreur de connexion');
       setIsLoading(false);
     }

@@ -15,7 +15,7 @@ export function middleware(request) {
   
   // Vérification plus robuste du token
   if (!authToken || !authToken.value || authToken.value.trim() === '') {
-    console.log('Token invalide ou manquant');
+    console.log('Token invalide ou manquant, redirection vers login');
     return NextResponse.redirect(new URL('/Login', request.url));
   }
   
@@ -33,15 +33,18 @@ export function middleware(request) {
   
   // Routes admin - accessibles uniquement aux administrateurs
   if (path.startsWith('/admin')) {
-    if (role !== 'Admin') {
+    console.log('Tentative d\'accès à la section admin, rôle:', role);
+    if (role.toLowerCase() !== 'admin') {
+      console.log('Accès refusé à la section admin, redirection vers dashboard');
       return redirectToRoleDashboard(role, request.url);
     }
+    console.log('Accès autorisé à la section admin');
     return NextResponse.next();
   }
   
   // Routes étudiant - accessibles aux étudiants et administrateurs
   if (path.startsWith('/etudiant')) {
-    if (role !== 'Etudiant' && role !== 'Admin') {
+    if (role.toLowerCase() !== 'etudiant' && role.toLowerCase() !== 'admin') {
       return redirectToRoleDashboard(role, request.url);
     }
     return NextResponse.next();
@@ -49,7 +52,7 @@ export function middleware(request) {
   
   // Routes pilote - accessibles aux pilotes et administrateurs
   if (path.startsWith('/pilote')) {
-    if (role !== 'Pilote' && role !== 'Admin') {
+    if (role.toLowerCase() !== 'pilote' && role.toLowerCase() !== 'admin') {
       return redirectToRoleDashboard(role, request.url);
     }
     return NextResponse.next();
@@ -57,7 +60,7 @@ export function middleware(request) {
   
   // Routes entreprise - accessibles aux entreprises et administrateurs
   if (path.startsWith('/entreprise')) {
-    if (role !== 'Entreprise' && role !== 'Admin') {
+    if (role.toLowerCase() !== 'entreprise' && role.toLowerCase() !== 'admin') {
       return redirectToRoleDashboard(role, request.url);
     }
     return NextResponse.next();
@@ -74,14 +77,15 @@ export function middleware(request) {
 
 // Fonction pour rediriger l'utilisateur vers son dashboard en fonction du rôle
 function redirectToRoleDashboard(role, baseUrl) {
-  switch (role) {
-    case 'Admin':
+  console.log('Redirection vers dashboard pour le rôle:', role);
+  switch (role.toLowerCase()) {
+    case 'admin':
       return NextResponse.redirect(new URL('/admin', baseUrl));
-    case 'Pilote':
+    case 'pilote':
       return NextResponse.redirect(new URL('/pilote/dashboard', baseUrl));
-    case 'Etudiant':
+    case 'etudiant':
       return NextResponse.redirect(new URL('/etudiant/dashboard', baseUrl));
-    case 'Entreprise':
+    case 'entreprise':
       return NextResponse.redirect(new URL('/entreprise/dashboard', baseUrl));
     default:
       return NextResponse.redirect(new URL('/Login', baseUrl));
