@@ -197,6 +197,7 @@ export default function AdminEntreprisesPage() {
                 method,
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getAuthToken()}`
                 },
                 body: JSON.stringify(formData),
             });
