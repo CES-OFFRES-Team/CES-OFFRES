@@ -20,27 +20,49 @@ export default function WishList() {
         try {
             setLoading(true);
             const userData = getUserData();
+            console.log('Données utilisateur:', userData); // Log pour déboguer
+
             if (!userData || !userData.id) {
                 setError('Utilisateur non authentifié');
                 return;
             }
 
-            const response = await fetch('http://20.19.36.142:8000/api/wishlist/list', {
+            const response = await fetch(`http://20.19.36.142:8000/api/wishlist/list/${userData.id}`, {
                 headers: {
                     'Authorization': `Bearer ${userData.token}`
                 }
             });
 
+            console.log('Statut de la réponse:', response.status); // Log pour déboguer
+
             if (!response.ok) {
-                throw new Error('Erreur lors de la récupération de la wishlist');
+                throw new Error(`Erreur lors de la récupération de la wishlist (${response.status})`);
             }
 
             const data = await response.json();
-            setFavoris(data.stages);
+            console.log('Données reçues:', data); // Log pour déboguer
+
+            // Transformation des données pour correspondre à la structure attendue
+            const stagesFormates = data.map(item => ({
+                id_stage: item.id_stage,
+                titre: item.titre_stage,
+                nom_entreprise: item.nom_entreprise,
+                localisation: item.localisation || 'Non spécifiée',
+                telephone: item.telephone || 'Non spécifié',
+                email: item.email || 'Non spécifié',
+                site_web: item.site_web,
+                description: item.description || 'Aucune description disponible',
+                salaire: item.salaire || 'Non spécifié',
+                type_stage: item.type_stage || 'Non spécifié',
+                niveau_etude: item.niveau_etude || 'Non spécifié',
+                date_ajout: item.date_ajout
+            }));
+
+            setFavoris(stagesFormates);
             setError(null);
         } catch (err) {
-            setError(err.message);
-            console.error('Erreur:', err);
+            setError(`Erreur: ${err.message}`);
+            console.error('Erreur détaillée:', err);
         } finally {
             setLoading(false);
         }
