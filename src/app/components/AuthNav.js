@@ -2,12 +2,11 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { logout, getUserData, getUserRole } from '../utils/auth';
+import { logout, getUserData } from '../utils/auth';
 
 export default function AuthNav() {
   const router = useRouter();
   const user = getUserData();
-  const userRole = getUserRole();
 
   const getDashboardPath = () => {
     if (!user) return '/Login';
@@ -25,7 +24,6 @@ export default function AuthNav() {
   };
 
   const handleLogout = () => {
-    // Utiliser la fonction logout de auth.js
     logout();
   };
 
@@ -46,7 +44,7 @@ export default function AuthNav() {
             Mon Compte
           </Link>
           
-          {userRole === 'Admin' && (
+          {user.role === 'Admin' && (
             <Link 
               href="/admin" 
               className="admin-panel-button"
@@ -56,7 +54,7 @@ export default function AuthNav() {
             </Link>
           )}
           
-          {userRole === 'Etudiant' && (
+          {user.role === 'Etudiant' && (
             <Link 
               href="/etudiant/dashboard" 
               className="student-dashboard-button"
