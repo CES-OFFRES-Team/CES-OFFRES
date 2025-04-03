@@ -11,101 +11,131 @@ class WishListController extends BaseController {
         $this->wishListModel = new WishList();
     }
 
-    public function handleRequest($method, $action, $id = null) {
-        switch ($action) {
-            case 'getWishList':
-                return $this->getWishList();
-            case 'addToWishList':
-                return $this->addToWishList();
-            case 'removeFromWishList':
-                return $this->removeFromWishList($id);
-            case 'checkWishListStatus':
-                return $this->checkWishListStatus($id);
-            default:
-                return $this->jsonResponse(['error' => 'Action non supportée'], 400);
+    public function handleRequest($method, $action = null, $id = null) {
+        header("Access-Control-Allow-Origin: *");
+        header("Content-Type: application/json; charset=UTF-8");
+        header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+        header("Access-Control-Max-Age: 3600");
+        header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+
+        if ($method === 'OPTIONS') {
+            http_response_code(200);
+            return json_encode(['status' => 'success']);
+        }
+
+        try {
+            switch ($action) {
+                case 'getWishList':
+                    return $this->getWishList();
+                case 'addToWishList':
+                    return $this->addToWishList();
+                case 'removeFromWishList':
+                    return $this->removeFromWishList($id);
+                case 'checkWishListStatus':
+                    return $this->checkWishListStatus($id);
+                default:
+                    http_response_code(400);
+                    return json_encode(['error' => 'Action non supportée']);
+            }
+        } catch (Exception $e) {
+            error_log("[ERROR] Exception dans WishListController: " . $e->getMessage());
+            http_response_code(500);
+            return json_encode(['error' => 'Erreur serveur interne']);
         }
     }
 
-    public function getWishList() {
+    private function getWishList() {
         try {
             $userData = $this->getUserData();
             if (!$userData || !isset($userData['id'])) {
-                return $this->jsonResponse(['error' => 'Utilisateur non authentifié'], 401);
+                http_response_code(401);
+                return json_encode(['error' => 'Utilisateur non authentifié']);
             }
 
             $wishList = $this->wishListModel->getWishList($userData['id']);
             $count = $this->wishListModel->getWishListCount($userData['id']);
 
-            return $this->jsonResponse([
+            return json_encode([
                 'count' => $count,
                 'stages' => $wishList
             ]);
         } catch (Exception $e) {
             error_log("Erreur dans getWishList: " . $e->getMessage());
-            return $this->jsonResponse(['error' => 'Erreur lors de la récupération de la wishlist'], 500);
+            http_response_code(500);
+            return json_encode(['error' => 'Erreur lors de la récupération de la wishlist']);
         }
     }
 
-    public function addToWishList() {
+    private function addToWishList() {
         try {
             $userData = $this->getUserData();
             if (!$userData || !isset($userData['id'])) {
-                return $this->jsonResponse(['error' => 'Utilisateur non authentifié'], 401);
+                http_response_code(401);
+                return json_encode(['error' => 'Utilisateur non authentifié']);
             }
 
             $data = json_decode(file_get_contents('php://input'), true);
             if (!isset($data['idStage'])) {
-                return $this->jsonResponse(['error' => 'ID du stage requis'], 400);
+                http_response_code(400);
+                return json_encode(['error' => 'ID du stage requis']);
             }
 
-            // Vérifier si le stage est déjà dans la wishlist
             if ($this->wishListModel->isInWishList($userData['id'], $data['idStage'])) {
-                return $this->jsonResponse(['error' => 'Ce stage est déjà dans votre wishlist'], 400);
+                http_response_code(400);
+                return json_encode(['error' => 'Ce stage est déjà dans votre wishlist']);
             }
 
             $this->wishListModel->addToWishList($userData['id'], $data['idStage']);
-            return $this->jsonResponse(['message' => 'Stage ajouté à la wishlist avec succès'], 201);
+            http_response_code(201);
+            return json_encode(['message' => 'Stage ajouté à la wishlist avec succès']);
         } catch (Exception $e) {
             error_log("Erreur dans addToWishList: " . $e->getMessage());
-            return $this->jsonResponse(['error' => 'Erreur lors de l\'ajout à la wishlist'], 500);
+            http_response_code(500);
+            return json_encode(['error' => 'Erreur lors de l\'ajout à la wishlist']);
         }
     }
 
-    public function removeFromWishList($idStage) {
+    private function removeFromWishList($idStage) {
         try {
             $userData = $this->getUserData();
             if (!$userData || !isset($userData['id'])) {
-                return $this->jsonResponse(['error' => 'Utilisateur non authentifié'], 401);
+                http_response_code(401);
+                return json_encode(['error' => 'Utilisateur non authentifié']);
             }
 
             if (!$idStage) {
-                return $this->jsonResponse(['error' => 'ID du stage requis'], 400);
+                http_response_code(400);
+                return json_encode(['error' => 'ID du stage requis']);
             }
 
             $this->wishListModel->removeFromWishList($userData['id'], $idStage);
-            return $this->jsonResponse(['message' => 'Stage retiré de la wishlist avec succès']);
+            return json_encode(['message' => 'Stage retiré de la wishlist avec succès']);
         } catch (Exception $e) {
             error_log("Erreur dans removeFromWishList: " . $e->getMessage());
-            return $this->jsonResponse(['error' => 'Erreur lors de la suppression de la wishlist'], 500);
+            http_response_code(500);
+            return json_encode(['error' => 'Erreur lors de la suppression de la wishlist']);
         }
     }
 
-    public function checkWishListStatus($idStage) {
+    private function checkWishListStatus($idStage) {
         try {
             $userData = $this->getUserData();
             if (!$userData || !isset($userData['id'])) {
-                return $this->jsonResponse(['error' => 'Utilisateur non authentifié'], 401);
+                http_response_code(401);
+                return json_encode(['error' => 'Utilisateur non authentifié']);
             }
 
             if (!$idStage) {
-                return $this->jsonResponse(['error' => 'ID du stage requis'], 400);
+                http_response_code(400);
+                return json_encode(['error' => 'ID du stage requis']);
             }
 
             $isInWishList = $this->wishListModel->isInWishList($userData['id'], $idStage);
-            return $this->jsonResponse(['isInWishList' => $isInWishList]);
+            return json_encode(['isInWishList' => $isInWishList]);
         } catch (Exception $e) {
             error_log("Erreur dans checkWishListStatus: " . $e->getMessage());
-            return $this->jsonResponse(['error' => 'Erreur lors de la vérification du statut de la wishlist'], 500);
+            http_response_code(500);
+            return json_encode(['error' => 'Erreur lors de la vérification du statut de la wishlist']);
         }
     }
 } 
