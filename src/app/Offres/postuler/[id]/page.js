@@ -94,6 +94,18 @@ export default function PostulerForm({ params }) {
         setErrorDetails(null);
 
         try {
+            // Log des données avant envoi
+            console.log('Données du formulaire:', {
+                cv: formData.cv ? {
+                    name: formData.cv.name,
+                    type: formData.cv.type,
+                    size: formData.cv.size
+                } : null,
+                id_personne: user?.id_personne,
+                id_stage: params.id,
+                lettre: formData.lettreMotivation ? 'présente' : 'absente'
+            });
+
             // Vérifier si l'utilisateur est connecté
             if (!user) {
                 throw new Error("Vous devez être connecté pour postuler");
@@ -122,10 +134,12 @@ export default function PostulerForm({ params }) {
             submitData.append('id_stage', params.id);
             submitData.append('statut', 'En attente');
             
-            // Ajouter la lettre de motivation si présente
             if (formData.lettreMotivation.trim()) {
                 submitData.append('lettre_motivation', formData.lettreMotivation);
             }
+
+            // Log de la requête
+            console.log('Envoi de la requête à:', `${API_URL}/candidatures.php`);
 
             // Envoyer la candidature
             const response = await fetch(`${API_URL}/candidatures.php`, {
@@ -133,28 +147,43 @@ export default function PostulerForm({ params }) {
                 body: submitData
             });
 
-            // Vérifier la réponse
+            // Log de la réponse initiale
+            console.log('Statut de la réponse:', response.status);
+            console.log('Headers:', Object.fromEntries(response.headers.entries()));
+
+            // Récupérer le texte de la réponse
             const responseText = await response.text();
-            console.log('Réponse brute:', responseText);
+            console.log('Réponse brute du serveur:', responseText);
+
+            // Stocker les détails de la réponse
+            setErrorDetails({
+                status: response.status,
+                statusText: response.statusText,
+                headers: Object.fromEntries(response.headers.entries()),
+                responseText: responseText,
+                url: response.url
+            });
 
             let data;
             try {
                 data = JSON.parse(responseText);
+                console.log('Réponse parsée:', data);
             } catch (e) {
-                setErrorDetails({
-                    message: "Erreur de parsing JSON",
-                    response: responseText,
-                    error: e.message
-                });
+                console.error('Erreur parsing JSON:', e);
+                setErrorDetails(prev => ({
+                    ...prev,
+                    parseError: e.message,
+                    rawResponse: responseText
+                }));
                 throw new Error("Format de réponse invalide du serveur");
             }
 
             if (!response.ok || data.status === 'error') {
-                setErrorDetails({
-                    message: data.message || "Erreur serveur",
-                    status: response.status,
-                    response: data
-                });
+                setErrorDetails(prev => ({
+                    ...prev,
+                    serverError: data.message,
+                    fullResponse: data
+                }));
                 throw new Error(data.message || "Erreur lors de l'envoi de la candidature");
             }
 
@@ -165,7 +194,7 @@ export default function PostulerForm({ params }) {
             }
 
         } catch (error) {
-            console.error('Erreur lors de la soumission:', error);
+            console.error('Erreur complète:', error);
             setError(error.message || "Une erreur est survenue lors de l'envoi de la candidature");
         } finally {
             setLoading(false);
@@ -193,10 +222,39 @@ export default function PostulerForm({ params }) {
                 
                 {errorDetails && (
                     <div className="error-details">
-                        <h3>Détails techniques :</h3>
-                        <pre className="error-technical">
-                            {JSON.stringify(errorDetails, null, 2)}
-                        </pre>
+                        <h3>Détails de l'erreur :</h3>
+                        <div className="error-sections">
+                            <div className="error-section">
+                                <h4>Statut de la requête</h4>
+                                <p>Status: {errorDetails.status}</p>
+                                <p>Status Text: {errorDetails.statusText}</p>
+                                <p>URL: {errorDetails.url}</p>
+                            </div>
+
+                            <div className="error-section">
+                                <h4>Headers de la réponse</h4>
+                                <pre>{JSON.stringify(errorDetails.headers, null, 2)}</pre>
+                            </div>
+
+                            <div className="error-section">
+                                <h4>Réponse du serveur</h4>
+                                <pre className="error-technical">{errorDetails.responseText}</pre>
+                            </div>
+
+                            {errorDetails.parseError && (
+                                <div className="error-section">
+                                    <h4>Erreur de parsing</h4>
+                                    <p>{errorDetails.parseError}</p>
+                                </div>
+                            )}
+
+                            {errorDetails.serverError && (
+                                <div className="error-section">
+                                    <h4>Erreur serveur</h4>
+                                    <p>{errorDetails.serverError}</p>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 )}
                 
@@ -205,7 +263,7 @@ export default function PostulerForm({ params }) {
                 <style jsx>{`
                     .error-container {
                         padding: 2rem;
-                        max-width: 800px;
+                        max-width: 900px;
                         margin: 2rem auto;
                         background: #fff;
                         border-radius: 8px;
@@ -225,10 +283,20 @@ export default function PostulerForm({ params }) {
                     }
                     .error-details {
                         margin-top: 1.5rem;
-                        padding: 1rem;
+                    }
+                    .error-sections {
+                        display: grid;
+                        gap: 1rem;
+                    }
+                    .error-section {
                         background: #f8f9fa;
                         border: 1px solid #dee2e6;
                         border-radius: 4px;
+                        padding: 1rem;
+                    }
+                    .error-section h4 {
+                        color: #0056b3;
+                        margin-bottom: 0.5rem;
                     }
                     .error-technical {
                         background: #272822;
@@ -239,6 +307,13 @@ export default function PostulerForm({ params }) {
                         font-family: monospace;
                         white-space: pre-wrap;
                         margin-top: 0.5rem;
+                        font-size: 0.9rem;
+                    }
+                    pre {
+                        background: #f8f9fa;
+                        padding: 0.5rem;
+                        border-radius: 4px;
+                        overflow-x: auto;
                     }
                     .btn {
                         margin-top: 1rem;
