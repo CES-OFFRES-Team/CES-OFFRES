@@ -2,18 +2,18 @@
 
 require_once __DIR__ . '/../models/WishList.php';
 require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../utils/JWTUtils.php';
+require_once __DIR__ . '/../models/User.php';
 
 class WishListController {
     private $wishListModel;
     private $db;
-    private $jwtUtils;
+    private $userModel;
 
     public function __construct() {
         $database = new Database();
         $this->db = $database->getConnection();
         $this->wishListModel = new WishList($this->db);
-        $this->jwtUtils = new JWTUtils();
+        $this->userModel = new User($this->db);
     }
 
     private function getAuthenticatedUser() {
@@ -23,13 +23,16 @@ class WishListController {
         }
 
         $token = str_replace('Bearer ', '', $headers['Authorization']);
-        $payload = $this->jwtUtils->verifyToken($token);
-
-        if (!$payload || !isset($payload->id)) {
+        
+        // Vérifier le token en utilisant la méthode findByToken du modèle User
+        $user = $this->userModel->findByToken($token);
+        
+        if (!$user) {
+            error_log("Token invalide ou utilisateur non trouvé");
             throw new Exception('Token invalide');
         }
 
-        return $payload;
+        return $user;
     }
 
     public function handleRequest($method, $action = null, $id = null) {
@@ -52,12 +55,12 @@ class WishListController {
 
             switch ($action) {
                 case 'list':
-                    return $this->getWishList($user->id);
+                    return $this->getWishList($user['id_personne']);
                 case 'add':
-                    return $this->addToWishList($user->id);
+                    return $this->addToWishList($user['id_personne']);
                 case 'remove':
                     if ($id) {
-                        return $this->removeFromWishList($user->id, $id);
+                        return $this->removeFromWishList($user['id_personne'], $id);
                     }
                     http_response_code(400);
                     return json_encode(['error' => 'ID du stage manquant']);
