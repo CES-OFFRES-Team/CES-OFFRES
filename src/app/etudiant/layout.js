@@ -48,19 +48,9 @@ export default function EtudiantLayout({ children }) {
 
     return (
         <div className="dashboard-layout">
-            <aside className="dashboard-sidebar">
+            <header className="dashboard-sidebar">
                 <div className="dashboard-logo">
                     <h2>CES OFFRES</h2>
-                </div>
-                
-                <div className="user-profile">
-                    <div className="user-avatar">
-                        <i className="fas fa-user"></i>
-                    </div>
-                    <div className="user-info">
-                        <h3 className="user-name">{user.prenom} {user.nom}</h3>
-                        <p className="user-role">Étudiant</p>
-                    </div>
                 </div>
 
                 <nav>
@@ -84,15 +74,25 @@ export default function EtudiantLayout({ children }) {
                             </Link>
                         </li>
                     </ul>
-
-                    <div className="logout-container">
-                        <button onClick={handleLogout} className="logout-button">
-                            <i className="fas fa-sign-out-alt"></i>
-                            Déconnexion
-                        </button>
-                    </div>
                 </nav>
-            </aside>
+
+                <div className="user-profile">
+                    <div className="user-avatar">
+                        <i className="fas fa-user"></i>
+                    </div>
+                    <div className="user-info">
+                        <h3 className="user-name">{user.prenom} {user.nom}</h3>
+                        <p className="user-role">Étudiant</p>
+                    </div>
+                </div>
+
+                <div className="logout-container">
+                    <button onClick={handleLogout} className="logout-button">
+                        <i className="fas fa-sign-out-alt"></i>
+                        Déconnexion
+                    </button>
+                </div>
+            </header>
 
             <main className="dashboard-content">
                 {children}
