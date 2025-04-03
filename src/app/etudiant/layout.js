@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { logout, getUserData, getUserRole } from '../utils/auth';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -8,6 +8,7 @@ import './etudiant.css';
 
 export default function EtudiantLayout({ children }) {
     const router = useRouter();
+    const pathname = usePathname();
     const user = getUserData();
     const userRole = getUserRole();
 
@@ -35,29 +36,44 @@ export default function EtudiantLayout({ children }) {
                     
                     <ul className="dashboard-menu">
                         <li>
-                            <Link href="/etudiant/dashboard">
+                            <Link 
+                                href="/etudiant/dashboard" 
+                                className={`nav-link ${pathname === '/etudiant/dashboard' ? 'active' : ''}`}
+                            >
                                 <i className="fas fa-home"></i> Tableau de bord
                             </Link>
                         </li>
                         <li>
-                            <Link href="/Offres">
+                            <Link 
+                                href="/etudiant/offres" 
+                                className={`nav-link ${pathname === '/etudiant/offres' ? 'active' : ''}`}
+                            >
                                 <i className="fas fa-briefcase"></i> Offres de stage
                             </Link>
                         </li>
                         <li>
-                            <Link href="/etudiant/candidatures">
+                            <Link 
+                                href="/etudiant/candidatures" 
+                                className={`nav-link ${pathname === '/etudiant/candidatures' ? 'active' : ''}`}
+                            >
                                 <i className="fas fa-file-alt"></i> Mes candidatures
                             </Link>
                         </li>
                         <li>
-                            <Link href="/etudiant/profile">
+                            <Link 
+                                href="/etudiant/profil" 
+                                className={`nav-link ${pathname === '/etudiant/profil' ? 'active' : ''}`}
+                            >
                                 <i className="fas fa-user"></i> Mon profil
                             </Link>
                         </li>
                         
                         {userRole === 'Admin' && (
                             <li className="admin-access">
-                                <Link href="/admin">
+                                <Link 
+                                    href="/admin" 
+                                    className="nav-link admin-link"
+                                >
                                     <i className="fas fa-cogs"></i> Accès Admin
                                 </Link>
                             </li>
