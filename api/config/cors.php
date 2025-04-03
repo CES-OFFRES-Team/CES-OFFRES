@@ -3,6 +3,7 @@
 $allowed_origins = [
     'http://20.19.36.142',
     'http://20.19.36.142:8000',
+    'http://20.19.36.142:3000',  // Frontend
     'http://localhost:3000',
     'http://localhost'
 ];
