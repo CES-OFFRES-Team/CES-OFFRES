@@ -7,7 +7,6 @@ class WishListController extends BaseController {
     private $wishListModel;
 
     public function __construct() {
-        parent::__construct();
         $this->wishListModel = new WishList();
     }
 
