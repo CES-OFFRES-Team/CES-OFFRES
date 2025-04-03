@@ -6,7 +6,8 @@ class WishList {
     private $db;
 
     public function __construct() {
-        $this->db = Database::getInstance()->getConnection();
+        $database = new Database();
+        $this->db = $database->getConnection();
     }
 
     public function addToWishList($idPersonne, $idStage) {
