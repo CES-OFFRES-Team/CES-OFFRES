@@ -4,11 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { HiLocationMarker, HiCalendar, HiClock, HiBriefcase, HiHeart, HiOutlineEmojiSad } from 'react-icons/hi';
 import Filters from './components/Filters';
-import Pagination from './components/Pagination';
 import styles from './Offres.module.css';
 
 const API_URL = 'http://20.19.36.142/api';  // Vérifiez que cette URL est correcte
-const ITEMS_PER_PAGE = 12;
 
 const formatDate = (dateString) => {
     if (!dateString) return 'Date non disponible';
@@ -81,7 +79,6 @@ export default function Offres() {
         }
     });
     const [favoris, setFavoris] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -146,10 +143,6 @@ export default function Offres() {
         fetchData();
     }, []);
 
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [filtres]);
-
     const handleFiltreChange = (newFiltres) => {
         setFiltres(newFiltres);
     };
@@ -185,11 +178,6 @@ export default function Offres() {
     };
 
     const offresFiltered = filtrerOffres();
-    const totalPages = Math.ceil(offresFiltered.length / ITEMS_PER_PAGE);
-    const offresPageCourante = offresFiltered.slice(
-        (currentPage - 1) * ITEMS_PER_PAGE,
-        currentPage * ITEMS_PER_PAGE
-    );
 
     return (
         <div className={styles.offresContainer}>
@@ -210,7 +198,7 @@ export default function Offres() {
                     <div className={styles.loadingContainer}>Chargement...</div>
                 ) : error ? (
                     <div className={styles.errorContainer}>{error}</div>
-                ) : offresPageCourante.length === 0 ? (
+                ) : offresFiltered.length === 0 ? (
                     <div className={styles.noResults}>
                         <div className={styles.noResultsIcon}>
                             <HiOutlineEmojiSad />
@@ -223,26 +211,16 @@ export default function Offres() {
                         </p>
                     </div>
                 ) : (
-                    <>
-                        {offresPageCourante.map((offre) => (
-                            <OffreCard
-                                key={offre.id_stage}
-                                offre={offre}
-                                onFavorite={toggleFavori}
-                                isFavorite={favoris.includes(offre.id_stage)}
-                            />
-                        ))}
-                    </>
+                    offresFiltered.map((offre) => (
+                        <OffreCard
+                            key={offre.id_stage}
+                            offre={offre}
+                            onFavorite={toggleFavori}
+                            isFavorite={favoris.includes(offre.id_stage)}
+                        />
+                    ))
                 )}
             </div>
-
-            {offresFiltered.length > ITEMS_PER_PAGE && (
-                <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
-                />
-            )}
         </div>
     );
 }
