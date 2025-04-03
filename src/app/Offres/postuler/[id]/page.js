@@ -3,9 +3,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import './PostulerForm.css';
-import { getUserData } from '../../../utils/auth';
-
-const API_URL = 'http://20.19.36.142:8000/api';
+import { getUserData, getAuthToken } from '../../../utils/auth';
+import { useAuth } from '../../../contexts/AuthContext';
+import { USER_ROLES, REDIRECT_PATHS, API_URL } from '../../../utils/constants';
 
 const formatDate = (dateString) => {
     if (!dateString) return 'Date non disponible';
@@ -19,10 +19,10 @@ const formatDate = (dateString) => {
 
 export default function PostulerForm({ params }) {
     const router = useRouter();
+    const { user, logout } = useAuth();
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const [offre, setOffre] = useState(null);
-    const [user, setUser] = useState(null);
     const [formData, setFormData] = useState({
         cv: null,
         lettreMotivation: '',
@@ -30,18 +30,50 @@ export default function PostulerForm({ params }) {
     const [errorDetails, setErrorDetails] = useState(null);
 
     useEffect(() => {
-        // Récupérer les informations de l'utilisateur
-        const userData = getUserData();
-        
-        if (!userData) {
+        // Vérifier si l'utilisateur est connecté et a le bon rôle
+        if (!user) {
             setError("Vous devez être connecté pour postuler");
+            router.push('/Login');
             return;
         }
-        if (!userData.id_personne) {
-            setError("Erreur: ID utilisateur non trouvé");
+        
+        if (user.role !== USER_ROLES.ETUDIANT) {
+            setError("Vous devez être connecté en tant qu'étudiant pour postuler");
+            router.push('/Login');
             return;
         }
-        setUser(userData);
+
+        // Vérifier si la session est toujours valide
+        const checkSession = async () => {
+            try {
+                const token = getAuthToken();
+                if (!token) {
+                    setError("Session expirée, veuillez vous reconnecter");
+                    logout();
+                    router.push('/Login');
+                    return;
+                }
+                
+                const response = await fetch(`${API_URL}/verify-token`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    // Session expirée, déconnecter l'utilisateur
+                    setError("Session expirée, veuillez vous reconnecter");
+                    logout();
+                    router.push('/Login');
+                    return;
+                }
+            } catch (error) {
+                console.error('Erreur lors de la vérification de la session:', error);
+                setError("Erreur lors de la vérification de la session");
+            }
+        };
+        
+        checkSession();
 
         // Récupérer les détails de l'offre
         const fetchOffre = async () => {
@@ -85,7 +117,7 @@ export default function PostulerForm({ params }) {
         if (params.id) {
             fetchOffre();
         }
-    }, [params.id]);
+    }, [params.id, user, router, logout]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -106,9 +138,13 @@ export default function PostulerForm({ params }) {
                 lettre: formData.lettreMotivation ? 'présente' : 'absente'
             });
 
-            // Vérifier si l'utilisateur est connecté
+            // Vérifier si l'utilisateur est connecté et a le bon rôle
             if (!user) {
                 throw new Error("Vous devez être connecté pour postuler");
+            }
+            
+            if (user.role !== USER_ROLES.ETUDIANT) {
+                throw new Error("Vous devez être connecté en tant qu'étudiant pour postuler");
             }
 
             // Vérifier le CV
@@ -188,7 +224,8 @@ export default function PostulerForm({ params }) {
             }
 
             if (data.status === 'success') {
-                router.push('/dashboard');
+                // Utiliser les constantes de redirection
+                router.push(REDIRECT_PATHS[USER_ROLES.ETUDIANT]);
             } else {
                 throw new Error(data.message || "Erreur lors de l'envoi de la candidature");
             }
