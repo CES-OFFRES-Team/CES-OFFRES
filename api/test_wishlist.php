@@ -18,52 +18,29 @@ function displayResult($title, $data) {
     echo "<hr>";
 }
 
-// Créer une instance du contrôleur
-$controller = new WishListController();
-
 // Test 1: Récupérer la wishlist d'un utilisateur spécifique
 echo "<h1>Test de la Wishlist</h1>";
 
 // ID de l'utilisateur à tester (à remplacer par un ID valide)
-$userId = 1; // Remplacez par un ID d'utilisateur valide
+$userId = 5; // Remplacez par un ID d'utilisateur valide
 
 try {
+    // Créer une instance du contrôleur
+    $controller = new WishListController();
+    
     // Test de la méthode getWishList
     echo "<h2>Test de getWishList pour l'utilisateur ID: $userId</h2>";
     
-    // Créer une instance du modèle WishList
-    $wishListModel = new WishList();
+    // Récupérer la wishlist via le contrôleur
+    $response = $controller->handleRequest('GET', 'getWishList');
+    $result = json_decode($response, true);
+    displayResult("Wishlist récupérée", $result);
     
-    // Récupérer la wishlist
-    $wishList = $wishListModel->getWishList($userId);
-    displayResult("Wishlist récupérée", $wishList);
-    
-    // Compter le nombre d'éléments
-    $count = $wishListModel->getWishListCount($userId);
-    displayResult("Nombre d'éléments dans la wishlist", $count);
-    
-    // Test de la méthode isInWishList
-    if (!empty($wishList)) {
-        $firstStageId = $wishList[0]['id_stage'];
-        $isInWishList = $wishListModel->isInWishList($userId, $firstStageId);
-        displayResult("Vérification si le stage ID $firstStageId est dans la wishlist", $isInWishList);
-    }
-    
-    // Test de la méthode addToWishList (commenté pour éviter d'ajouter des doublons)
-    /*
-    $newStageId = 10; // ID d'un stage à ajouter
-    $added = $wishListModel->addToWishList($userId, $newStageId);
-    displayResult("Ajout du stage ID $newStageId à la wishlist", $added);
-    */
-    
-    // Test de la méthode removeFromWishList (commenté pour éviter de supprimer des données)
-    /*
-    if (!empty($wishList)) {
-        $stageToRemove = $wishList[0]['id_stage'];
-        $removed = $wishListModel->removeFromWishList($userId, $stageToRemove);
-        displayResult("Suppression du stage ID $stageToRemove de la wishlist", $removed);
-    }
-    */
+    // Test de la méthode checkWishListStatus avec un ID de stage
+    $stageId = 20; // ID du stage à vérifier
+    $response = $controller->handleRequest('GET', 'checkWishListStatus', $stageId);
+    $result = json_decode($response, true);
+    displayResult("Vérification du statut dans la wishlist pour le stage ID: $stageId", $result);
     
 } catch (Exception $e) {
     echo "<h2>Erreur</h2>";
