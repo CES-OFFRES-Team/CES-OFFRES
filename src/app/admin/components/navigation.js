@@ -2,9 +2,12 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { getUserRole } from '../../utils/auth';
 import AuthNav from '../../components/AuthNav';
 
 export default function Navigation() {
+    const userRole = getUserRole();
+
     return (
         <aside className="sidebar">
             <div className="logo-container">
@@ -56,14 +59,16 @@ export default function Navigation() {
                     </a>
                 </li>
                 
-                <li className="nav-item">
-                    <a href="/etudiant/dashboard" className="nav-link">
-                        <span className="material-symbols-rounded">
-                            switch_account
-                        </span>
-                        <span className="nav-label">Espace Étudiant</span>
-                    </a>
-                </li>
+                {userRole === 'Admin' && (
+                    <li className="nav-item">
+                        <a href="/etudiant/dashboard" className="nav-link">
+                            <span className="material-symbols-rounded">
+                                switch_account
+                            </span>
+                            <span className="nav-label">Espace Étudiant</span>
+                        </a>
+                    </li>
+                )}
             </ul>
 
             <ul className="nav-list secondary-nav">
