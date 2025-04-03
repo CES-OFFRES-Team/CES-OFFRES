@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { HiLocationMarker, HiCalendar, HiClock, HiBriefcase, HiHeart } from 'react-icons/hi';
+import { HiLocationMarker, HiCalendar, HiClock, HiBriefcase, HiHeart, HiOutlineEmojiSad } from 'react-icons/hi';
 import Filters from './components/Filters';
 import styles from './Offres.module.css';
 
@@ -70,8 +70,9 @@ export default function Offres() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [filtres, setFiltres] = useState({
-        entreprise: '',
-        ville: ''
+        entreprises: [], // Changed from string to array
+        villes: [],     // Changed from string to array
+        themes: []
     });
     const [favoris, setFavoris] = useState([]);
 
@@ -144,15 +145,19 @@ export default function Offres() {
 
     const filtrerOffres = () => {
         return offres.filter(offre => {
-            const entreprise = offre.entrepriseDetails;
-            
-            const matchEntreprise = !filtres.entreprise || 
-                offre.nom_entreprise === filtres.entreprise;
+            const matchEntreprise = filtres.entreprises.length === 0 || 
+                filtres.entreprises.includes(offre.nom_entreprise);
                 
-            const matchVille = !filtres.ville || 
-                (entreprise && entreprise.ville === filtres.ville);
+            const matchVille = filtres.villes.length === 0 || 
+                filtres.villes.includes(offre.entrepriseDetails?.ville);
+                
+            const matchThemes = filtres.themes.length === 0 || 
+                filtres.themes.some(theme => 
+                    offre.description.toLowerCase().includes(theme) ||
+                    offre.titre.toLowerCase().includes(theme)
+                );
 
-            return matchEntreprise && matchVille;
+            return matchEntreprise && matchVille && matchThemes;
         });
     };
 
@@ -174,22 +179,30 @@ export default function Offres() {
                 <p>Trouvez le stage qui correspond à vos attentes</p>
             </div>
 
-            {!isLoading && !error && (
-                <Filters 
-                    offres={offres}
-                    entreprises={entreprises}
-                    onFilterChange={setFiltres}
-                    filtres={filtres}
-                />
-            )}
+            <Filters 
+                offres={offres}
+                entreprises={entreprises}
+                onFilterChange={setFiltres}
+                filtres={filtres}
+            />
 
             <div className={styles.offresGrid}>
                 {isLoading ? (
                     <div className={styles.loadingContainer}>Chargement...</div>
                 ) : error ? (
                     <div className={styles.errorContainer}>{error}</div>
-                ) : offres.length === 0 ? (
-                    <div className={styles.noResults}>Aucune offre disponible</div>
+                ) : offresFiltered.length === 0 ? (
+                    <div className={styles.noResults}>
+                        <div className={styles.noResultsIcon}>
+                            <HiOutlineEmojiSad />
+                        </div>
+                        <h2>Oups ! Aucune offre trouvée</h2>
+                        <p>
+                            Nous n'avons pas trouvé d'offres correspondant à vos critères.
+                            <br />
+                            Essayez de modifier vos filtres ou revenez plus tard !
+                        </p>
+                    </div>
                 ) : (
                     offresFiltered.map((offre) => (
                         <OffreCard

@@ -43,35 +43,36 @@
 
 .filtersGrid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 colonnes fixes */
-    gap: 2rem;
-    align-items: start;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .filterGroup {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem;
+    width: 100%;
 }
 
 .filterLabel {
     font-weight: 600;
-    color: #151A2D;
-    font-size: 1rem;
-    margin-bottom: 0.25rem;
-    font-family: 'Poppins', sans-serif;
+    color: #1f2642;
+    font-size: 0.95rem;
 }
 
 .filterSelect {
-    padding: 0.875rem 1rem;
-    border-radius: 12px;
+    width: 100%;
+    padding: 0.75rem;
     border: 2px solid #e2e8f0;
-    background-color: white;
-    color: #151A2D;
+    border-radius: 12px;
     font-size: 0.95rem;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    background-color: white;
+    height: 45px; /* Fixed height for all inputs */
     transition: all 0.3s ease;
     cursor: pointer;
-    font-family: 'Poppins', sans-serif;
 }
 
 .filterSelect:hover {
@@ -154,6 +155,70 @@
     background-color: #1f2642;
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(21, 26, 45, 0.2);
+}
+
+/* Filter Input */
+.filterInputContainer {
+    position: relative;
+    width: 100%;
+}
+
+.filterInput,
+.themeInput {
+    width: 100%;
+    height: 45px;
+    padding: 0.75rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    background-color: white;
+}
+
+.filterInput:focus,
+.themeInput:focus {
+    border-color: #1f2642;
+}
+
+.filterInput::placeholder,
+.themeInput::placeholder {
+    color: #a0aec0;
+}
+
+.optionsList {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    margin-top: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.optionItem {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #1f2642;
+    font-size: 0.95rem;
+}
+
+.optionItem:hover {
+    background-color: rgba(31, 38, 66, 0.1);
+}
+
+.selectedValue {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
 }
 
 /* Offres Grid */
@@ -311,12 +376,104 @@
 }
 
 .noResults {
+    grid-column: 1/-1;
     text-align: center;
-    padding: 3rem 2rem;
-    color: #4a5568;
-    font-size: 1.1rem;
+    padding: 4rem 2rem;
     background: white;
     border-radius: 20px;
     box-shadow: 0 4px 6px rgba(21, 26, 45, 0.1);
-    grid-column: 1/-1;
+}
+
+.noResultsIcon {
+    font-size: 4rem;
+    color: #151A2D;
+    margin-bottom: 1.5rem;
+    opacity: 0.8;
+}
+
+.noResults h2 {
+    color: #151A2D;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+}
+
+.noResults p {
+    color: #4a5568;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+/* Theme Input */
+.themeInputContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.themeInput {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    background-color: white;
+    height: 45px; /* Fixed height for all inputs */
+    transition: border-color 0.2s;
+}
+
+.themeInput:focus {
+    border-color: #1f2642;
+}
+
+.themeInput::placeholder {
+    color: #a0aec0;
+}
+
+.themesList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+    position: relative;
+    top: 5px; /* Slight offset from input */
+}
+
+.themeTag {
+    display: inline-flex;
+    align-items: center;
+    background: #1f2642;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    gap: 0.5rem;
+    transition: all 0.2s;
+}
+
+.themeTag:hover {
+    background: #2a345c;
+}
+
+.removeTheme {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 0;
+    font-size: 1.2rem;
+    line-height: 1;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.removeTheme:hover {
+    opacity: 1;
 }
