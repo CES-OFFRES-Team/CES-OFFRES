@@ -34,7 +34,11 @@ class WishList {
 
     public function getWishList($idPersonne) {
         try {
-            $query = "SELECT s.*, e.nom_entreprise, e.email, e.téléphone, e.site_web, e.localisation 
+            $query = "SELECT s.id_stage, s.titre, s.description, s.remuneration, 
+                            s.date_publication, s.date_debut, s.date_fin,
+                            e.id_entreprise, e.nom_entreprise, e.adresse, 
+                            e.email, e.telephone, e.moyenne_eval, e.description as description_entreprise,
+                            w.date_ajout
                      FROM Offres_de_stage s 
                      INNER JOIN ajouter_wish_list w ON s.id_stage = w.id_stage 
                      LEFT JOIN Entreprises e ON s.id_entreprise = e.id_entreprise 
