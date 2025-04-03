@@ -11,6 +11,7 @@ require_once 'controllers/UserController.php';
 require_once 'controllers/CandidatureController.php';
 require_once __DIR__ . '/controllers/EntrepriseController.php';
 require_once __DIR__ . '/controllers/OffreController.php';
+require_once __DIR__ . '/controllers/WishListController.php';
 
 // Récupération de l'URL
 $request_uri = $_SERVER['REQUEST_URI'];
@@ -99,6 +100,29 @@ try {
         case '/offres':
             $controller = new OffreController();
             echo $controller->handleRequest($method, isset($query_params['id']) ? $query_params['id'] : null);
+            break;
+
+        // Routes pour la wishlist
+        case '/wishlist/list':
+            $controller = new WishListController();
+            echo $controller->getWishList();
+            break;
+
+        case '/wishlist/add':
+            $controller = new WishListController();
+            echo $controller->addToWishList();
+            break;
+
+        case '/wishlist/remove':
+            $controller = new WishListController();
+            $idStage = isset($query_params['id']) ? $query_params['id'] : null;
+            echo $controller->removeFromWishList($idStage);
+            break;
+
+        case '/wishlist/check':
+            $controller = new WishListController();
+            $idStage = isset($query_params['id']) ? $query_params['id'] : null;
+            echo $controller->checkWishListStatus($idStage);
             break;
 
         default:
