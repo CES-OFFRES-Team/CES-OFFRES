@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { HiLocationMarker, HiCalendar, HiClock, HiBriefcase, HiTrash, HiPlus, HiRefresh, HiSearch, HiCurrencyEuro } from 'react-icons/hi';
 import OffreModal from './OffreModal';
-import './Offres.css';
+import './Offres.module.css';
 
 const API_URL = 'http://20.19.36.142:8000/api';
 
