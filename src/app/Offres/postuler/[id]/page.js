@@ -133,14 +133,14 @@ export default function PostulerForm({ params }) {
                     type: formData.cv.type,
                     size: formData.cv.size
                 } : null,
-                id_personne: user?.id_personne,
+                id_personne: user.id_personne,
                 id_stage: params.id,
                 lettre: formData.lettreMotivation ? 'présente' : 'absente'
             });
 
             // Vérifier si l'utilisateur est connecté et a le bon rôle
-            if (!user) {
-                throw new Error("Vous devez être connecté pour postuler");
+            if (!user || !user.id_personne) {
+                throw new Error("Erreur: ID utilisateur non trouvé");
             }
             
             if (user.role !== USER_ROLES.ETUDIANT) {
