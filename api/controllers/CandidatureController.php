@@ -17,44 +17,41 @@ class CandidatureController {
             $this->candidature = new Candidature($this->db);
             
             // Définir le chemin d'upload de manière absolue
-            $this->upload_directory = realpath(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'uploads';
+            $this->upload_directory = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uploads';
             error_log("[DEBUG] Chemin d'upload absolu: " . $this->upload_directory);
 
-            // Vérifier si le dossier principal existe
-            if (!file_exists($this->upload_directory)) {
-                error_log("[DEBUG] Tentative de création du dossier principal: " . $this->upload_directory);
-                if (!@mkdir($this->upload_directory, 0755, true)) {
-                    error_log("[ERROR] Erreur lors de la création du dossier principal: " . error_get_last()['message']);
-                    throw new Exception("Impossible de créer le dossier d'upload");
-                }
-            }
+            // Vérifier les permissions des dossiers
+            $required_dirs = [
+                $this->upload_directory => "dossier principal d'upload",
+                $this->upload_directory . DIRECTORY_SEPARATOR . 'cv' => "dossier des CVs",
+                $this->upload_directory . DIRECTORY_SEPARATOR . 'lettres' => "dossier des lettres"
+            ];
 
-            // Créer les sous-dossiers
-            $subdirs = ['cv', 'lettres'];
-            foreach ($subdirs as $dir) {
-                $path = $this->upload_directory . DIRECTORY_SEPARATOR . $dir;
-                error_log("[DEBUG] Vérification/création du dossier: " . $path);
+            foreach ($required_dirs as $dir => $description) {
+                error_log("[DEBUG] Vérification du " . $description . ": " . $dir);
                 
-                if (!file_exists($path)) {
-                    error_log("[DEBUG] Tentative de création du sous-dossier: " . $path);
-                    if (!@mkdir($path, 0755, true)) {
-                        $error = error_get_last();
-                        error_log("[ERROR] Erreur création sous-dossier: " . ($error ? $error['message'] : 'Erreur inconnue'));
-                        throw new Exception("Impossible de créer le sous-dossier " . $dir);
+                if (!file_exists($dir)) {
+                    error_log("[ERROR] Le " . $description . " n'existe pas: " . $dir);
+                    throw new Exception("Le " . $description . " n'existe pas");
+                }
+
+                error_log("[DEBUG] Permissions actuelles du " . $description . ": " . substr(sprintf('%o', fileperms($dir)), -4));
+                
+                // Tenter de définir les permissions si nécessaire
+                if (!is_writable($dir)) {
+                    error_log("[DEBUG] Tentative de modification des permissions pour " . $description);
+                    @chmod($dir, 0777);
+                    
+                    if (!is_writable($dir)) {
+                        error_log("[ERROR] Le " . $description . " n'est pas accessible en écriture après tentative de modification des permissions");
+                        throw new Exception("Le " . $description . " n'est pas accessible en écriture");
                     }
                 }
 
-                // Vérifier les permissions
-                if (!is_writable($path)) {
-                    error_log("[DEBUG] Tentative de modification des permissions: " . $path);
-                    if (!@chmod($path, 0755)) {
-                        error_log("[ERROR] Impossible de modifier les permissions du dossier: " . $path);
-                        throw new Exception("Permissions insuffisantes pour le dossier " . $dir);
-                    }
-                }
+                error_log("[DEBUG] " . $description . " est accessible en écriture");
             }
 
-            error_log("[DEBUG] Configuration des dossiers terminée avec succès");
+            error_log("[DEBUG] Tous les dossiers sont correctement configurés et accessibles");
 
         } catch (Exception $e) {
             error_log("[ERROR] Exception dans le constructeur: " . $e->getMessage());
