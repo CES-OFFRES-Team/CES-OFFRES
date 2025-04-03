@@ -96,22 +96,22 @@ export default function LoginPage() {
       
       // Vérifier "Se souvenir de moi"
       const rememberMe = document.getElementById('cbx')?.checked || false;
+      
+      // Définir les cookies avec des options plus permissives
       const cookieOptions = { 
         expires: rememberMe ? 7 : 1, 
-        secure: true,
-        sameSite: 'strict',
-        path: '/'
+        secure: false, // Désactiver secure pour le développement local
+        sameSite: 'lax', // Utiliser lax au lieu de strict
+        path: '/',
+        domain: window.location.hostname
       };
       
       // Enregistrer les données dans les cookies
-      Cookies.set('authToken', data.token, cookieOptions);
-      Cookies.set('userData', JSON.stringify(userData), cookieOptions);
-      Cookies.set('userRole', userData.role, cookieOptions);
+      document.cookie = `authToken=${data.token}; path=/; max-age=${rememberMe ? 7 * 24 * 60 * 60 : 24 * 60 * 60}`;
+      document.cookie = `userData=${JSON.stringify(userData)}; path=/; max-age=${rememberMe ? 7 * 24 * 60 * 60 : 24 * 60 * 60}`;
+      document.cookie = `userRole=${userData.role}; path=/; max-age=${rememberMe ? 7 * 24 * 60 * 60 : 24 * 60 * 60}`;
       
-      console.log('Cookies enregistrés:', {
-        token: data.token,
-        role: userData.role
-      });
+      console.log('Cookies définis:', document.cookie);
       
       // Afficher le succès
       setSuccessMessage(`Connexion réussie ! Bienvenue ${userData.prenom}`);
