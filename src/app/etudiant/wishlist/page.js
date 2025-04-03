@@ -27,7 +27,7 @@ export default function WishList() {
                 return;
             }
 
-            const response = await fetch(`http://20.19.36.142:8000/api/wishlist`, {
+            const response = await fetch(`http://20.19.36.142:8000/api/wishlist/list`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${userData.token}`,
@@ -46,20 +46,24 @@ export default function WishList() {
             const data = await response.json();
             console.log('Données reçues:', data); // Log pour déboguer
 
-            const stagesFormates = Array.isArray(data) ? data.map(item => ({
+            if (!data || !data.stages) {
+                throw new Error('Format de données invalide');
+            }
+
+            const stagesFormates = data.stages.map(item => ({
                 id_stage: item.id_stage,
-                titre: item.titre_stage || item.titre,
-                nom_entreprise: item.nom_entreprise,
+                titre: item.titre || item.titre_stage || 'Sans titre',
+                nom_entreprise: item.nom_entreprise || 'Entreprise non spécifiée',
                 localisation: item.localisation || 'Non spécifiée',
                 telephone: item.telephone || 'Non spécifié',
                 email: item.email || 'Non spécifié',
-                site_web: item.site_web,
+                site_web: item.site_web || '',
                 description: item.description || 'Aucune description disponible',
                 salaire: item.salaire || 'Non spécifié',
                 type_stage: item.type_stage || 'Non spécifié',
                 niveau_etude: item.niveau_etude || 'Non spécifié',
                 date_ajout: item.date_ajout
-            })) : [];
+            }));
 
             setFavoris(stagesFormates);
             setError(null);
