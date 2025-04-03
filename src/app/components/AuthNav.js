@@ -2,20 +2,11 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
+import { logout, getUserData } from '../utils/auth';
 
 export default function AuthNav() {
   const router = useRouter();
-  const userData = Cookies.get('userData');
-  let user = null;
-
-  if (userData) {
-    try {
-      user = JSON.parse(userData);
-    } catch (e) {
-      console.error('Erreur lors du parsing des données utilisateur:', e);
-    }
-  }
+  const user = getUserData();
 
   const getDashboardPath = () => {
     if (!user) return '/Login';
@@ -27,18 +18,16 @@ export default function AuthNav() {
         return '/pilote/dashboard';
       case 'Etudiant':
         return '/dashboard';
+      case 'Entreprise':
+        return '/entreprise/dashboard';
       default:
         return '/Login';
     }
   };
 
   const handleLogout = () => {
-    // Supprimer les cookies
-    Cookies.remove('authToken');
-    Cookies.remove('userData');
-    
-    // Rediriger vers la page de connexion
-    router.push('/Login');
+    // Utiliser la fonction logout de auth.js
+    logout();
   };
 
   return (

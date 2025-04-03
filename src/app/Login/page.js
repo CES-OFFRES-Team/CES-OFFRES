@@ -88,15 +88,17 @@ const loginUser = async (email, password) => {
         // S'assurer que les champs essentiels sont présents
         const userData = {
             id_personne: data.user.id_personne || data.user.id, // Essayer les deux formats possibles
-            nom: data.user.nom || '',
-            prenom: data.user.prenom || '',
-            email: data.user.email || email,
-            role: data.user.role || 'Etudiant'
+            nom: data.user.nom || data.user.nom_personne || '',
+            prenom: data.user.prenom || data.user.prenom_personne || '',
+            email: data.user.email || data.user.email_personne || email,
+            role: data.user.role || 'Etudiant' // Valeur par défaut si le rôle est manquant
         };
 
+        // Logs détaillés pour déboguer
+        console.log('Rôle récupéré de l\'API:', data.user.role);
         console.log('Données utilisateur finales:', userData);
 
-        // Mettre à jour les données avec les valeurs par défaut si nécessaire
+        // Mettre à jour les données avec les valeurs normalisées
         data.user = userData;
 
         return data;

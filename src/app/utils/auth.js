@@ -67,10 +67,25 @@ export const hasRole = (requiredRole) => {
 };
 
 export const logout = () => {
+    // Supprimer tous les cookies avec différentes options pour s'assurer de leur suppression
     Cookies.remove(TOKEN_KEY);
     Cookies.remove(USER_DATA_KEY);
     Cookies.remove(USER_ROLE_KEY);
-    window.location.href = '/login';
+    
+    // Supprimer également avec des options spécifiques (domaine et chemin)
+    Cookies.remove(TOKEN_KEY, { path: '/' });
+    Cookies.remove(USER_DATA_KEY, { path: '/' });
+    Cookies.remove(USER_ROLE_KEY, { path: '/' });
+    
+    // Nettoyer le stockage local au cas où
+    if (typeof window !== 'undefined') {
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(USER_DATA_KEY);
+        localStorage.removeItem(USER_ROLE_KEY);
+        
+        // Forcer le navigateur à effectuer une redirection complète plutôt qu'une navigation SPA
+        window.location.href = '/login';
+    }
 };
 
 // Fonction pour vérifier si le token est toujours valide avec le backend

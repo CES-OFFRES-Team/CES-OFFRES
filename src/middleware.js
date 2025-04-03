@@ -108,6 +108,7 @@ export const config = {
     '/admin/:path*',
     '/pilote/:path*',
     '/dashboard/:path*',
-    '/dashboard'
+    '/dashboard',
+    '/entreprise/:path*'
   ]
 }; 
