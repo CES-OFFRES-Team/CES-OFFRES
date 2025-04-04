@@ -19,7 +19,7 @@ export const USER_ROLES = {
 // Chemins de redirection par rôle
 export const REDIRECT_PATHS = {
   [USER_ROLES.ADMIN]: '/admin',
-  [USER_ROLES.ETUDIANT]: '/etudiant/dashboard',
+  [USER_ROLES.ETUDIANT]: '/dashboard',
   [USER_ROLES.PILOTE]: '/pilote/dashboard',
   [USER_ROLES.ENTREPRISE]: '/entreprise/dashboard'
 }; 
