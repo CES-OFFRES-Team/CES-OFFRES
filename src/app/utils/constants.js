@@ -20,6 +20,6 @@ export const USER_ROLES = {
 export const REDIRECT_PATHS = {
   [USER_ROLES.ADMIN]: '/admin',
   [USER_ROLES.ETUDIANT]: '/dashboard',
-  [USER_ROLES.PILOTE]: '/pilote/dashboard',
+  [USER_ROLES.PILOTE]: '/pilote',
   [USER_ROLES.ENTREPRISE]: '/entreprise/dashboard'
 }; 

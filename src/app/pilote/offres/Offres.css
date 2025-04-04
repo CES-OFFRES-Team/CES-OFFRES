@@ -1,0 +1,258 @@
+.offres-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.offres-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.offres-header h1 {
+    margin: 0;
+    color: #2d3748;
+}
+
+.actions-container {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.filter-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+}
+
+.offres-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.offre-card {
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.offre-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.offre-header {
+    margin-bottom: 1rem;
+}
+
+.offre-title {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #2d3748;
+}
+
+.offre-company {
+    color: #718096;
+    font-size: 0.875rem;
+}
+
+.offre-content {
+    margin-bottom: 1.5rem;
+}
+
+.offre-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #4a5568;
+}
+
+.detail-item svg {
+    color: #718096;
+}
+
+.offre-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-primary {
+    background-color: #4299e1;
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #3182ce;
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 1px solid #e2e8f0;
+    color: #4a5568;
+}
+
+.btn-outline:hover {
+    background-color: #f7fafc;
+}
+
+.trash-icon {
+    color: #e53e3e;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #2d3748;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #718096;
+    padding: 0.5rem;
+}
+
+.close-button:hover {
+    color: #4a5568;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #4a5568;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.alert-error {
+    background-color: #fed7d7;
+    color: #c53030;
+    border: 1px solid #feb2b2;
+}
+
+.alert-success {
+    background-color: #c6f6d5;
+    color: #2f855a;
+    border: 1px solid #9ae6b4;
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid #e2e8f0;
+    border-bottom-color: #4299e1;
+    border-radius: 50%;
+    animation: rotation 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.no-data-message {
+    text-align: center;
+    padding: 2rem;
+    color: #718096;
+    grid-column: 1 / -1;
+} 
