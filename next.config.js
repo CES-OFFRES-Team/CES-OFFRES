@@ -5,6 +5,10 @@ const nextConfig = {
   },
   reactStrictMode: true,
   cssModules: true,
+  devIndicators: {
+    buildActivity: false,
+    buildActivityPosition: 'bottom-right',
+  },
   webpack(config) {
     config.module.rules.push({
       test: /\.(png|jpg|gif|svg|webp)$/i,
