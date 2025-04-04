@@ -10,7 +10,7 @@
 
 .offres-header {
     text-align: center;
-    background: linear-gradient(135deg, #1a365d 0%, #2563eb 100%);
+    background: linear-gradient(135deg, #1a365d 0%, #560b44 100%);
     padding: clamp(2rem, 4vw, 3rem);
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(37, 99, 235, 0.1);
