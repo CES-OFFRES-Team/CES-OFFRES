@@ -39,7 +39,7 @@ export default function ProtectedRoute({ children, requiredRole = null }) {
                 } else if (userRole === 'Pilote') {
                     router.push('/pilote/dashboard');
                 } else if (userRole === 'Etudiant') {
-                    router.push('/dashboard');
+                    router.push('/etudiant/dashboard');
                 } else if (userRole === 'Entreprise') {
                     router.push('/entreprise/dashboard');
                 } else {

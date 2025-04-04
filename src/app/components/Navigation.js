@@ -151,6 +151,14 @@ export default function Navigation() {
                                 </li>
                             </>
                         )}
+                        {user?.role === USER_ROLES.ETUDIANT && (
+                            <li className="nav-item">
+                                <Link href="/etudiant/dashboard" className="nav-link" onClick={() => setIsOpen(false)}>
+                                    <i className="fa-solid fa-gauge-high"></i>
+                                    <span className="nav-label">Mon Dashboard</span>
+                                </Link>
+                            </li>
+                        )}
                         {!user?.role === USER_ROLES.ADMIN && (
                             <li className="nav-item">
                                 <Link href="/Contact" className="nav-link" onClick={() => setIsOpen(false)}>
