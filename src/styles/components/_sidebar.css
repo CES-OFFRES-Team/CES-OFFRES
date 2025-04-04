@@ -19,6 +19,7 @@
 
 .sidebar.expanded .nav-logo {
     width: 130px;
+    height: 45px;
 }
 
 .sidebar.expanded .link-text {
@@ -178,19 +179,20 @@ main, .footer {
 
 .logo-container {
     width: 100%;
-    padding: 20px;
+    padding: 1rem;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 1rem;
     overflow: hidden;
     transition: all 0.3s ease;
 }
 
 .nav-logo {
-    width: 45px;
-    height: auto;
+    width: auto;
+    height: 45px;
     transition: all 0.3s ease;
+    object-fit: contain;
 }
 
 .nav-item {
